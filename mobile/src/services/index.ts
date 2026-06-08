@@ -1,0 +1,9 @@
+export { authService } from './auth.service';
+export { usersService } from './users.service';
+export { coachesService } from './coaches.service';
+export { sportsService } from './sports.service';
+export { bookingRequestsService } from './bookingRequests.service';
+export { bookingsService } from './bookings.service';
+export { paymentsService } from './payments.service';
+export { reviewsService } from './reviews.service';
+export { notificationsService } from './notifications.service';
