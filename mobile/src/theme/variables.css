@@ -80,11 +80,11 @@
 }
 
 /* Dark mode overrides */
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
     --ion-background-color: #0f0f1a;
     --ion-background-color-rgb: 15, 15, 26;
     --ion-text-color: #f4f5f8;
     --ion-text-color-rgb: 244, 245, 248;
   }
-}
+} */
