@@ -3,6 +3,7 @@ import React from 'react';
 import { Redirect, Route } from 'react-router-dom';
 
 import ProtectedRoute from '@/components/ProtectedRoute';
+import CompleteProfilePage from '@/pages/auth/CompleteProfilePage';
 import ForgotPasswordPage from '@/pages/auth/ForgotPasswordPage';
 import OtpVerificationPage from '@/pages/auth/OtpVerificationPage';
 import RoleSelectionPage from '@/pages/auth/RoleSelectionPage';
@@ -28,6 +29,7 @@ const AppRoutes: React.FC = () => {
       <Route path="/auth/forgot-password" component={ForgotPasswordPage} exact />
       <Route path="/auth/otp" component={OtpVerificationPage} exact />
       <Route path="/auth/role" component={RoleSelectionPage} exact />
+      <Route path="/auth/complete-profile" component={CompleteProfilePage} exact />
 
       {/* ── Protected: Athlete / Parent ────────────────────── */}
       <ProtectedRoute path="/athlete" component={AthleteRoutes} />
