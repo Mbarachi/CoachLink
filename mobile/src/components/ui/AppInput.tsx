@@ -1,4 +1,4 @@
-import { IonIcon, IonInput, IonItem, IonLabel, IonNote } from '@ionic/react';
+import { IonIcon, IonInput, IonLabel, IonTextarea } from '@ionic/react';
 import React, { useState } from 'react';
 import { eyeOffOutline, eyeOutline } from 'ionicons/icons';
 
@@ -14,6 +14,7 @@ interface AppInputProps {
   readonly?: boolean;
   disabled?: boolean;
   autocomplete?: string;
+  rows?: number;
 }
 
 const AppInput: React.FC<AppInputProps> = ({
@@ -28,6 +29,7 @@ const AppInput: React.FC<AppInputProps> = ({
   readonly = false,
   disabled = false,
   autocomplete,
+  rows,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -53,11 +55,11 @@ const AppInput: React.FC<AppInputProps> = ({
         style={{
           position: 'relative',
           display: 'flex',
-          alignItems: 'center',
+          alignItems: type === 'textarea' ? 'flex-start' : 'center',
           background: '#fff',
           border: `1.5px solid ${error ? 'var(--cl-error)' : 'var(--cl-border)'}`,
           borderRadius: 12,
-          padding: '0 14px',
+          padding: type === 'textarea' ? '10px 14px' : '0 14px',
           minHeight: 52,
         }}
       >
@@ -69,29 +71,52 @@ const AppInput: React.FC<AppInputProps> = ({
               color: 'var(--cl-text-light)',
               marginRight: 10,
               flexShrink: 0,
+              marginTop: type === 'textarea' ? 2 : 0,
             }}
           />
         )}
-        <IonInput
-          type={resolvedType as any}
-          placeholder={placeholder}
-          value={value}
-          onIonInput={onIonInput}
-          onIonBlur={onIonBlur}
-          readonly={readonly}
-          disabled={disabled}
-          autocomplete={autocomplete as any}
-          style={{
-            '--padding-start': '0',
-            '--padding-end': '0',
-            '--padding-top': '0',
-            '--padding-bottom': '0',
-            fontSize: 15,
-            color: 'var(--cl-text-main)',
-            fontFamily: 'Poppins, sans-serif',
-            flex: 1,
-          }}
-        />
+        {type === 'textarea' ? (
+          <IonTextarea
+            placeholder={placeholder}
+            value={value}
+            onIonInput={onIonInput}
+            onIonBlur={onIonBlur}
+            readonly={readonly}
+            disabled={disabled}
+            rows={rows ?? 2}
+            style={{
+              '--padding-start': '0',
+              '--padding-end': '0',
+              '--padding-top': '0',
+              '--padding-bottom': '0',
+              fontSize: 15,
+              color: 'var(--cl-text-main)',
+              fontFamily: 'Poppins, sans-serif',
+              flex: 1,
+            }}
+          />
+        ) : (
+          <IonInput
+            type={resolvedType as any}
+            placeholder={placeholder}
+            value={value}
+            onIonInput={onIonInput}
+            onIonBlur={onIonBlur}
+            readonly={readonly}
+            disabled={disabled}
+            autocomplete={autocomplete as any}
+            style={{
+              '--padding-start': '0',
+              '--padding-end': '0',
+              '--padding-top': '0',
+              '--padding-bottom': '0',
+              fontSize: 15,
+              color: 'var(--cl-text-main)',
+              fontFamily: 'Poppins, sans-serif',
+              flex: 1,
+            }}
+          />
+        )}
         {type === 'password' && (
           <IonIcon
             icon={showPassword ? eyeOffOutline : eyeOutline}

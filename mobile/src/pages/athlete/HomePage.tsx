@@ -94,7 +94,11 @@ const HomePage: React.FC = () => {
                     justifyContent: 'center',
                   }}
                 >
-                  <IonIcon icon="person-outline" style={{ fontSize: 18, color: 'var(--cl-primary)' }} />
+                  {/* Person / human */}
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--cl-primary)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="7" r="4" />
+                    <path d="M4 21 C4 17 7.6 14 12 14 C16.4 14 20 17 20 21" />
+                  </svg>
                 </div>
                 <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 12, color: 'var(--cl-text-light)', margin: 0 }}>
                   Your Role
@@ -126,9 +130,13 @@ const HomePage: React.FC = () => {
                     justifyContent: 'center',
                   }}
                 >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6FCF97" strokeWidth="2">
-                    <circle cx="12" cy="12" r="10" />
-                    <path d="M12 6v6l4 2" />
+                  {/* Swimming – swimmer with waves */}
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--cl-primary)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="17" cy="3.5" r="1.8" />
+                    <path d="M2 11 C5 9 8 13 11 11 L17 7" />
+                    <path d="M14 10 L16 15" />
+                    <path d="M2 16 Q5.5 14 9 16 Q12.5 18 16 16 Q19 14 22 16" />
+                    <path d="M2 19.5 Q5.5 17.5 9 19.5 Q12.5 21.5 16 19.5 Q19 17.5 22 19.5" />
                   </svg>
                 </div>
                 <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 12, color: 'var(--cl-text-light)', margin: 0 }}>

@@ -307,6 +307,8 @@ const CompleteProfilePage: React.FC = () => {
                     <AppInput
                       label="Bio"
                       placeholder="Write a short bio about yourself"
+                      type="textarea"
+                      rows={2}
                       value={field.value}
                       onIonInput={(e) => field.onChange((e.target as HTMLInputElement).value)}
                       onIonBlur={field.onBlur}
