@@ -1,4 +1,7 @@
 import { IonRouterOutlet } from '@ionic/react';
+import SearchCoachesPage from '@/pages/athlete/SearchCoachesPage';
+import CoachListingPage from '@/pages/athlete/CoachListingPage';
+import CoachDetailsPage from '@/pages/athlete/CoachDetailsPage';
 import React from 'react';
 import { Redirect, Route } from 'react-router-dom';
 
@@ -23,6 +26,9 @@ const AppRoutes: React.FC = () => {
     <IonRouterOutlet id="main">
       {/* ── Public ─────────────────────────────────────────── */}
       <Route path="/splash" component={SplashPage} exact />
+      <Route path="/athlete/search" component={SearchCoachesPage} exact />
+      <Route path="/athlete/coaches" component={CoachListingPage} exact />
+      <Route path="/athlete/coaches/:id" component={CoachDetailsPage} exact />
       <Route path="/welcome" component={WelcomePage} exact />
       <Route path="/auth/signin" component={SignInPage} exact />
       <Route path="/auth/signup" component={SignUpPage} exact />

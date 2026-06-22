@@ -19,6 +19,7 @@ import { Redirect, Route } from 'react-router-dom';
 import BookingRequestPage from '@/pages/athlete/BookingRequestPage';
 import BookingSuccessPage from '@/pages/athlete/BookingSuccessPage';
 import CoachDetailsPage from '@/pages/athlete/CoachDetailsPage';
+import CoachListingPage from '@/pages/athlete/CoachListingPage';
 import HomePage from '@/pages/athlete/HomePage';
 import MyBookingsPage from '@/pages/athlete/MyBookingsPage';
 import NotificationsPage from '@/pages/athlete/NotificationsPage';
@@ -38,6 +39,7 @@ const AthleteRoutes: React.FC = () => (
       <Route path="/athlete/profile" component={ProfilePage} exact />
 
       {/* ── Stack screens (no tab highlight) ─────────────── */}
+      <Route path='/athlete/coaches' component={CoachListingPage} exact />
       <Route path="/athlete/coaches/:id" component={CoachDetailsPage} exact />
       <Route path="/athlete/booking-request/:coachId" component={BookingRequestPage} exact />
       <Route path="/athlete/payment/:bookingRequestId" component={PaymentPage} exact />
