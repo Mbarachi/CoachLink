@@ -32,9 +32,8 @@ Fields:
 * userId
 * bio
 * yearsOfExperience
-* hourlyRate
-* state
-* area
+* sessionRate
+* venue
 * verificationStatus
 * rating
 * totalReviews

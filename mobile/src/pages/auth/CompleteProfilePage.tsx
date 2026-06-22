@@ -20,12 +20,15 @@ const coachSchema = z.object({
   sport: z.string().min(1, 'Please select a sport'),
   yearsOfExperience: z.string().min(1, 'Please select experience'),
   area: z.string().min(1, 'Area is required'),
-  hourlyRate: z.string().min(1, 'Hourly rate is required'),
+  sessionRate: z.string().min(1, 'Session rate is required'),
   bio: z.string().min(10, 'Bio must be at least 10 characters'),
 });
 
 type AthleteForm = z.infer<typeof athleteSchema>;
 type CoachForm = z.infer<typeof coachSchema>;
+
+const formatComma = (val: string) =>
+  val.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
 const SPORTS = ['Tennis', 'Swimming'];
 const AREAS = ['Lekki', 'Ikoyi', 'Yaba', 'Victoria Island', 'Ikeja', 'Surulere'];
@@ -59,6 +62,7 @@ const CompleteProfilePage: React.FC = () => {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [avatarSrc, setAvatarSrc] = React.useState<string | null>(null);
+  const [avatarError, setAvatarError] = React.useState<string | null>(null);
 
   const schema = isCoach ? coachSchema : athleteSchema;
 
@@ -69,7 +73,7 @@ const CompleteProfilePage: React.FC = () => {
   } = useForm<any>({
     resolver: zodResolver(schema),
     defaultValues: isCoach
-      ? { fullName: '', sport: '', yearsOfExperience: '', area: '', hourlyRate: '', bio: '' }
+      ? { fullName: '', sport: '', yearsOfExperience: '', area: '', sessionRate: '', bio: '' }
       : { fullName: '', area: '', preferredSport: '' },
   });
 
@@ -77,12 +81,19 @@ const CompleteProfilePage: React.FC = () => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (ev) => setAvatarSrc(ev.target?.result as string);
+      reader.onload = (ev) => {
+        setAvatarSrc(ev.target?.result as string);
+        setAvatarError(null);
+      };
       reader.readAsDataURL(file);
     }
   };
 
   const onSubmit = (data: AthleteForm | CoachForm) => {
+    if (isCoach && !avatarSrc) {
+      setAvatarError('Profile photo is required for coaches');
+      return;
+    }
     const [firstName, ...rest] = (data as AthleteForm).fullName.trim().split(' ');
     updateUser({
       firstName,
@@ -136,8 +147,20 @@ const CompleteProfilePage: React.FC = () => {
               }}
               onClick={() => fileInputRef.current?.click()}
             >
-              Add Profile Photo
+              {avatarSrc ? 'Change Photo' : 'Add Profile Photo'}
             </p>
+            {isCoach && avatarError && (
+              <p
+                style={{
+                  fontFamily: 'Poppins, sans-serif',
+                  fontSize: 12,
+                  color: 'var(--cl-error)',
+                  marginTop: 4,
+                }}
+              >
+                {avatarError}
+              </p>
+            )}
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} noValidate>
@@ -286,17 +309,20 @@ const CompleteProfilePage: React.FC = () => {
             {isCoach && (
               <>
                 <Controller
-                  name="hourlyRate"
+                  name="sessionRate"
                   control={control}
                   render={({ field }) => (
                     <AppInput
-                      label="Hourly Rate (NGN)"
-                      placeholder="Enter your hourly rate"
-                      type="number"
-                      value={field.value}
-                      onIonInput={(e) => field.onChange((e.target as HTMLInputElement).value)}
+                      label="Session Rate (NGN)"
+                      placeholder="Enter your session rate"
+                      type="text"
+                      value={formatComma(field.value ?? '')}
+                      onIonInput={(e) => {
+                        const raw = (e.target as HTMLInputElement).value.replace(/,/g, '');
+                        field.onChange(raw);
+                      }}
                       onIonBlur={field.onBlur}
-                      error={(errors as any).hourlyRate?.message}
+                      error={(errors as any).sessionRate?.message}
                     />
                   )}
                 />

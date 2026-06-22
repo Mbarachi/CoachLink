@@ -1,182 +1,74 @@
-# CoachLink MVP PRD v1.0
+# CoachLink Navigation Structure
 
-## Product Overview
+## Public Routes
 
-CoachLink is a marketplace platform that connects athletes and parents with verified sports coaches.
-
-The platform enables users to discover coaches, view profiles, request training sessions, make payments, and manage bookings.
-
-The initial MVP focuses exclusively on Tennis and Swimming coaches.
-
----
-
-# Problem Statement
-
-Finding qualified sports coaches is fragmented and largely dependent on referrals, social media, and word-of-mouth.
-
-Athletes and parents often struggle to:
-
-* Find trusted coaches
-* Compare coaching options
-* Understand pricing
-* Schedule sessions efficiently
-
-Coaches similarly struggle to:
-
-* Acquire new clients
-* Showcase their experience
-* Manage booking requests
-
-CoachLink aims to solve these challenges through a simple marketplace experience.
+| Route             | Description      |
+| ----------------- | ---------------- |
+| /                 | Splash Screen    |
+| /welcome          | Welcome Screen   |
+| /signin           | Sign In          |
+| /signup           | Sign Up          |
+| /forgot-password  | Forgot Password  |
+| /verify-otp       | OTP Verification |
+| /select-role      | Role Selection   |
+| /complete-profile | Complete Profile |
 
 ---
 
-# MVP Objectives
+# Athlete / Parent Routes
 
-Validate the following assumptions:
-
-1. Coaches are willing to create profiles on the platform.
-2. Athletes and parents are willing to request coaching sessions through the platform.
-3. Users are willing to complete payments through the platform.
-
----
-
-# Supported Sports
-
-The MVP will support only:
-
-* Tennis
-* Swimming
-
-Additional sports are intentionally excluded.
+| Route            | Description      |
+| ---------------- | ---------------- |
+| /home            | Dashboard / Home |
+| /search          | Search Coaches   |
+| /coaches         | Coach Listing    |
+| /coaches/:id     | Coach Details    |
+| /booking-request | Request Session  |
+| /payment         | Payment Screen   |
+| /booking-success | Booking Success  |
+| /bookings        | My Bookings      |
+| /notifications   | Notifications    |
+| /profile         | Profile          |
+| /settings        | Settings         |
 
 ---
 
-# User Roles
+# Coach Routes
 
-## Athlete
-
-Capabilities:
-
-* Create account
-* Browse coaches
-* View coach profiles
-* Request sessions
-* Make payments
-* Leave reviews
+| Route          | Description              |
+| -------------- | ------------------------ |
+| /dashboard     | Coach Dashboard          |
+| /requests      | Incoming Requests        |
+| /requests/:id  | Request Details          |
+| /availability  | Manage Availability      |
+| /earnings      | Earnings Summary         |
+| /coach-profile | Coach Profile Management |
 
 ---
 
-## Parent
+# Athlete / Parent Bottom Navigation
 
-Capabilities:
+Home
 
-* Create account
-* Browse coaches
-* Request sessions for children
-* Make payments
-* Leave reviews
+Search
 
-Child profiles are not supported in MVP.
+Bookings
 
-Parents can provide child details during booking requests.
+Notifications
+
+Profile
 
 ---
 
-## Coach
+# Coach Bottom Navigation
 
-Capabilities:
+Dashboard
 
-* Create coach profile
-* Specify sport expertise
-* Define pricing
-* Manage availability
-* Accept or reject requests
-* Receive bookings
+Requests
 
----
+Availability
 
-# MVP Scope
-
-Included:
-
-* Authentication
-* Coach onboarding
-* Coach discovery
-* Coach profile pages
-* Booking requests
-* Booking management
-* Payments
-* Reviews
-* Notifications
-
-Excluded:
-
-* AI recommendations
-* Live chat
-* Wallets
-* Subscriptions
-* Tournaments
-* Video coaching
-* Coach analytics
-* Referral programs
-* Social feeds
-
----
-
-# Location Strategy
-
-To reduce complexity and cost, the MVP will not use map-based discovery.
-
-Coach locations will consist of:
-
-* Country
-* State
-* Area
-
-Examples:
-
-* Lagos → Lekki
-* Lagos → Ikoyi
-* Lagos → Yaba
-
-Users can filter coaches by area.
-
-No Google Maps integration will be included in MVP.
-
----
-
-# Booking Flow
-
-Booking Model: Request-Based
-
-User Flow:
-
-1. User selects coach
-2. User submits booking request
-3. Coach reviews request
-4. Coach accepts or declines
-5. Payment is requested
-6. User completes payment
-7. Booking becomes confirmed
-
----
-
-# Payment Flow
-
-Payment Provider:
-
-* Paystack
-
-Flow:
-
-Booking Request
-→ Coach Accepts
-→ Payment Required
-→ Payment Completed
-→ Booking Confirmed
-
-No wallet functionality will be included.
+Profile
 
 ---
 
@@ -184,134 +76,90 @@ No wallet functionality will be included.
 
 Splash
 → Welcome
-→ Sign In / Sign Up
+→ Sign Up / Sign In
 → Role Selection
 → Complete Profile
 → Home
 
 ---
 
-# Screen Inventory
+# Discovery Flow
 
-## Public Screens
-
-1. Splash
-2. Welcome
-3. Sign In
-4. Sign Up
-5. Forgot Password
-6. OTP Verification
-7. Role Selection
+Home
+→ Search Coaches
+→ Coach Listing
+→ Coach Details
 
 ---
 
-## Athlete / Parent Screens
+# Booking Flow
 
-8. Home
-9. Search Coaches
-10. Coach Details
-11. Booking Request
-12. Payment
-13. Booking Success
-14. My Bookings
-15. Notifications
-16. Profile
-17. Settings
+Coach Details
+→ Request Session
+→ Coach Review
+→ Payment
+→ Booking Confirmation
 
 ---
 
-## Coach Screens
+# Coach Workflow
 
-18. Dashboard
-19. Incoming Requests
-20. Request Details
-21. Availability
-22. Profile Management
-23. Earnings Summary
+Dashboard
+→ Incoming Requests
+→ Accept / Decline
+→ Booking Created
 
 ---
 
-# Database Entities
+# MVP Geography
 
-Core Entities:
+Launch Area:
 
-* User
-* CoachProfile
+Amuwo Odofin, Lagos
+
+Discovery Filters:
+
 * Sport
-* CoachSport
-* BookingRequest
-* Booking
-* Payment
-* Review
-* Notification
+* Venue
+
+Supported Venues:
+
+* MU Court
+* Festival Hotel Pool
+* Golden Tulip Pool
+* Appleton School
+* Private Residence
+
+No location-based routing or map navigation will be implemented in MVP.
 
 ---
 
-# Technical Stack
+# Role-Based Redirects
 
-Frontend:
+Athlete
 
-* Ionic React
-* Capacitor
-* TypeScript
+Login
+→ /home
 
-Backend:
+Parent
 
-* NestJS
-* PostgreSQL
+Login
+→ /home
 
-State Management:
+Coach
 
-* Zustand
-
-Server State:
-
-* React Query
-
-Forms:
-
-* React Hook Form
-* Zod
-
-Payments:
-
-* Paystack
-
-Media Storage:
-
-* Cloudinary
+Login
+→ /dashboard
 
 ---
 
-# Success Metrics
+# Future Navigation (Version 2)
 
-The MVP will be considered successful if:
+Potential Additional Routes:
 
-* Coaches complete onboarding
-* Booking requests are created
-* Booking requests are accepted
-* Payments are completed
-* Users make repeat bookings
-
-Downloads alone are not considered success metrics.
-
----
-
-# Future Roadmap
-
-Version 2:
-
-* Google Maps integration
-* Child profiles
-* In-app messaging
-* Push notifications
-* Coach subscriptions
-* AI-powered coach recommendations
-
-Version 3:
-
-* Training plans
-* Tournament management
-* Coach analytics
-* Video coaching
-* Community features
+* /messages
+* /reviews
+* /coach-subscriptions
+* /children
+* /maps
+* /training-plans

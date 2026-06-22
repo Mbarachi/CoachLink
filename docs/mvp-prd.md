@@ -89,7 +89,7 @@ Capabilities:
 
 * Create coach profile
 * Specify sport expertise
-* Define pricing
+* Define session pricing
 * Manage availability
 * Accept or reject requests
 * Receive bookings
@@ -126,25 +126,42 @@ Excluded:
 
 # Location Strategy
 
-To reduce complexity and cost, the MVP will not use map-based discovery.
+The MVP will focus exclusively on Amuwo Odofin, Lagos.
 
-Coach locations will consist of:
+Users will not search by city or area.
 
-* Country
-* State
-* Area
+Instead, users will discover coaches by:
+
+- Sport
+- Coaching Venue
 
 Examples:
 
-* Lagos → Lekki
-* Lagos → Ikoyi
-* Lagos → Yaba
+- MU Court
+- Festival Hotel Pool
+- Golden Tulip Pool
+- Private Residence
+- School Facilities
 
-Users can filter coaches by area.
+This allows CoachLink to launch within a focused geographic area and validate demand before expanding to other parts of Lagos.
 
 No Google Maps integration will be included in MVP.
 
 ---
+
+# Launch Geography
+
+Phase 1 Launch Area:
+
+- Amuwo Odofin, Lagos
+
+Future Expansion:
+
+- Festac
+- Surulere
+- Lekki
+- Ikoyi
+- Victoria Island
 
 # Booking Flow
 
@@ -180,6 +197,28 @@ No wallet functionality will be included.
 
 ---
 
+# Pricing Strategy
+
+Pricing Model:
+
+Per Session
+
+Coaches determine their own session rates.
+
+CoachLink may provide recommended pricing guidance based on sport and experience level.
+
+Example Recommended Ranges:
+
+Swimming:
+₦5,000 - ₦15,000 per session
+
+Tennis:
+₦7,500 - ₦20,000 per session
+
+CoachLink does not enforce fixed pricing in MVP.
+
+---
+
 # Authentication Flow
 
 Splash
@@ -207,27 +246,28 @@ Splash
 
 ## Athlete / Parent Screens
 
-8. Home
-9. Search Coaches
-10. Coach Details
-11. Booking Request
-12. Payment
-13. Booking Success
-14. My Bookings
-15. Notifications
-16. Profile
-17. Settings
+8.  Home
+9.  Search Coaches
+10. Coach Listing
+11. Coach Details
+12. Booking Request
+13. Payment
+14. Booking Success
+15. My Bookings
+16. Notifications
+17. Profile
+18. Settings
 
 ---
 
 ## Coach Screens
 
-18. Dashboard
-19. Incoming Requests
-20. Request Details
-21. Availability
-22. Profile Management
-23. Earnings Summary
+19. Dashboard
+20. Incoming Requests
+21. Request Details
+22. Availability
+23. Profile Management
+24. Earnings Summary
 
 ---
 
@@ -288,6 +328,8 @@ Media Storage:
 The MVP will be considered successful if:
 
 * Coaches complete onboarding
+* Coaches publish profiles
+* Users discover coaches
 * Booking requests are created
 * Booking requests are accepted
 * Payments are completed
