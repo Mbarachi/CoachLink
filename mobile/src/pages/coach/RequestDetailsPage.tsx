@@ -28,6 +28,7 @@ const RequestDetailsPage: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen className="ion-padding">
+        {id}
         {/* Placeholder: athlete info, sport, proposed date/time, notes, Accept / Decline actions */}
         {/* requestId: {id} */}
       </IonContent>

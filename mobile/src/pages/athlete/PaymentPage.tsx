@@ -28,6 +28,7 @@ const PaymentPage: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen className="ion-padding">
+        {bookingRequestId}
         {/* Placeholder: booking summary, amount, Pay with Paystack CTA */}
         {/* bookingRequestId: {bookingRequestId} */}
       </IonContent>

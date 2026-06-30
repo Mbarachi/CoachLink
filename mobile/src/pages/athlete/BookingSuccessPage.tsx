@@ -12,6 +12,7 @@ const BookingSuccessPage: React.FC = () => {
   return (
     <IonPage>
       <IonContent fullscreen className="ion-padding ion-text-center">
+        {bookingId}
         {/* Placeholder: success illustration, confirmation message, View Booking CTA */}
         {/* bookingId: {bookingId} */}
       </IonContent>
