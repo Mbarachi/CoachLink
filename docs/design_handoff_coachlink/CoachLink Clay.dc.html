@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;}
+  body{margin:0;background:#E7E6E1;}
+  ::-webkit-scrollbar{width:0;height:0;}
+  .scr::-webkit-scrollbar{display:none;}
+</style>
+</helmet>
+
+<section style="min-height:100vh;padding:40px;font-family:'Plus Jakarta Sans',sans-serif;display:flex;gap:40px;justify-content:center;align-items:flex-start;">
+
+  <!-- ===================== PHONE ===================== -->
+  <div style="flex:none;position:sticky;top:40px;">
+    <div style="width:390px;height:834px;border-radius:48px;background:#0c0c0c;padding:11px;box-shadow:0 40px 80px -28px rgba(0,0,0,.5),0 12px 28px rgba(0,0,0,.18);">
+      <div style="width:100%;height:100%;border-radius:37px;overflow:hidden;position:relative;background:#F3E9DC;font-family:'Plus Jakarta Sans',sans-serif;">
+
+        <!-- ===== SPLASH ===== -->
+        <sc-if value="{{ is.splash }}" hint-placeholder-val="{{ true }}">
+          <div onClick="{{ nav.welcome }}" style="height:100%;background:#241C13;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;">
+            <div style="position:absolute;top:-50px;right:-50px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(225,98,60,.22),transparent 68%);"></div>
+            <div style="display:flex;align-items:center;gap:13px;">
+              <div style="width:46px;height:46px;border-radius:14px;background:#E1623C;display:flex;align-items:center;justify-content:center;"><div style="width:19px;height:19px;border-radius:50%;background:#241C13;"></div></div>
+              <span style="font-family:'Schibsted Grotesk',sans-serif;font-weight:800;font-size:32px;color:#F3E9DC;letter-spacing:-.03em;">CoachLink</span>
+            </div>
+            <span style="position:absolute;bottom:54px;font-size:13px;color:#a08e76;">Tap to continue</span>
+          </div>
+        </sc-if>
+
+        <!-- ===== WELCOME ===== -->
+        <sc-if value="{{ is.welcome }}" hint-placeholder-val="{{ true }}">
+          <div style="height:100%;display:flex;flex-direction:column;padding:0 26px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;height:46px;flex:none;"><span style="font-weight:700;font-size:14px;color:#241C13;">9:41</span><span style="width:18px;height:11px;border:1.6px solid #241C13;border-radius:3px;"></span></div>
+            <div style="display:flex;align-items:center;gap:9px;margin-top:8px;"><div style="width:28px;height:28px;border-radius:9px;background:#241C13;display:flex;align-items:center;justify-content:center;"><div style="width:12px;height:12px;border-radius:50%;background:#E1623C;"></div></div><span style="font-family:'Schibsted Grotesk',sans-serif;font-weight:800;font-size:20px;color:#241C13;letter-spacing:-.03em;">CoachLink</span></div>
+            <div style="margin-top:22px;border-radius:26px;height:316px;background-image:repeating-linear-gradient(125deg,#E7D7C2 0 13px,#EFE3D3 13px 26px);border:1px solid #ECDFCD;display:flex;align-items:flex-end;padding:16px;overflow:hidden;"><span style="font-family:monospace;font-size:11px;color:#a08e76;background:#FFFDF8;padding:4px 9px;border-radius:7px;">athlete · hero photo</span></div>
+            <div style="flex:1;"></div>
+            <h1 style="font-family:'Schibsted Grotesk',sans-serif;font-weight:800;font-size:37px;line-height:1.02;letter-spacing:-.035em;color:#241C13;margin:18px 0 0;">Find your coach.<br>Train with intent.</h1>
+            <p style="font-size:14.5px;line-height:1.5;color:#8a7b68;margin:13px 0 0;">Verified swimming &amp; tennis coaches in Amuwo Odofin. Book by the session, train near home.</p>
+            <button onClick="{{ nav.signup }}" style="margin-top:20px;border:none;height:56px;border-radius:16px;background:#E1623C;color:#FFFDF8;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:16px;cursor:pointer;">Create an account</button>
+            <button onClick="{{ nav.signin }}" style="margin:11px 0 22px;border:none;background:none;color:#241C13;font-weight:600;font-size:14px;cursor:pointer;">I already have an account</button>
+          </div>
+        </sc-if>
+
+        <!-- ===== SIGN IN ===== -->
+        <sc-if value="{{ is.signin }}" hint-placeholder-val="{{ true }}">
+          <div style="height:100%;display:flex;flex-direction:column;padding:0 26px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;height:46px;flex:none;"><span style="font-weight:700;font-size:14px;color:#241C13;">9:41</span><span style="width:18px;height:11px;border:1.6px solid #241C13;border-radius:3px;"></span></div>
+            <button onClick="{{ nav.welcome }}" style="width:40px;height:40px;border-radius:50%;border:1px solid #ECDFCD;background:#FFFDF8;font-size:18px;cursor:pointer;margin-top:6px;">‹</button>
+            <h1 style="font-family:'Schibsted Grotesk',sans-serif;font-weight:800;font-size:32px;letter-spacing:-.03em;color:#241C13;margin:26px 0 6px;">Welcome back</h1>
+            <p style="font-size:14.5px;color:#8a7b68;margin:0 0 26px;">Sign in to keep training.</p>
+            <label style="font-size:12.5px;font-weight:600;color:#241C13;margin-bottom:7px;display:block;">Email</label>
+            <input value="ada@example.com" style="width:100%;height:52px;border-radius:14px;border:1px solid #ECDFCD;background:#FFFDF8;padding:0 15px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14.5px;color:#241C13;outline:none;margin-bottom:16px;" />
+            <label style="font-size:12.5px;font-weight:600;color:#241C13;margin-bottom:7px;display:block;">Password</label>
+            <input type="password" value="password" style="width:100%;height:52px;border-radius:14px;border:1px solid #ECDFCD;background:#FFFDF8;padding:0 15px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14.5px;color:#241C13;outline:none;" />
+            <button onClick="{{ nav.forgot }}" style="align-self:flex-end;margin-top:11px;border:none;background:none;color:#241C13;font-weight:600;font-size:13px;cursor:pointer;">Forgot password?</button>
+            <button onClick="{{ nav.home }}" style="margin-top:20px;border:none;height:56px;border-radius:16px;background:#E1623C;color:#FFFDF8;font-weight:700;font-size:16px;cursor:pointer;">Sign in</button>
+            <div style="flex:1;"></div>
+            <p style="text-align:center;font-size:13.5px;color:#8a7b68;margin-bottom:24px;">New here? <span onClick="{{ nav.signup }}" style="color:#241C13;font-weight:700;cursor:pointer;">Create an account</span></p>
+          </div>
+        </sc-if>
+
+        <!-- ===== SIGN UP ===== -->
+        <sc-if value="{{ is.signup }}" hint-placeholder-val="{{ true }}">
+          <div style="height:100%;display:flex;flex-direction:column;padding:0 26px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;height:46px;flex:none;"><span style="font-weight:700;font-size:14px;color:#241C13;">9:41</span><span style="width:18px;height:11px;border:1.6px solid #241C13;border-radius:3px;"></span></div>
+            <button onClick="{{ nav.welcome }}" style="width:40px;height:40px;border-radius:50%;border:1px solid #ECDFCD;background:#FFFDF8;font-size:18px;cursor:pointer;margin-top:6px;">‹</button>
+            <h1 style="font-family:'Schibsted Grotesk',sans-serif;font-weight:800;font-size:32px;letter-spacing:-.03em;color:#241C13;margin:22px 0 6px;">Create account</h1>
+            <p style="font-size:14.5px;color:#8a7b68;margin:0 0 22px;">Join CoachLink in under a minute.</p>
+            <label style="font-size:12.5px;font-weight:600;color:#241C13;margin-bottom:7px;display:block;">Full name</label>
+            <input placeholder="Ada Obi" style="width:100%;height:52px;border-radius:14px;border:1px solid #ECDFCD;background:#FFFDF8;padding:0 15px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14.5px;color:#241C13;outline:none;margin-bottom:15px;" />
+            <label style="font-size:12.5px;font-weight:600;color:#241C13;margin-bottom:7px;display:block;">Email</label>
+            <input placeholder="you@example.com" style="width:100%;height:52px;border-radius:14px;border:1px solid #ECDFCD;background:#FFFDF8;padding:0 15px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14.5px;color:#241C13;outline:none;margin-bottom:15px;" />
+            <label style="font-size:12.5px;font-weight:600;color:#241C13;margin-bottom:7px;display:block;">Password</label>
+            <input type="password" placeholder="Create a password" style="width:100%;height:52px;border-radius:14px;border:1px solid #ECDFCD;background:#FFFDF8;padding:0 15px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14.5px;color:#241C13;outline:none;" />
+            <button onClick="{{ nav.otp }}" style="margin-top:22px;border:none;height:56px;border-radius:16px;background:#E1623C;color:#FFFDF8;font-weight:700;font-size:16px;cursor:pointer;">Continue</button>
+            <div style="flex:1;"></div>
+            <p style="text-align:center;font-size:13.5px;color:#8a7b68;margin-bottom:24px;">Already have an account? <span onClick="{{ nav.signin }}" style="color:#241C13;font-weight:700;cursor:pointer;">Sign in</span></p>
+          </div>
+        </sc-if>
+
+        <!-- ===== FORGOT ===== -->
+        <sc-if value="{{ is.forgot }}" hint-placeholder-val="{{ true }}">
+          <div style="height:100%;display:flex;flex-direction:column;padding:0 26px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;height:46px;flex:none;"><span style="font-weight:700;font-size:14px;color:#241C13;">9:41</span><span style="width:18px;height:11px;border:1.6px solid #241C13;border-radius:3px;"></span></div>
+            <button onClick="{{ nav.signin }}" style="width:40px;height:40px;border-radius:50%;border:1px solid #ECDFCD;background:#FFFDF8;font-size:18px;cursor:pointer;margin-top:6px;">‹</button>
+            <h1 style="font-family:'Schibsted Grotesk',sans-serif;font-weight:800;font-size:32px;letter-spacing:-.03em;color:#241C13;margin:26px 0 6px;">Reset password</h1>
+            <p style="font-size:14.5px;line-height:1.5;color:#8a7b68;margin:0 0 26px;">Enter your email and we'll send a 6-digit code to reset your password.</p>
+            <label style="font-size:12.5px;font-weight:600;color:#241C13;margin-bottom:7px;display:block;">Email</label>
+            <input placeholder="you@example.com" style="width:100%;height:52px;border-radius:14px;border:1px solid #ECDFCD;background:#FFFDF8;padding:0 15px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14.5px;color:#241C13;outline:none;" />
+            <button onClick="{{ nav.otp }}" style="margin-top:22px;border:none;height:56px;border-radius:16px;background:#E1623C;color:#FFFDF8;font-weight:700;font-size:16px;cursor:pointer;">Send code</button>
+          </div>
+        </sc-if>
+
+        <!-- ===== OTP ===== -->
+        <sc-if value="{{ is.otp }}" hint-placeholder-val="{{ true }}">
+          <div style="height:100%;display:flex;flex-direction:column;padding:0 26px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;height:46px;flex:none;"><span style="font-weight:700;font-size:14px;color:#241C13;">9:41</span><span style="width:18px;height:11px;border:1.6px solid #241C13;border-radius:3px;"></span></div>
+            <button onClick="{{ nav.signup }}" style="width:40px;height:40px;border-radius:50%;border:1px solid #ECDFCD;background:#FFFDF8;font-size:18px;cursor:pointer;margin-top:6px;">‹</button>
+            <h1 style="font-family:'Schibsted Grotesk',sans-serif;font-weight:800;font-size:32px;letter-spacing:-.03em;color:#241C13;margin:26px 0 6px;">Verify it's you</h1>
+            <p style="font-size:14.5px;line-height:1.5;color:#8a7b68;margin:0 0 28px;">We sent a 6-digit code to your email. Enter it below.</p>
+            <div style="display:flex;gap:10px;justify-content:space-between;">
+              <div style="flex:1;height:60px;border-radius:14px;border:1.6px solid #241C13;background:#FFFDF8;display:flex;align-items:center;justify-content:center;font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:24px;color:#241C13;">4</div>
+              <div style="flex:1;height:60px;border-radius:14px;border:1.6px solid #241C13;background:#FFFDF8;display:flex;align-items:center;justify-content:center;font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:24px;color:#241C13;">8</div>
+              <div style="flex:1;height:60px;border-radius:14px;border:1.6px solid #241C13;background:#FFFDF8;display:flex;align-items:center;justify-content:center;font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:24px;color:#241C13;">2</div>
+              <div style="flex:1;height:60px;border-radius:14px;border:1px solid #ECDFCD;background:#FFFDF8;"></div>
+              <div style="flex:1;height:60px;border-radius:14px;border:1px solid #ECDFCD;background:#FFFDF8;"></div>
+              <div style="flex:1;height:60px;border-radius:14px;border:1px solid #ECDFCD;background:#FFFDF8;"></div>
+            </div>
+            <p style="font-size:13.5px;color:#8a7b68;margin:22px 0 0;">Didn't get it? <span style="color:#241C13;font-weight:700;">Resend in 0:42</span></p>
+            <button onClick="{{ nav.role }}" style="margin-top:22px;border:none;height:56px;border-radius:16px;background:#E1623C;color:#FFFDF8;font-weight:700;font-size:16px;cursor:pointer;">Verify</button>
+          </div>
+        </sc-if>
+
+        <!-- ===== ROLE SELECTION ===== -->
+        <sc-if value="{{ is.role }}" hint-placeholder-val="{{ true }}">
+          <div style="height:100%;display:flex;flex-direction:column;padding:0 26px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;height:46px;flex:none;"><span style="font-weight:700;font-size:14px;color:#241C13;">9:41</span><span style="width:18px;height:11px;border:1.6px solid #241C13;border-radius:3px;"></span></div>
+            <h1 style="font-family:'Schibsted Grotesk',sans-serif;font-weight:800;font-size:32px;letter-spacing:-.03em;color:#241C13;margin:30px 0 6px;">How will you<br>use CoachLink?</h1>
+            <p style="font-size:14.5px;color:#8a7b68;margin:0 0 26px;">You can change this later in settings.</p>
+            <div onClick="{{ nav.roleAthlete }}" style="display:flex;align-items:center;gap:15px;background:#FFFDF8;border:1.6px solid #241C13;border-radius:20px;padding:18px;cursor:pointer;margin-bottom:13px;">
+              <div style="width:48px;height:48px;border-radius:14px;background:#241C13;color:#E1623C;display:flex;align-items:center;justify-content:center;font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:20px;">A</div>
+              <div style="flex:1;"><div style="font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:17px;color:#241C13;">I'm an athlete</div><div style="font-size:13px;color:#8a7b68;margin-top:2px;">Find a coach and book my own sessions.</div></div>
+              <span style="font-size:20px;color:#241C13;">›</span>
+            </div>
+            <div onClick="{{ nav.roleParent }}" style="display:flex;align-items:center;gap:15px;background:#FFFDF8;border:1px solid #ECDFCD;border-radius:20px;padding:18px;cursor:pointer;margin-bottom:13px;">
+              <div style="width:48px;height:48px;border-radius:14px;background:#F0E5D5;color:#241C13;display:flex;align-items:center;justify-content:center;font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:20px;">P</div>
+              <div style="flex:1;"><div style="font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:17px;color:#241C13;">I'm a parent</div><div style="font-size:13px;color:#8a7b68;margin-top:2px;">Book sessions for my child.</div></div>
+              <span style="font-size:20px;color:#8a7b68;">›</span>
+            </div>
+            <div onClick="{{ nav.roleCoach }}" style="display:flex;align-items:center;gap:15px;background:#FFFDF8;border:1px solid #ECDFCD;border-radius:20px;padding:18px;cursor:pointer;">
+              <div style="width:48px;height:48px;border-radius:14px;background:#E1623C;color:#FFFDF8;display:flex;align-items:center;justify-content:center;font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:20px;">C</div>
+              <div style="flex:1;"><div style="font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:17px;color:#241C13;">I'm a coach</div><div style="font-size:13px;color:#8a7b68;margin-top:2px;">List my profile and accept bookings.</div></div>
+              <span style="font-size:20px;color:#8a7b68;">›</span>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== HOME ===== -->
+        <sc-if value="{{ is.home }}" hint-placeholder-val="{{ true }}">
+          <div style="height:100%;display:flex;flex-direction:column;">
+            <div style="padding:0 22px;flex:none;">
+              <div style="display:flex;align-items:center;justify-content:space-between;height:46px;"><span style="font-weight:700;font-size:14px;color:#241C13;">9:41</span><span style="width:18px;height:11px;border:1.6px solid #241C13;border-radius:3px;"></span></div>
+              <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-top:4px;">
+                <div><div style="font-family:monospace;font-size:10px;letter-spacing:.1em;color:#a08e76;">YOUR AREA</div><div style="font-weight:700;font-size:16px;color:#241C13;margin-top:2px;">Amuwo Odofin, Lagos</div></div>
+                <div onClick="{{ nav.notifications }}" style="width:40px;height:40px;border-radius:13px;border:1px solid #ECDFCD;background:#FFFDF8;display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer;"><div style="width:14px;height:14px;border:1.8px solid #241C13;border-radius:4px 4px 7px 7px;"></div><div style="position:absolute;top:9px;right:10px;width:7px;height:7px;border-radius:50%;background:#E1623C;border:1.5px solid #FFFDF8;"></div></div>
+              </div>
+              <h1 style="font-family:'Schibsted Grotesk',sans-serif;font-weight:800;font-size:29px;letter-spacing:-.03em;color:#241C13;margin:15px 0 12px;">Find a coach</h1>
+              <div onClick="{{ nav.search }}" style="display:flex;align-items:center;gap:10px;height:50px;border-radius:15px;background:#FFFDF8;border:1px solid #ECDFCD;padding:0 15px;cursor:pointer;"><div style="width:14px;height:14px;border-radius:50%;border:2px solid #c2b09a;"></div><span style="color:#a08e76;font-size:14.5px;">Search coaches or venues</span></div>
+            </div>
+            <div class="scr" style="flex:1;overflow-y:auto;padding:16px 0 12px;">
+              <div style="padding:0 22px;"><div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:11px;"><span style="font-weight:700;font-size:15px;color:#241C13;">Browse by sport</span></div></div>
+              <div class="scr" style="display:flex;gap:11px;overflow-x:auto;padding:0 22px 4px;">
+                <div onClick="{{ nav.search }}" style="flex:none;width:138px;height:92px;border-radius:18px;background:#241C13;padding:14px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;"><div style="width:26px;height:26px;border-radius:50%;background:#E1623C;"></div><div><div style="color:#FFFDF8;font-weight:700;font-size:15px;">Swimming</div><div style="color:#a08e76;font-size:11.5px;">18 coaches</div></div></div>
+                <div onClick="{{ nav.search }}" style="flex:none;width:138px;height:92px;border-radius:18px;background:#E1623C;padding:14px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;"><div style="width:26px;height:26px;border-radius:50%;background:#241C13;"></div><div><div style="color:#241C13;font-weight:700;font-size:15px;">Tennis</div><div style="color:#FFFDF8;font-size:11.5px;">11 coaches</div></div></div>
+                <div onClick="{{ nav.search }}" style="flex:none;width:138px;height:92px;border-radius:18px;background:#FFFDF8;border:1px solid #ECDFCD;padding:14px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;"><div style="width:26px;height:26px;border-radius:8px;background:#F0E5D5;"></div><div><div style="color:#241C13;font-weight:700;font-size:15px;">All venues</div><div style="color:#a08e76;font-size:11.5px;">5 nearby</div></div></div>
+              </div>
+              <div style="padding:20px 22px 0;"><div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px;"><span style="font-weight:700;font-size:15px;color:#241C13;">Top coaches near you</span><span onClick="{{ nav.listing }}" style="font-size:12.5px;color:#241C13;font-weight:600;cursor:pointer;">See all</span></div></div>
+              <div style="padding:0 22px;">
+                <sc-for list="{{ coaches }}" as="co" hint-placeholder-count="5">
+                  <div onClick="{{ co.open }}" style="display:flex;align-items:center;gap:13px;padding:14px 0;border-bottom:1px solid #ECDFCD;cursor:pointer;">
+                    <div style="width:52px;height:52px;border-radius:15px;background:#241C13;color:#E1623C;display:flex;align-items:center;justify-content:center;font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:17px;flex:none;">{{ co.initials }}</div>
+                    <div style="flex:1;min-width:0;"><div style="font-weight:700;font-size:15px;color:#241C13;">{{ co.name }}</div><div style="font-size:12.5px;color:#8a7b68;margin-top:2px;">{{ co.sport }} · {{ co.venue }}</div></div>
+                    <div style="text-align:right;flex:none;"><div style="font-weight:700;font-size:14px;color:#241C13;">{{ co.price }}</div><div style="font-size:11.5px;color:#8a7b68;margin-top:2px;">★ {{ co.rating }} · {{ co.dist }}</div></div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="flex:none;display:flex;justify-content:space-around;padding:11px 6px 20px;border-top:1px solid #ECDFCD;background:#F3E9DC;">
+              <div onClick="{{ nav.home }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;"><div style="width:21px;height:21px;border-radius:7px;background:#241C13;"></div><span style="font-size:10px;font-weight:700;color:#241C13;">Home</span></div>
+              <div onClick="{{ nav.search }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;"><div style="width:21px;height:21px;border-radius:7px;border:1.6px solid #c2b09a;"></div><span style="font-size:10px;font-weight:600;color:#a08e76;">Search</span></div>
+              <div onClick="{{ nav.bookings }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;"><div style="width:21px;height:21px;border-radius:7px;border:1.6px solid #c2b09a;"></div><span style="font-size:10px;font-weight:600;color:#a08e76;">Bookings</span></div>
+              <div onClick="{{ nav.notifications }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;"><div style="width:21px;height:21px;border-radius:7px;border:1.6px solid #c2b09a;"></div><span style="font-size:10px;font-weight:600;color:#a08e76;">Alerts</span></div>
+              <div onClick="{{ nav.profile }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;"><div style="width:21px;height:21px;border-radius:7px;border:1.6px solid #c2b09a;"></div><span style="font-size:10px;font-weight:600;color:#a08e76;">Profile</span></div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== SEARCH ===== -->
+        <sc-if value="{{ is.search }}" hint-placeholder-val="{{ true }}">
+          <div style="height:100%;display:flex;flex-direction:column;">
+            <div style="padding:0 22px;flex:none;">
+              <div style="display:flex;align-items:center;justify-content:space-between;height:46px;"><span style="font-weight:700;font-size:14px;color:#241C13;">9:41</span><span style="width:18px;height:11px;border:1.6px solid #241C13;border-radius:3px;"></span></div>
+              <h1 style="font-family:'Schibsted Grotesk',sans-serif;font-weight:800;font-size:26px;letter-spacing:-.03em;color:#241C13;margin:8px 0 12px;">Search</h1>
+              <div style="display:flex;align-items:center;gap:10px;height:50px;border-radius:15px;background:#FFFDF8;border:1.6px solid #241C13;padding:0 15px;"><div style="width:14px;height:14px;border-radius:50%;border:2px solid #241C13;"></div><input autofocus placeholder="Coach name or venue" style="flex:1;border:none;outline:none;background:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:14.5px;color:#241C13;" /></div>
+              <div class="scr" style="display:flex;gap:8px;margin-top:13px;overflow-x:auto;padding-bottom:3px;">
+                <span style="flex:none;background:#241C13;color:#E1623C;font-weight:600;font-size:13px;padding:8px 16px;border-radius:999px;">All sports</span>
+                <span style="flex:none;background:#FFFDF8;border:1px solid #ECDFCD;color:#6e5f4d;font-weight:600;font-size:13px;padding:8px 16px;border-radius:999px;">Swimming</span>
+                <span style="flex:none;background:#FFFDF8;border:1px solid #ECDFCD;color:#6e5f4d;font-weight:600;font-size:13px;padding:8px 16px;border-radius:999px;">Tennis</span>
+              </div>
+              <div class="scr" style="display:flex;gap:8px;margin-top:9px;overflow-x:auto;padding-bottom:3px;">
+                <span style="flex:none;background:#F0E5D5;color:#241C13;font-weight:600;font-size:12.5px;padding:7px 14px;border-radius:999px;">MU Court</span>
+                <span style="flex:none;background:#F0E5D5;color:#241C13;font-weight:600;font-size:12.5px;padding:7px 14px;border-radius:999px;">Festival Hotel Pool</span>
+                <span style="flex:none;background:#F0E5D5;color:#241C13;font-weight:600;font-size:12.5px;padding:7px 14px;border-radius:999px;">Golden Tulip Pool</span>
+                <span style="flex:none;background:#F0E5D5;color:#241C13;font-weight:600;font-size:12.5px;padding:7px 14px;border-radius:999px;">School Facilities</span>
+              </div>
+            </div>
+            <div class="scr" style="flex:1;overflow-y:auto;padding:14px 22px 12px;">
+              <div style="font-size:12.5px;color:#8a7b68;margin-bottom:6px;">5 coaches near you</div>
+              <sc-for list="{{ coaches }}" as="co" hint-placeholder-count="5">
+                <div onClick="{{ co.open }}" style="display:flex;align-items:center;gap:13px;padding:13px;margin-bottom:10px;border-radius:16px;background:#FFFDF8;border:1px solid #ECDFCD;cursor:pointer;">
+                  <div style="width:50px;height:50px;border-radius:14px;background:#241C13;color:#E1623C;display:flex;align-items:center;justify-content:center;font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:16px;flex:none;">{{ co.initials }}</div>
+                  <div style="flex:1;min-width:0;"><div style="font-weight:700;font-size:15px;color:#241C13;">{{ co.name }}</div><div style="font-size:12.5px;color:#8a7b68;margin-top:2px;">{{ co.sport }} · {{ co.venue }}</div></div>
+                  <div style="text-align:right;flex:none;"><div style="font-weight:700;font-size:14px;color:#241C13;">{{ co.price }}</div><div style="font-size:11.5px;color:#8a7b68;margin-top:2px;">★ {{ co.rating }}</div></div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="flex:none;display:flex;justify-content:space-around;padding:11px 6px 20px;border-top:1px solid #ECDFCD;background:#F3E9DC;">
+              <div onClick="{{ nav.home }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;"><div style="width:21px;height:21px;border-radius:7px;border:1.6px solid #c2b09a;"></div><span style="font-size:10px;font-weight:600;color:#a08e76;">Home</span></div>
+              <div onClick="{{ nav.search }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;"><div style="width:21px;height:21px;border-radius:7px;background:#241C13;"></div><span style="font-size:10px;font-weight:700;color:#241C13;">Search</span></div>
+              <div onClick="{{ nav.bookings }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;"><div style="width:21px;height:21px;border-radius:7px;border:1.6px solid #c2b09a;"></div><span style="font-size:10px;font-weight:600;color:#a08e76;">Bookings</span></div>
+              <div onClick="{{ nav.notifications }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;"><div style="width:21px;height:21px;border-radius:7px;border:1.6px solid #c2b09a;"></div><span style="font-size:10px;font-weight:600;color:#a08e76;">Alerts</span></div>
+              <div onClick="{{ nav.profile }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;"><div style="width:21px;height:21px;border-radius:7px;border:1.6px solid #c2b09a;"></div><span style="font-size:10px;font-weight:600;color:#a08e76;">Profile</span></div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== COACH LISTING ===== -->
+        <sc-if value="{{ is.listing }}" hint-placeholder-val="{{ true }}">
+          <div style="height:100%;display:flex;flex-direction:column;">
+            <div style="padding:0 22px;flex:none;">
+              <div style="display:flex;align-items:center;justify-content:space-between;height:46px;"><span style="font-weight:700;font-size:14px;color:#241C13;">9:41</span><span style="width:18px;height:11px;border:1.6px solid #241C13;border-radius:3px;"></span></div>
+              <div style="display:flex;align-items:center;gap:13px;padding:4px 0 12px;"><button onClick="{{ nav.home }}" style="width:38px;height:38px;border-radius:50%;border:1px solid #ECDFCD;background:#FFFDF8;font-size:18px;cursor:pointer;">‹</button><span style="font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:19px;color:#241C13;">Coaches near you</span></div>
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <span style="font-size:12.5px;color:#8a7b68;">5 results · Amuwo Odofin</span>
+                <span style="display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:#241C13;background:#FFFDF8;border:1px solid #ECDFCD;padding:7px 13px;border-radius:999px;">Sort: Nearest</span>
+              </div>
+            </div>
+            <div class="scr" style="flex:1;overflow-y:auto;padding:14px 22px 12px;">
+              <sc-for list="{{ coaches }}" as="co" hint-placeholder-count="5">
+                <div onClick="{{ co.open }}" style="display:flex;gap:13px;padding:14px;margin-bottom:11px;border-radius:18px;background:#FFFDF8;border:1px solid #ECDFCD;cursor:pointer;">
+                  <div style="width:62px;height:62px;border-radius:16px;background-image:repeating-linear-gradient(125deg,#2b2117 0 9px,#352818 9px 18px);display:flex;align-items:flex-end;justify-content:flex-start;flex:none;"><span style="font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:15px;color:#E1623C;padding:6px 8px;">{{ co.initials }}</span></div>
+                  <div style="flex:1;min-width:0;">
+                    <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-weight:700;font-size:15px;color:#241C13;">{{ co.name }}</span><span style="font-weight:700;font-size:13.5px;color:#241C13;">{{ co.price }}</span></div>
+                    <div style="font-size:12.5px;color:#8a7b68;margin-top:3px;">{{ co.sport }} Coach · {{ co.exp }} exp</div>
+                    <div style="display:flex;align-items:center;gap:9px;margin-top:8px;"><span style="font-size:11.5px;font-weight:600;color:#241C13;background:#F0E5D5;padding:4px 9px;border-radius:7px;">★ {{ co.rating }}</span><span style="font-size:11.5px;color:#8a7b68;">{{ co.venue }} · {{ co.dist }}</span></div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== COACH DETAILS ===== -->
+        <sc-if value="{{ is.coach }}" hint-placeholder-val="{{ true }}">
+          <div style="height:100%;display:flex;flex-direction:column;">
+            <div class="scr" style="flex:1;overflow-y:auto;">
+              <div style="height:236px;background-image:repeating-linear-gradient(125deg,#2b2117 0 13px,#352818 13px 26px);position:relative;display:flex;align-items:flex-end;padding:16px;">
+                <button onClick="{{ nav.listing }}" style="position:absolute;top:50px;left:18px;width:38px;height:38px;border-radius:50%;border:none;background:rgba(255,253,248,.92);font-size:18px;cursor:pointer;">‹</button>
+                <div style="position:absolute;top:50px;right:18px;width:38px;height:38px;border-radius:50%;border:none;background:rgba(255,253,248,.92);display:flex;align-items:center;justify-content:center;font-size:17px;cursor:pointer;">♡</div>
+                <span style="font-family:monospace;font-size:11px;color:#d8c6ab;background:rgba(0,0,0,.35);padding:4px 9px;border-radius:7px;">coach · action photo</span>
+              </div>
+              <div style="padding:0 22px;margin-top:-36px;position:relative;">
+                <div style="width:72px;height:72px;border-radius:20px;background:#241C13;color:#E1623C;display:flex;align-items:center;justify-content:center;font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:24px;border:3px solid #F3E9DC;">{{ coach.initials }}</div>
+                <h2 style="font-family:'Schibsted Grotesk',sans-serif;font-weight:800;font-size:25px;letter-spacing:-.02em;color:#241C13;margin:14px 0 3px;">{{ coach.name }} <span style="color:#E1623C;">✓</span></h2>
+                <div style="font-size:14px;color:#8a7b68;">{{ coach.sport }} Coach · {{ coach.venue }}</div>
+                <div style="font-size:13.5px;color:#241C13;margin-top:7px;font-weight:600;">★ {{ coach.rating }} <span style="color:#a08e76;font-weight:400;">({{ coach.reviews }} reviews)</span></div>
+                <div style="display:flex;gap:9px;margin-top:18px;">
+                  <div style="flex:1;background:#FFFDF8;border:1px solid #ECDFCD;border-radius:15px;padding:13px 12px;"><div style="font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:19px;color:#241C13;">{{ coach.exp }}</div><div style="font-size:11px;color:#8a7b68;margin-top:2px;">Experience</div></div>
+                  <div style="flex:1;background:#FFFDF8;border:1px solid #ECDFCD;border-radius:15px;padding:13px 12px;"><div style="font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:19px;color:#241C13;">{{ coach.sessions }}</div><div style="font-size:11px;color:#8a7b68;margin-top:2px;">Sessions</div></div>
+                  <div style="flex:1;background:#FFFDF8;border:1px solid #ECDFCD;border-radius:15px;padding:13px 12px;"><div style="font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:19px;color:#241C13;">{{ coach.rating }}</div><div style="font-size:11px;color:#8a7b68;margin-top:2px;">Rating</div></div>
+                </div>
+                <h3 style="font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:15px;color:#241C13;margin:22px 0 7px;">About</h3>
+                <p style="font-size:13.5px;line-height:1.55;color:#6e5f4d;margin:0;">Professional coach with {{ coach.exp }} working with kids and adults across all levels. Focused on technique, endurance and steady, measurable progress.</p>
+                <h3 style="font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:15px;color:#241C13;margin:20px 0 7px;">Training venue</h3>
+                <div style="display:flex;align-items:center;gap:11px;background:#FFFDF8;border:1px solid #ECDFCD;border-radius:15px;padding:13px 14px;"><div style="width:34px;height:34px;border-radius:10px;background:#F0E5D5;"></div><div><div style="font-weight:600;font-size:13.5px;color:#241C13;">{{ coach.venue }}</div><div style="font-size:12px;color:#8a7b68;">Amuwo Odofin, Lagos · {{ coach.dist }}</div></div></div>
+                <h3 style="font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:15px;color:#241C13;margin:20px 0 7px;">Pricing</h3>
+                <div style="background:#241C13;border-radius:17px;padding:16px;display:flex;align-items:center;justify-content:space-between;"><div><div style="font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:22px;color:#FFFDF8;">{{ coach.price }}</div><div style="font-size:12px;color:#bfae97;margin-top:2px;">per session</div></div><span style="font-size:11px;font-weight:600;color:#FFFDF8;background:#E1623C;padding:6px 11px;border-radius:999px;">Within range</span></div>
+                <h3 style="font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:15px;color:#241C13;margin:20px 0 7px;">Reviews</h3>
+                <div style="background:#FFFDF8;border:1px solid #ECDFCD;border-radius:15px;padding:14px;">
+                  <div style="display:flex;align-items:center;gap:10px;"><div style="width:34px;height:34px;border-radius:50%;background:#F0E5D5;color:#241C13;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;">NK</div><div style="flex:1;"><div style="font-weight:700;font-size:13.5px;color:#241C13;">Ngozi K.</div><div style="font-size:11px;color:#8a7b68;">★ 5.0 · 2 weeks ago</div></div></div>
+                  <p style="font-size:13px;line-height:1.5;color:#6e5f4d;margin:10px 0 0;">Patient and encouraging. My son went from scared of water to swimming a full lap in a month.</p>
+                </div>
+                <div style="height:96px;"></div>
+              </div>
+            </div>
+            <div style="flex:none;display:flex;align-items:center;gap:14px;padding:14px 22px 22px;background:#F3E9DC;border-top:1px solid #ECDFCD;">
+              <div><div style="font-weight:700;font-size:16px;color:#241C13;">{{ coach.price }}</div><div style="font-size:11px;color:#8a7b68;">per session</div></div>
+              <button onClick="{{ nav.booking }}" style="flex:1;height:54px;border:none;border-radius:15px;background:#E1623C;color:#FFFDF8;font-weight:700;font-size:15.5px;cursor:pointer;">Request session</button>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== BOOKING REQUEST ===== -->
+        <sc-if value="{{ is.booking }}" hint-placeholder-val="{{ true }}">
+          <div style="height:100%;display:flex;flex-direction:column;">
+            <div style="flex:none;padding:0 22px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;height:46px;"><span style="font-weight:700;font-size:14px;color:#241C13;">9:41</span><span style="width:18px;height:11px;border:1.6px solid #241C13;border-radius:3px;"></span></div>
+              <div style="display:flex;align-items:center;gap:13px;padding:4px 0 14px;"><button onClick="{{ nav.coach }}" style="width:38px;height:38px;border-radius:50%;border:1px solid #ECDFCD;background:#FFFDF8;font-size:18px;cursor:pointer;">‹</button><span style="font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:19px;color:#241C13;">Request a session</span></div>
+            </div>
+            <div class="scr" style="flex:1;overflow-y:auto;padding:0 22px 12px;">
+              <div style="display:flex;align-items:center;gap:13px;background:#FFFDF8;border:1px solid #ECDFCD;border-radius:16px;padding:13px;"><div style="width:46px;height:46px;border-radius:13px;background:#241C13;color:#E1623C;display:flex;align-items:center;justify-content:center;font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:15px;">{{ coach.initials }}</div><div style="flex:1;"><div style="font-weight:700;font-size:15px;color:#241C13;">{{ coach.name }}</div><div style="font-size:12.5px;color:#8a7b68;">{{ coach.sport }} · {{ coach.price }}/session</div></div></div>
+              <sc-if value="{{ isParent }}" hint-placeholder-val="{{ true }}">
+                <h4 style="font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:14px;color:#241C13;margin:20px 0 11px;">Child details</h4>
+                <div style="display:flex;gap:10px;"><input placeholder="Child's name" style="flex:2;height:50px;border-radius:13px;border:1px solid #ECDFCD;background:#FFFDF8;padding:0 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:#241C13;outline:none;" /><input placeholder="Age" style="flex:1;height:50px;border-radius:13px;border:1px solid #ECDFCD;background:#FFFDF8;padding:0 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:#241C13;outline:none;" /></div>
+              </sc-if>
+              <h4 style="font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:14px;color:#241C13;margin:20px 0 11px;">Select date · May 2024</h4>
+              <div style="display:flex;gap:7px;justify-content:space-between;">
+                <div style="flex:1;text-align:center;padding:11px 0;border-radius:13px;background:#FFFDF8;border:1px solid #ECDFCD;"><div style="font-size:10px;color:#a08e76;">Mon</div><div style="font-weight:700;font-size:15px;color:#241C13;margin-top:3px;">13</div></div>
+                <div style="flex:1;text-align:center;padding:11px 0;border-radius:13px;background:#E1623C;border:1px solid #E1623C;"><div style="font-size:10px;color:#FFFDF8;">Wed</div><div style="font-weight:700;font-size:15px;color:#FFFDF8;margin-top:3px;">15</div></div>
+                <div style="flex:1;text-align:center;padding:11px 0;border-radius:13px;background:#FFFDF8;border:1px solid #ECDFCD;"><div style="font-size:10px;color:#a08e76;">Fri</div><div style="font-weight:700;font-size:15px;color:#241C13;margin-top:3px;">17</div></div>
+                <div style="flex:1;text-align:center;padding:11px 0;border-radius:13px;background:#FFFDF8;border:1px solid #ECDFCD;"><div style="font-size:10px;color:#a08e76;">Sat</div><div style="font-weight:700;font-size:15px;color:#241C13;margin-top:3px;">18</div></div>
+              </div>
+              <h4 style="font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:14px;color:#241C13;margin:20px 0 11px;">Select time</h4>
+              <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                <span style="font-size:13px;font-weight:600;color:#6e5f4d;background:#FFFDF8;border:1px solid #ECDFCD;padding:9px 15px;border-radius:11px;">6:00 AM</span>
+                <span style="font-size:13px;font-weight:600;background:#241C13;color:#E1623C;padding:9px 15px;border-radius:11px;">8:00 AM</span>
+                <span style="font-size:13px;font-weight:600;color:#6e5f4d;background:#FFFDF8;border:1px solid #ECDFCD;padding:9px 15px;border-radius:11px;">10:00 AM</span>
+                <span style="font-size:13px;font-weight:600;color:#6e5f4d;background:#FFFDF8;border:1px solid #ECDFCD;padding:9px 15px;border-radius:11px;">4:00 PM</span>
+              </div>
+              <h4 style="font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:14px;color:#241C13;margin:20px 0 11px;">Note for the coach <span style="color:#a08e76;font-weight:400;">(optional)</span></h4>
+              <textarea placeholder="Any goals or requirements?" style="width:100%;height:74px;border-radius:14px;border:1px solid #ECDFCD;background:#FFFDF8;padding:13px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:#241C13;resize:none;outline:none;"></textarea>
+              <div style="display:flex;gap:10px;align-items:flex-start;background:#F0E5D5;border-radius:13px;padding:13px;margin-top:14px;"><div style="width:18px;height:18px;border-radius:50%;background:#241C13;color:#E1623C;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex:none;">i</div><span style="font-size:12.5px;line-height:1.45;color:#6e5f4d;">You'll only pay after {{ coach.name }} accepts. Payment is handled securely via Paystack.</span></div>
+              <div style="height:90px;"></div>
+            </div>
+            <div style="flex:none;padding:14px 22px 22px;background:#F3E9DC;border-top:1px solid #ECDFCD;"><button onClick="{{ nav.sendRequest }}" style="width:100%;height:54px;border:none;border-radius:15px;background:#E1623C;color:#FFFDF8;font-weight:700;font-size:15.5px;cursor:pointer;">Send request</button></div>
+          </div>
+        </sc-if>
+
+        <!-- ===== PAYMENT ===== -->
+        <sc-if value="{{ is.payment }}" hint-placeholder-val="{{ true }}">
+          <div style="height:100%;display:flex;flex-direction:column;">
+            <div style="flex:none;padding:0 22px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;height:46px;"><span style="font-weight:700;font-size:14px;color:#241C13;">9:41</span><span style="width:18px;height:11px;border:1.6px solid #241C13;border-radius:3px;"></span></div>
+              <div style="display:flex;align-items:center;gap:13px;padding:4px 0 14px;"><button onClick="{{ nav.bookings }}" style="width:38px;height:38px;border-radius:50%;border:1px solid #ECDFCD;background:#FFFDF8;font-size:18px;cursor:pointer;">‹</button><span style="font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:19px;color:#241C13;">Payment</span></div>
+            </div>
+            <div class="scr" style="flex:1;overflow-y:auto;padding:0 22px 12px;">
+              <div style="background:#241C13;border-radius:18px;padding:20px;"><div style="font-size:12.5px;color:#bfae97;">Total due</div><div style="font-family:'Schibsted Grotesk',sans-serif;font-weight:800;font-size:34px;color:#FFFDF8;margin-top:4px;">{{ coach.price }}</div><div style="font-size:12.5px;color:#bfae97;margin-top:4px;">1 session with {{ coach.name }} · {{ coach.sport }}</div></div>
+              <div style="display:flex;justify-content:space-between;font-size:13.5px;color:#6e5f4d;margin:18px 2px 0;"><span>Session fee</span><span style="color:#241C13;font-weight:600;">{{ coach.price }}</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:13.5px;color:#6e5f4d;margin:9px 2px 0;"><span>Service fee</span><span style="color:#241C13;font-weight:600;">₦0</span></div>
+              <div style="height:1px;background:#ECDFCD;margin:14px 0;"></div>
+              <h4 style="font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:14px;color:#241C13;margin:0 0 11px;">Pay with</h4>
+              <div style="display:flex;align-items:center;gap:13px;background:#FFFDF8;border:1.6px solid #241C13;border-radius:14px;padding:14px;margin-bottom:10px;"><div style="width:42px;height:30px;border-radius:7px;background:#F0E5D5;"></div><div style="flex:1;"><div style="font-weight:700;font-size:14px;color:#241C13;">Card · Paystack</div><div style="font-size:12px;color:#8a7b68;">Visa ending 4242</div></div><div style="width:20px;height:20px;border-radius:50%;background:#241C13;display:flex;align-items:center;justify-content:center;color:#E1623C;font-size:12px;">✓</div></div>
+              <div style="display:flex;align-items:center;gap:13px;background:#FFFDF8;border:1px solid #ECDFCD;border-radius:14px;padding:14px;"><div style="width:42px;height:30px;border-radius:7px;background:#F0E5D5;"></div><div style="flex:1;"><div style="font-weight:700;font-size:14px;color:#241C13;">Bank transfer</div><div style="font-size:12px;color:#8a7b68;">Pay via your bank app</div></div><div style="width:20px;height:20px;border-radius:50%;border:1.6px solid #c2b09a;"></div></div>
+              <div style="display:flex;gap:8px;align-items:center;margin-top:16px;color:#8a7b68;font-size:12px;"><div style="width:16px;height:16px;border-radius:5px;background:#F0E5D5;"></div>Secured by Paystack · 256-bit encryption</div>
+            </div>
+            <div style="flex:none;padding:14px 22px 22px;background:#F3E9DC;border-top:1px solid #ECDFCD;"><button onClick="{{ nav.payNow }}" style="width:100%;height:54px;border:none;border-radius:15px;background:#E1623C;color:#FFFDF8;font-weight:700;font-size:15.5px;cursor:pointer;">Pay {{ coach.price }}</button></div>
+          </div>
+        </sc-if>
+
+        <!-- ===== SUCCESS ===== -->
+        <sc-if value="{{ is.success }}" hint-placeholder-val="{{ true }}">
+          <div style="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 34px;">
+            <div style="width:96px;height:96px;border-radius:50%;background:#E1623C;display:flex;align-items:center;justify-content:center;font-size:44px;color:#FFFDF8;">✓</div>
+            <sc-if value="{{ notPaid }}" hint-placeholder-val="{{ true }}">
+              <h2 style="font-family:'Schibsted Grotesk',sans-serif;font-weight:800;font-size:27px;letter-spacing:-.02em;color:#241C13;margin:26px 0 10px;">Request sent</h2>
+              <p style="font-size:14.5px;line-height:1.55;color:#8a7b68;margin:0;">Your request has been sent to {{ coach.name }}. We'll notify you the moment they respond — then you can pay to confirm.</p>
+            </sc-if>
+            <sc-if value="{{ paid }}" hint-placeholder-val="{{ true }}">
+              <h2 style="font-family:'Schibsted Grotesk',sans-serif;font-weight:800;font-size:27px;letter-spacing:-.02em;color:#241C13;margin:26px 0 10px;">Booking confirmed</h2>
+              <p style="font-size:14.5px;line-height:1.55;color:#8a7b68;margin:0;">Payment received. Your session with {{ coach.name }} is confirmed. See you on the court.</p>
+            </sc-if>
+            <button onClick="{{ nav.bookings }}" style="margin-top:30px;width:100%;height:54px;border:none;border-radius:15px;background:#241C13;color:#FFFDF8;font-weight:700;font-size:15.5px;cursor:pointer;">View my bookings</button>
+            <button onClick="{{ nav.home }}" style="margin-top:11px;border:none;background:none;color:#241C13;font-weight:600;font-size:14px;cursor:pointer;">Back to home</button>
+          </div>
+        </sc-if>
+
+        <!-- ===== MY BOOKINGS ===== -->
+        <sc-if value="{{ is.bookings }}" hint-placeholder-val="{{ true }}">
+          <div style="height:100%;display:flex;flex-direction:column;">
+            <div style="padding:0 22px;flex:none;">
+              <div style="display:flex;align-items:center;justify-content:space-between;height:46px;"><span style="font-weight:700;font-size:14px;color:#241C13;">9:41</span><span style="width:18px;height:11px;border:1.6px solid #241C13;border-radius:3px;"></span></div>
+              <h1 style="font-family:'Schibsted Grotesk',sans-serif;font-weight:800;font-size:26px;letter-spacing:-.03em;color:#241C13;margin:8px 0 14px;">My bookings</h1>
+              <div style="display:flex;gap:8px;">
+                <span style="background:#241C13;color:#E1623C;font-weight:600;font-size:13px;padding:8px 16px;border-radius:999px;">Upcoming</span>
+                <span style="background:#FFFDF8;border:1px solid #ECDFCD;color:#6e5f4d;font-weight:600;font-size:13px;padding:8px 16px;border-radius:999px;">Completed</span>
+                <span style="background:#FFFDF8;border:1px solid #ECDFCD;color:#6e5f4d;font-weight:600;font-size:13px;padding:8px 16px;border-radius:999px;">Cancelled</span>
+              </div>
+            </div>
+            <div class="scr" style="flex:1;overflow-y:auto;padding:16px 22px 12px;">
+              <div style="background:#FFFDF8;border:1px solid #ECDFCD;border-radius:18px;padding:15px;margin-bottom:13px;">
+                <div style="display:flex;align-items:center;gap:12px;"><div style="width:46px;height:46px;border-radius:13px;background:#241C13;color:#E1623C;display:flex;align-items:center;justify-content:center;font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:15px;">TA</div><div style="flex:1;"><div style="font-weight:700;font-size:15px;color:#241C13;">Tobi Adebayo</div><div style="font-size:12.5px;color:#8a7b68;">Swimming · Festival Hotel Pool</div></div><span style="font-size:11px;font-weight:700;color:#FFFDF8;background:#E1623C;padding:5px 10px;border-radius:999px;">Accepted</span></div>
+                <div style="display:flex;align-items:center;gap:16px;margin:13px 0;font-size:12.5px;color:#6e5f4d;"><span>📅 Wed, 15 May</span><span>🕗 8:00 AM</span></div>
+                <div style="display:flex;gap:9px;"><button onClick="{{ nav.payment }}" style="flex:1;height:44px;border:none;border-radius:12px;background:#E1623C;color:#FFFDF8;font-weight:700;font-size:13.5px;cursor:pointer;">Pay ₦12,000 to confirm</button><button style="width:44px;height:44px;border:1px solid #ECDFCD;border-radius:12px;background:#FFFDF8;cursor:pointer;">⋯</button></div>
+              </div>
+              <div style="background:#FFFDF8;border:1px solid #ECDFCD;border-radius:18px;padding:15px;margin-bottom:13px;">
+                <div style="display:flex;align-items:center;gap:12px;"><div style="width:46px;height:46px;border-radius:13px;background:#241C13;color:#E1623C;display:flex;align-items:center;justify-content:center;font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:15px;">CO</div><div style="flex:1;"><div style="font-weight:700;font-size:15px;color:#241C13;">Chidinma Okafor</div><div style="font-size:12.5px;color:#8a7b68;">Tennis · MU Court</div></div><span style="font-size:11px;font-weight:700;color:#2c6e2c;background:#e3f4e3;padding:5px 10px;border-radius:999px;">Confirmed</span></div>
+                <div style="display:flex;align-items:center;gap:16px;margin:13px 0 4px;font-size:12.5px;color:#6e5f4d;"><span>📅 Fri, 17 May</span><span>🕔 5:00 PM</span></div>
+              </div>
+              <div style="background:#FFFDF8;border:1px solid #ECDFCD;border-radius:18px;padding:15px;">
+                <div style="display:flex;align-items:center;gap:12px;"><div style="width:46px;height:46px;border-radius:13px;background:#241C13;color:#E1623C;display:flex;align-items:center;justify-content:center;font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:15px;">EJ</div><div style="flex:1;"><div style="font-weight:700;font-size:15px;color:#241C13;">Emeka Johnson</div><div style="font-size:12.5px;color:#8a7b68;">Swimming · Golden Tulip Pool</div></div><span style="font-size:11px;font-weight:700;color:#8a7b68;background:#F0E5D5;padding:5px 10px;border-radius:999px;">Completed</span></div>
+                <div style="display:flex;align-items:center;gap:16px;margin:13px 0;font-size:12.5px;color:#6e5f4d;"><span>📅 Sat, 18 May</span><span>🕖 7:00 AM</span></div>
+                <button style="width:100%;height:44px;border:1.6px solid #241C13;border-radius:12px;background:#FFFDF8;color:#241C13;font-weight:700;font-size:13.5px;cursor:pointer;">Leave a review</button>
+              </div>
+            </div>
+            <div style="flex:none;display:flex;justify-content:space-around;padding:11px 6px 20px;border-top:1px solid #ECDFCD;background:#F3E9DC;">
+              <div onClick="{{ nav.home }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;"><div style="width:21px;height:21px;border-radius:7px;border:1.6px solid #c2b09a;"></div><span style="font-size:10px;font-weight:600;color:#a08e76;">Home</span></div>
+              <div onClick="{{ nav.search }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;"><div style="width:21px;height:21px;border-radius:7px;border:1.6px solid #c2b09a;"></div><span style="font-size:10px;font-weight:600;color:#a08e76;">Search</span></div>
+              <div onClick="{{ nav.bookings }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;"><div style="width:21px;height:21px;border-radius:7px;background:#241C13;"></div><span style="font-size:10px;font-weight:700;color:#241C13;">Bookings</span></div>
+              <div onClick="{{ nav.notifications }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;"><div style="width:21px;height:21px;border-radius:7px;border:1.6px solid #c2b09a;"></div><span style="font-size:10px;font-weight:600;color:#a08e76;">Alerts</span></div>
+              <div onClick="{{ nav.profile }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;"><div style="width:21px;height:21px;border-radius:7px;border:1.6px solid #c2b09a;"></div><span style="font-size:10px;font-weight:600;color:#a08e76;">Profile</span></div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== NOTIFICATIONS ===== -->
+        <sc-if value="{{ is.notifications }}" hint-placeholder-val="{{ true }}">
+          <div style="height:100%;display:flex;flex-direction:column;">
+            <div style="padding:0 22px;flex:none;">
+              <div style="display:flex;align-items:center;justify-content:space-between;height:46px;"><span style="font-weight:700;font-size:14px;color:#241C13;">9:41</span><span style="width:18px;height:11px;border:1.6px solid #241C13;border-radius:3px;"></span></div>
+              <div style="display:flex;align-items:center;justify-content:space-between;margin:8px 0 6px;"><h1 style="font-family:'Schibsted Grotesk',sans-serif;font-weight:800;font-size:26px;letter-spacing:-.03em;color:#241C13;margin:0;">Notifications</h1><span style="font-size:12.5px;color:#241C13;font-weight:600;">Mark all read</span></div>
+            </div>
+            <div class="scr" style="flex:1;overflow-y:auto;padding:10px 22px 12px;">
+              <div onClick="{{ nav.payment }}" style="display:flex;gap:13px;padding:14px;border-radius:16px;background:#FFFDF8;border:1px solid #241C13;margin-bottom:10px;cursor:pointer;"><div style="width:40px;height:40px;border-radius:12px;background:#E1623C;display:flex;align-items:center;justify-content:center;font-size:16px;color:#FFFDF8;flex:none;">✓</div><div style="flex:1;"><div style="display:flex;align-items:center;gap:7px;"><span style="font-weight:700;font-size:14px;color:#241C13;">Request accepted</span><span style="width:7px;height:7px;border-radius:50%;background:#E1623C;"></span></div><p style="font-size:12.5px;line-height:1.45;color:#6e5f4d;margin:3px 0 0;">Tobi Adebayo accepted your request. Tap to complete payment.</p></div><span style="font-size:11px;color:#a08e76;flex:none;">2m</span></div>
+              <div style="display:flex;gap:13px;padding:14px;border-radius:16px;background:#FFFDF8;border:1px solid #ECDFCD;margin-bottom:10px;"><div style="width:40px;height:40px;border-radius:12px;background:#F0E5D5;display:flex;align-items:center;justify-content:center;font-size:15px;flex:none;">💳</div><div style="flex:1;"><div style="display:flex;align-items:center;gap:7px;"><span style="font-weight:700;font-size:14px;color:#241C13;">Payment confirmed</span><span style="width:7px;height:7px;border-radius:50%;background:#E1623C;"></span></div><p style="font-size:12.5px;line-height:1.45;color:#6e5f4d;margin:3px 0 0;">Your booking with Chidinma Okafor is confirmed for Fri, 17 May.</p></div><span style="font-size:11px;color:#a08e76;flex:none;">1h</span></div>
+              <div style="display:flex;gap:13px;padding:14px;border-radius:16px;background:#FFFDF8;border:1px solid #ECDFCD;margin-bottom:10px;"><div style="width:40px;height:40px;border-radius:12px;background:#F0E5D5;display:flex;align-items:center;justify-content:center;font-size:15px;flex:none;">⭐</div><div style="flex:1;"><span style="font-weight:700;font-size:14px;color:#241C13;">Leave a review</span><p style="font-size:12.5px;line-height:1.45;color:#6e5f4d;margin:3px 0 0;">How was your session with Emeka Johnson? Share your feedback.</p></div><span style="font-size:11px;color:#a08e76;flex:none;">1d</span></div>
+              <div style="display:flex;gap:13px;padding:14px;border-radius:16px;background:#FFFDF8;border:1px solid #ECDFCD;"><div style="width:40px;height:40px;border-radius:12px;background:#F0E5D5;display:flex;align-items:center;justify-content:center;font-size:15px;flex:none;">⏰</div><div style="flex:1;"><span style="font-weight:700;font-size:14px;color:#241C13;">Session reminder</span><p style="font-size:12.5px;line-height:1.45;color:#6e5f4d;margin:3px 0 0;">Your swimming session is tomorrow at 8:00 AM, Festival Hotel Pool.</p></div><span style="font-size:11px;color:#a08e76;flex:none;">2d</span></div>
+            </div>
+            <div style="flex:none;display:flex;justify-content:space-around;padding:11px 6px 20px;border-top:1px solid #ECDFCD;background:#F3E9DC;">
+              <div onClick="{{ nav.home }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;"><div style="width:21px;height:21px;border-radius:7px;border:1.6px solid #c2b09a;"></div><span style="font-size:10px;font-weight:600;color:#a08e76;">Home</span></div>
+              <div onClick="{{ nav.search }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;"><div style="width:21px;height:21px;border-radius:7px;border:1.6px solid #c2b09a;"></div><span style="font-size:10px;font-weight:600;color:#a08e76;">Search</span></div>
+              <div onClick="{{ nav.bookings }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;"><div style="width:21px;height:21px;border-radius:7px;border:1.6px solid #c2b09a;"></div><span style="font-size:10px;font-weight:600;color:#a08e76;">Bookings</span></div>
+              <div onClick="{{ nav.notifications }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;"><div style="width:21px;height:21px;border-radius:7px;background:#241C13;"></div><span style="font-size:10px;font-weight:700;color:#241C13;">Alerts</span></div>
+              <div onClick="{{ nav.profile }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;"><div style="width:21px;height:21px;border-radius:7px;border:1.6px solid #c2b09a;"></div><span style="font-size:10px;font-weight:600;color:#a08e76;">Profile</span></div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== PROFILE ===== -->
+        <sc-if value="{{ is.profile }}" hint-placeholder-val="{{ true }}">
+          <div style="height:100%;display:flex;flex-direction:column;">
+            <div class="scr" style="flex:1;overflow-y:auto;">
+              <div style="padding:0 22px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;height:46px;"><span style="font-weight:700;font-size:14px;color:#241C13;">9:41</span><span style="width:18px;height:11px;border:1.6px solid #241C13;border-radius:3px;"></span></div>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin:8px 0 18px;"><h1 style="font-family:'Schibsted Grotesk',sans-serif;font-weight:800;font-size:26px;letter-spacing:-.03em;color:#241C13;margin:0;">Profile</h1><button onClick="{{ nav.settings }}" style="width:38px;height:38px;border-radius:50%;border:1px solid #ECDFCD;background:#FFFDF8;font-size:16px;cursor:pointer;">⚙</button></div>
+                <div style="display:flex;align-items:center;gap:15px;"><div style="width:66px;height:66px;border-radius:20px;background:#241C13;color:#E1623C;display:flex;align-items:center;justify-content:center;font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:24px;">AO</div><div><div style="font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:19px;color:#241C13;">Ada Obi</div><div style="font-size:13px;color:#8a7b68;">ada@example.com</div><span style="display:inline-block;margin-top:6px;font-size:11px;font-weight:700;color:#FFFDF8;background:#E1623C;padding:3px 10px;border-radius:999px;">Athlete</span></div></div>
+                <div style="display:flex;gap:9px;margin-top:18px;">
+                  <div style="flex:1;background:#FFFDF8;border:1px solid #ECDFCD;border-radius:15px;padding:14px;text-align:center;"><div style="font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:20px;color:#241C13;">8</div><div style="font-size:11px;color:#8a7b68;margin-top:2px;">Sessions</div></div>
+                  <div style="flex:1;background:#FFFDF8;border:1px solid #ECDFCD;border-radius:15px;padding:14px;text-align:center;"><div style="font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:20px;color:#241C13;">3</div><div style="font-size:11px;color:#8a7b68;margin-top:2px;">Coaches</div></div>
+                  <div style="flex:1;background:#FFFDF8;border:1px solid #ECDFCD;border-radius:15px;padding:14px;text-align:center;"><div style="font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:20px;color:#241C13;">5</div><div style="font-size:11px;color:#8a7b68;margin-top:2px;">Reviews</div></div>
+                </div>
+                <div style="margin-top:20px;background:#FFFDF8;border:1px solid #ECDFCD;border-radius:18px;overflow:hidden;">
+                  <div onClick="{{ nav.bookings }}" style="display:flex;align-items:center;gap:13px;padding:15px;border-bottom:1px solid #F0E5D5;cursor:pointer;"><div style="width:20px;height:20px;border-radius:6px;background:#F0E5D5;"></div><span style="flex:1;font-size:14px;font-weight:600;color:#241C13;">My bookings</span><span style="color:#c2b09a;">›</span></div>
+                  <div style="display:flex;align-items:center;gap:13px;padding:15px;border-bottom:1px solid #F0E5D5;cursor:pointer;"><div style="width:20px;height:20px;border-radius:6px;background:#F0E5D5;"></div><span style="flex:1;font-size:14px;font-weight:600;color:#241C13;">Payment methods</span><span style="color:#c2b09a;">›</span></div>
+                  <div onClick="{{ nav.notifications }}" style="display:flex;align-items:center;gap:13px;padding:15px;border-bottom:1px solid #F0E5D5;cursor:pointer;"><div style="width:20px;height:20px;border-radius:6px;background:#F0E5D5;"></div><span style="flex:1;font-size:14px;font-weight:600;color:#241C13;">Notifications</span><span style="color:#c2b09a;">›</span></div>
+                  <div onClick="{{ nav.settings }}" style="display:flex;align-items:center;gap:13px;padding:15px;cursor:pointer;"><div style="width:20px;height:20px;border-radius:6px;background:#F0E5D5;"></div><span style="flex:1;font-size:14px;font-weight:600;color:#241C13;">Settings</span><span style="color:#c2b09a;">›</span></div>
+                </div>
+                <div onClick="{{ nav.cdash }}" style="margin-top:14px;display:flex;align-items:center;gap:11px;background:#241C13;border-radius:16px;padding:15px;cursor:pointer;"><div style="width:20px;height:20px;border-radius:6px;background:#E1623C;"></div><span style="flex:1;font-size:14px;font-weight:700;color:#FFFDF8;">Switch to coach view</span><span style="color:#E1623C;">›</span></div>
+                <div style="height:96px;"></div>
+              </div>
+            </div>
+            <div style="flex:none;display:flex;justify-content:space-around;padding:11px 6px 20px;border-top:1px solid #ECDFCD;background:#F3E9DC;">
+              <div onClick="{{ nav.home }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;"><div style="width:21px;height:21px;border-radius:7px;border:1.6px solid #c2b09a;"></div><span style="font-size:10px;font-weight:600;color:#a08e76;">Home</span></div>
+              <div onClick="{{ nav.search }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;"><div style="width:21px;height:21px;border-radius:7px;border:1.6px solid #c2b09a;"></div><span style="font-size:10px;font-weight:600;color:#a08e76;">Search</span></div>
+              <div onClick="{{ nav.bookings }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;"><div style="width:21px;height:21px;border-radius:7px;border:1.6px solid #c2b09a;"></div><span style="font-size:10px;font-weight:600;color:#a08e76;">Bookings</span></div>
+              <div onClick="{{ nav.notifications }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;"><div style="width:21px;height:21px;border-radius:7px;border:1.6px solid #c2b09a;"></div><span style="font-size:10px;font-weight:600;color:#a08e76;">Alerts</span></div>
+              <div onClick="{{ nav.profile }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;"><div style="width:21px;height:21px;border-radius:7px;background:#241C13;"></div><span style="font-size:10px;font-weight:700;color:#241C13;">Profile</span></div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== SETTINGS ===== -->
+        <sc-if value="{{ is.settings }}" hint-placeholder-val="{{ true }}">
+          <div style="height:100%;display:flex;flex-direction:column;">
+            <div style="flex:none;padding:0 22px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;height:46px;"><span style="font-weight:700;font-size:14px;color:#241C13;">9:41</span><span style="width:18px;height:11px;border:1.6px solid #241C13;border-radius:3px;"></span></div>
+              <div style="display:flex;align-items:center;gap:13px;padding:4px 0 14px;"><button onClick="{{ nav.profile }}" style="width:38px;height:38px;border-radius:50%;border:1px solid #ECDFCD;background:#FFFDF8;font-size:18px;cursor:pointer;">‹</button><span style="font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:19px;color:#241C13;">Settings</span></div>
+            </div>
+            <div class="scr" style="flex:1;overflow-y:auto;padding:0 22px 22px;">
+              <div style="font-family:monospace;font-size:10.5px;letter-spacing:.1em;color:#a08e76;margin:6px 0 8px;">ACCOUNT</div>
+              <div style="background:#FFFDF8;border:1px solid #ECDFCD;border-radius:16px;overflow:hidden;margin-bottom:18px;">
+                <div style="display:flex;align-items:center;padding:14px 15px;border-bottom:1px solid #F0E5D5;"><span style="flex:1;font-size:14px;font-weight:600;color:#241C13;">Edit profile</span><span style="color:#c2b09a;">›</span></div>
+                <div style="display:flex;align-items:center;padding:14px 15px;border-bottom:1px solid #F0E5D5;"><span style="flex:1;font-size:14px;font-weight:600;color:#241C13;">Email &amp; password</span><span style="color:#c2b09a;">›</span></div>
+                <div style="display:flex;align-items:center;padding:14px 15px;"><span style="flex:1;font-size:14px;font-weight:600;color:#241C13;">Location</span><span style="font-size:13px;color:#8a7b68;">Amuwo Odofin ›</span></div>
+              </div>
+              <div style="font-family:monospace;font-size:10.5px;letter-spacing:.1em;color:#a08e76;margin:0 0 8px;">PREFERENCES</div>
+              <div style="background:#FFFDF8;border:1px solid #ECDFCD;border-radius:16px;overflow:hidden;margin-bottom:18px;">
+                <div style="display:flex;align-items:center;padding:14px 15px;border-bottom:1px solid #F0E5D5;"><span style="flex:1;font-size:14px;font-weight:600;color:#241C13;">Push notifications</span><div style="width:42px;height:24px;border-radius:999px;background:#E1623C;position:relative;"><div style="position:absolute;top:2px;right:2px;width:20px;height:20px;border-radius:50%;background:#FFFDF8;"></div></div></div>
+                <div style="display:flex;align-items:center;padding:14px 15px;border-bottom:1px solid #F0E5D5;"><span style="flex:1;font-size:14px;font-weight:600;color:#241C13;">Email updates</span><div style="width:42px;height:24px;border-radius:999px;background:#ECDFCD;position:relative;"><div style="position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#FFFDF8;"></div></div></div>
+                <div style="display:flex;align-items:center;padding:14px 15px;"><span style="flex:1;font-size:14px;font-weight:600;color:#241C13;">Booking reminders</span><div style="width:42px;height:24px;border-radius:999px;background:#E1623C;position:relative;"><div style="position:absolute;top:2px;right:2px;width:20px;height:20px;border-radius:50%;background:#FFFDF8;"></div></div></div>
+              </div>
+              <div style="font-family:monospace;font-size:10.5px;letter-spacing:.1em;color:#a08e76;margin:0 0 8px;">SUPPORT</div>
+              <div style="background:#FFFDF8;border:1px solid #ECDFCD;border-radius:16px;overflow:hidden;margin-bottom:18px;">
+                <div style="display:flex;align-items:center;padding:14px 15px;border-bottom:1px solid #F0E5D5;"><span style="flex:1;font-size:14px;font-weight:600;color:#241C13;">Help &amp; FAQ</span><span style="color:#c2b09a;">›</span></div>
+                <div style="display:flex;align-items:center;padding:14px 15px;"><span style="flex:1;font-size:14px;font-weight:600;color:#241C13;">Privacy &amp; terms</span><span style="color:#c2b09a;">›</span></div>
+              </div>
+              <button onClick="{{ nav.welcome }}" style="width:100%;height:52px;border:1px solid #ECDFCD;border-radius:15px;background:#FFFDF8;color:#c0392b;font-weight:700;font-size:14.5px;cursor:pointer;">Log out</button>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== COACH DASHBOARD ===== -->
+        <sc-if value="{{ is.cdash }}" hint-placeholder-val="{{ true }}">
+          <div style="height:100%;display:flex;flex-direction:column;">
+            <div class="scr" style="flex:1;overflow-y:auto;">
+              <div style="padding:0 22px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;height:46px;"><span style="font-weight:700;font-size:14px;color:#241C13;">9:41</span><span style="width:18px;height:11px;border:1.6px solid #241C13;border-radius:3px;"></span></div>
+                <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-top:4px;"><div><div style="font-size:13px;color:#8a7b68;">Good morning,</div><div style="font-family:'Schibsted Grotesk',sans-serif;font-weight:800;font-size:25px;letter-spacing:-.03em;color:#241C13;margin-top:1px;">Coach Tobi</div></div><div style="width:48px;height:48px;border-radius:15px;background:#241C13;color:#E1623C;display:flex;align-items:center;justify-content:center;font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:16px;">TA</div></div>
+                <div style="display:flex;gap:10px;margin-top:18px;">
+                  <div style="flex:1;background:#241C13;border-radius:18px;padding:16px;"><div style="font-family:'Schibsted Grotesk',sans-serif;font-weight:800;font-size:26px;color:#E1623C;">3</div><div style="font-size:11.5px;color:#bfae97;margin-top:3px;">New requests</div></div>
+                  <div style="flex:1;background:#FFFDF8;border:1px solid #ECDFCD;border-radius:18px;padding:16px;"><div style="font-family:'Schibsted Grotesk',sans-serif;font-weight:800;font-size:26px;color:#241C13;">7</div><div style="font-size:11.5px;color:#8a7b68;margin-top:3px;">Sessions this week</div></div>
+                </div>
+                <div style="display:flex;gap:10px;margin-top:10px;">
+                  <div style="flex:1;background:#FFFDF8;border:1px solid #ECDFCD;border-radius:18px;padding:16px;"><div style="font-family:'Schibsted Grotesk',sans-serif;font-weight:800;font-size:21px;color:#241C13;">₦248k</div><div style="font-size:11.5px;color:#8a7b68;margin-top:3px;">Earned this month</div></div>
+                  <div style="flex:1;background:#FFFDF8;border:1px solid #ECDFCD;border-radius:18px;padding:16px;"><div style="font-family:'Schibsted Grotesk',sans-serif;font-weight:800;font-size:21px;color:#241C13;">4.8 ★</div><div style="font-size:11.5px;color:#8a7b68;margin-top:3px;">Rating · 32 reviews</div></div>
+                </div>
+                <div style="display:flex;align-items:baseline;justify-content:space-between;margin:24px 0 11px;"><span style="font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:16px;color:#241C13;">Pending requests</span><span onClick="{{ nav.crequests }}" style="font-size:12.5px;color:#241C13;font-weight:600;cursor:pointer;">View all</span></div>
+                <sc-for list="{{ requests }}" as="rq" hint-placeholder-count="3">
+                  <div onClick="{{ rq.open }}" style="display:flex;align-items:center;gap:12px;background:#FFFDF8;border:1px solid #ECDFCD;border-radius:16px;padding:13px;margin-bottom:10px;cursor:pointer;"><div style="width:44px;height:44px;border-radius:12px;background:#F0E5D5;color:#241C13;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;">{{ rq.initials }}</div><div style="flex:1;min-width:0;"><div style="font-weight:700;font-size:14px;color:#241C13;">{{ rq.name }}</div><div style="font-size:12px;color:#8a7b68;">{{ rq.date }} · {{ rq.time }}</div></div><span style="font-size:11px;font-weight:700;color:#FFFDF8;background:#E1623C;padding:5px 10px;border-radius:999px;">New</span></div>
+                </sc-for>
+                <div style="height:96px;"></div>
+              </div>
+            </div>
+            <div style="flex:none;display:flex;justify-content:space-around;padding:11px 6px 20px;border-top:1px solid #ECDFCD;background:#F3E9DC;">
+              <div onClick="{{ nav.cdash }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;"><div style="width:21px;height:21px;border-radius:7px;background:#241C13;"></div><span style="font-size:10px;font-weight:700;color:#241C13;">Home</span></div>
+              <div onClick="{{ nav.crequests }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;"><div style="width:21px;height:21px;border-radius:7px;border:1.6px solid #c2b09a;"></div><span style="font-size:10px;font-weight:600;color:#a08e76;">Requests</span></div>
+              <div onClick="{{ nav.cavailability }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;"><div style="width:21px;height:21px;border-radius:7px;border:1.6px solid #c2b09a;"></div><span style="font-size:10px;font-weight:600;color:#a08e76;">Calendar</span></div>
+              <div onClick="{{ nav.cearnings }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;"><div style="width:21px;height:21px;border-radius:7px;border:1.6px solid #c2b09a;"></div><span style="font-size:10px;font-weight:600;color:#a08e76;">Earnings</span></div>
+              <div onClick="{{ nav.cprofile }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;"><div style="width:21px;height:21px;border-radius:7px;border:1.6px solid #c2b09a;"></div><span style="font-size:10px;font-weight:600;color:#a08e76;">Profile</span></div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== INCOMING REQUESTS ===== -->
+        <sc-if value="{{ is.crequests }}" hint-placeholder-val="{{ true }}">
+          <div style="height:100%;display:flex;flex-direction:column;">
+            <div style="padding:0 22px;flex:none;">
+              <div style="display:flex;align-items:center;justify-content:space-between;height:46px;"><span style="font-weight:700;font-size:14px;color:#241C13;">9:41</span><span style="width:18px;height:11px;border:1.6px solid #241C13;border-radius:3px;"></span></div>
+              <h1 style="font-family:'Schibsted Grotesk',sans-serif;font-weight:800;font-size:26px;letter-spacing:-.03em;color:#241C13;margin:8px 0 14px;">Requests</h1>
+              <div style="display:flex;gap:8px;">
+                <span style="background:#241C13;color:#E1623C;font-weight:600;font-size:13px;padding:8px 16px;border-radius:999px;">New · 3</span>
+                <span style="background:#FFFDF8;border:1px solid #ECDFCD;color:#6e5f4d;font-weight:600;font-size:13px;padding:8px 16px;border-radius:999px;">Accepted</span>
+                <span style="background:#FFFDF8;border:1px solid #ECDFCD;color:#6e5f4d;font-weight:600;font-size:13px;padding:8px 16px;border-radius:999px;">Declined</span>
+              </div>
+            </div>
+            <div class="scr" style="flex:1;overflow-y:auto;padding:16px 22px 12px;">
+              <sc-for list="{{ requests }}" as="rq" hint-placeholder-count="3">
+                <div onClick="{{ rq.open }}" style="background:#FFFDF8;border:1px solid #ECDFCD;border-radius:18px;padding:15px;margin-bottom:12px;cursor:pointer;">
+                  <div style="display:flex;align-items:center;gap:12px;"><div style="width:46px;height:46px;border-radius:13px;background:#F0E5D5;color:#241C13;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;">{{ rq.initials }}</div><div style="flex:1;"><div style="font-weight:700;font-size:15px;color:#241C13;">{{ rq.name }}</div><div style="font-size:12.5px;color:#8a7b68;">{{ rq.sport }} · {{ rq.date }} · {{ rq.time }}</div></div><span style="font-weight:700;font-size:14px;color:#241C13;">{{ rq.price }}</span></div>
+                  <p style="font-size:12.5px;line-height:1.45;color:#6e5f4d;margin:11px 0 0;">{{ rq.note }}</p>
+                </div>
+              </sc-for>
+            </div>
+            <div style="flex:none;display:flex;justify-content:space-around;padding:11px 6px 20px;border-top:1px solid #ECDFCD;background:#F3E9DC;">
+              <div onClick="{{ nav.cdash }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;"><div style="width:21px;height:21px;border-radius:7px;border:1.6px solid #c2b09a;"></div><span style="font-size:10px;font-weight:600;color:#a08e76;">Home</span></div>
+              <div onClick="{{ nav.crequests }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;"><div style="width:21px;height:21px;border-radius:7px;background:#241C13;"></div><span style="font-size:10px;font-weight:700;color:#241C13;">Requests</span></div>
+              <div onClick="{{ nav.cavailability }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;"><div style="width:21px;height:21px;border-radius:7px;border:1.6px solid #c2b09a;"></div><span style="font-size:10px;font-weight:600;color:#a08e76;">Calendar</span></div>
+              <div onClick="{{ nav.cearnings }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;"><div style="width:21px;height:21px;border-radius:7px;border:1.6px solid #c2b09a;"></div><span style="font-size:10px;font-weight:600;color:#a08e76;">Earnings</span></div>
+              <div onClick="{{ nav.cprofile }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;"><div style="width:21px;height:21px;border-radius:7px;border:1.6px solid #c2b09a;"></div><span style="font-size:10px;font-weight:600;color:#a08e76;">Profile</span></div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== REQUEST DETAILS ===== -->
+        <sc-if value="{{ is.crequest }}" hint-placeholder-val="{{ true }}">
+          <div style="height:100%;display:flex;flex-direction:column;">
+            <div style="flex:none;padding:0 22px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;height:46px;"><span style="font-weight:700;font-size:14px;color:#241C13;">9:41</span><span style="width:18px;height:11px;border:1.6px solid #241C13;border-radius:3px;"></span></div>
+              <div style="display:flex;align-items:center;gap:13px;padding:4px 0 14px;"><button onClick="{{ nav.crequests }}" style="width:38px;height:38px;border-radius:50%;border:1px solid #ECDFCD;background:#FFFDF8;font-size:18px;cursor:pointer;">‹</button><span style="font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:19px;color:#241C13;">Request details</span></div>
+            </div>
+            <div class="scr" style="flex:1;overflow-y:auto;padding:0 22px 12px;">
+              <div style="display:flex;align-items:center;gap:13px;"><div style="width:56px;height:56px;border-radius:16px;background:#F0E5D5;color:#241C13;display:flex;align-items:center;justify-content:center;font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:18px;">{{ request.initials }}</div><div><div style="font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:18px;color:#241C13;">{{ request.name }}</div><div style="font-size:13px;color:#8a7b68;">Requested a {{ request.sport }} session</div></div></div>
+              <sc-if value="{{ request.child }}" hint-placeholder-val="{{ true }}">
+                <div style="display:flex;align-items:center;gap:10px;background:#E1623C;border-radius:14px;padding:13px;margin-top:16px;"><div style="width:20px;height:20px;border-radius:6px;background:#241C13;"></div><div style="font-size:13px;color:#241C13;"><strong>Booking for a child:</strong> {{ request.child }}</div></div>
+              </sc-if>
+              <div style="background:#FFFDF8;border:1px solid #ECDFCD;border-radius:16px;padding:4px 16px;margin-top:16px;">
+                <div style="display:flex;justify-content:space-between;padding:13px 0;border-bottom:1px solid #F0E5D5;"><span style="font-size:13.5px;color:#8a7b68;">Date</span><span style="font-size:13.5px;font-weight:600;color:#241C13;">{{ request.date }}</span></div>
+                <div style="display:flex;justify-content:space-between;padding:13px 0;border-bottom:1px solid #F0E5D5;"><span style="font-size:13.5px;color:#8a7b68;">Time</span><span style="font-size:13.5px;font-weight:600;color:#241C13;">{{ request.time }}</span></div>
+                <div style="display:flex;justify-content:space-between;padding:13px 0;border-bottom:1px solid #F0E5D5;"><span style="font-size:13.5px;color:#8a7b68;">Venue</span><span style="font-size:13.5px;font-weight:600;color:#241C13;">{{ request.venue }}</span></div>
+                <div style="display:flex;justify-content:space-between;padding:13px 0;"><span style="font-size:13.5px;color:#8a7b68;">Session fee</span><span style="font-size:13.5px;font-weight:700;color:#241C13;">{{ request.price }}</span></div>
+              </div>
+              <h4 style="font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:14px;color:#241C13;margin:18px 0 8px;">Note from athlete</h4>
+              <div style="background:#FFFDF8;border:1px solid #ECDFCD;border-radius:14px;padding:14px;font-size:13.5px;line-height:1.5;color:#6e5f4d;">{{ request.note }}</div>
+              <div style="height:96px;"></div>
+            </div>
+            <div style="flex:none;display:flex;gap:10px;padding:14px 22px 22px;background:#F3E9DC;border-top:1px solid #ECDFCD;">
+              <button onClick="{{ nav.crequests }}" style="flex:1;height:54px;border:1.6px solid #241C13;border-radius:15px;background:#FFFDF8;color:#241C13;font-weight:700;font-size:15px;cursor:pointer;">Decline</button>
+              <button onClick="{{ nav.crequests }}" style="flex:2;height:54px;border:none;border-radius:15px;background:#E1623C;color:#FFFDF8;font-weight:700;font-size:15px;cursor:pointer;">Accept &amp; request payment</button>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== AVAILABILITY ===== -->
+        <sc-if value="{{ is.cavailability }}" hint-placeholder-val="{{ true }}">
+          <div style="height:100%;display:flex;flex-direction:column;">
+            <div style="flex:none;padding:0 22px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;height:46px;"><span style="font-weight:700;font-size:14px;color:#241C13;">9:41</span><span style="width:18px;height:11px;border:1.6px solid #241C13;border-radius:3px;"></span></div>
+              <h1 style="font-family:'Schibsted Grotesk',sans-serif;font-weight:800;font-size:26px;letter-spacing:-.03em;color:#241C13;margin:8px 0 4px;">Availability</h1>
+              <p style="font-size:13px;color:#8a7b68;margin:0 0 6px;">Set the days and times you're open to coach.</p>
+            </div>
+            <div class="scr" style="flex:1;overflow-y:auto;padding:10px 22px 12px;">
+              <div style="background:#FFFDF8;border:1px solid #ECDFCD;border-radius:16px;overflow:hidden;">
+                <div style="display:flex;align-items:center;padding:15px;border-bottom:1px solid #F0E5D5;"><span style="flex:1;font-weight:700;font-size:14px;color:#241C13;">Monday</span><span style="font-size:12.5px;color:#8a7b68;margin-right:11px;">6:00 – 10:00 AM</span><div style="width:42px;height:24px;border-radius:999px;background:#E1623C;position:relative;"><div style="position:absolute;top:2px;right:2px;width:20px;height:20px;border-radius:50%;background:#FFFDF8;"></div></div></div>
+                <div style="display:flex;align-items:center;padding:15px;border-bottom:1px solid #F0E5D5;"><span style="flex:1;font-weight:700;font-size:14px;color:#241C13;">Wednesday</span><span style="font-size:12.5px;color:#8a7b68;margin-right:11px;">6:00 – 9:00 AM</span><div style="width:42px;height:24px;border-radius:999px;background:#E1623C;position:relative;"><div style="position:absolute;top:2px;right:2px;width:20px;height:20px;border-radius:50%;background:#FFFDF8;"></div></div></div>
+                <div style="display:flex;align-items:center;padding:15px;border-bottom:1px solid #F0E5D5;"><span style="flex:1;font-weight:700;font-size:14px;color:#241C13;">Friday</span><span style="font-size:12.5px;color:#8a7b68;margin-right:11px;">4:00 – 7:00 PM</span><div style="width:42px;height:24px;border-radius:999px;background:#E1623C;position:relative;"><div style="position:absolute;top:2px;right:2px;width:20px;height:20px;border-radius:50%;background:#FFFDF8;"></div></div></div>
+                <div style="display:flex;align-items:center;padding:15px;border-bottom:1px solid #F0E5D5;"><span style="flex:1;font-weight:700;font-size:14px;color:#a08e76;">Saturday</span><span style="font-size:12.5px;color:#c2b09a;margin-right:11px;">Off</span><div style="width:42px;height:24px;border-radius:999px;background:#ECDFCD;position:relative;"><div style="position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#FFFDF8;"></div></div></div>
+                <div style="display:flex;align-items:center;padding:15px;"><span style="flex:1;font-weight:700;font-size:14px;color:#a08e76;">Sunday</span><span style="font-size:12.5px;color:#c2b09a;margin-right:11px;">Off</span><div style="width:42px;height:24px;border-radius:999px;background:#ECDFCD;position:relative;"><div style="position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#FFFDF8;"></div></div></div>
+              </div>
+              <h4 style="font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:14px;color:#241C13;margin:20px 0 10px;">Wednesday slots</h4>
+              <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                <span style="font-size:13px;font-weight:600;background:#241C13;color:#E1623C;padding:9px 15px;border-radius:11px;">6:00 AM</span>
+                <span style="font-size:13px;font-weight:600;background:#241C13;color:#E1623C;padding:9px 15px;border-radius:11px;">7:00 AM</span>
+                <span style="font-size:13px;font-weight:600;color:#6e5f4d;background:#FFFDF8;border:1px solid #ECDFCD;padding:9px 15px;border-radius:11px;">8:00 AM</span>
+                <span style="font-size:13px;font-weight:600;background:#241C13;color:#E1623C;padding:9px 15px;border-radius:11px;">9:00 AM</span>
+                <span style="font-size:13px;font-weight:600;color:#6e5f4d;background:#FFFDF8;border:1px solid #ECDFCD;padding:9px 15px;border-radius:11px;">+ Add</span>
+              </div>
+              <div style="height:90px;"></div>
+            </div>
+            <div style="flex:none;padding:14px 22px 22px;background:#F3E9DC;border-top:1px solid #ECDFCD;"><button onClick="{{ nav.cdash }}" style="width:100%;height:54px;border:none;border-radius:15px;background:#E1623C;color:#FFFDF8;font-weight:700;font-size:15.5px;cursor:pointer;">Save availability</button></div>
+          </div>
+        </sc-if>
+
+        <!-- ===== COACH PROFILE MGMT ===== -->
+        <sc-if value="{{ is.cprofile }}" hint-placeholder-val="{{ true }}">
+          <div style="height:100%;display:flex;flex-direction:column;">
+            <div style="flex:none;padding:0 22px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;height:46px;"><span style="font-weight:700;font-size:14px;color:#241C13;">9:41</span><span style="width:18px;height:11px;border:1.6px solid #241C13;border-radius:3px;"></span></div>
+              <h1 style="font-family:'Schibsted Grotesk',sans-serif;font-weight:800;font-size:26px;letter-spacing:-.03em;color:#241C13;margin:8px 0 14px;">My profile</h1>
+            </div>
+            <div class="scr" style="flex:1;overflow-y:auto;padding:0 22px 12px;">
+              <div style="display:flex;align-items:center;gap:15px;"><div style="width:66px;height:66px;border-radius:20px;background-image:repeating-linear-gradient(125deg,#2b2117 0 9px,#352818 9px 18px);display:flex;align-items:flex-end;"><span style="font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:14px;color:#E1623C;padding:6px 8px;">TA</span></div><button style="border:1.6px solid #241C13;background:#FFFDF8;border-radius:12px;padding:10px 16px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:13px;color:#241C13;cursor:pointer;">Change photo</button></div>
+              <label style="font-size:12.5px;font-weight:600;color:#241C13;margin:18px 0 7px;display:block;">Full name</label>
+              <input value="Tobi Adebayo" style="width:100%;height:50px;border-radius:13px;border:1px solid #ECDFCD;background:#FFFDF8;padding:0 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:#241C13;outline:none;" />
+              <label style="font-size:12.5px;font-weight:600;color:#241C13;margin:15px 0 7px;display:block;">Sport</label>
+              <div style="display:flex;gap:8px;"><span style="font-size:13px;font-weight:600;background:#241C13;color:#E1623C;padding:10px 18px;border-radius:11px;">Swimming</span><span style="font-size:13px;font-weight:600;color:#6e5f4d;background:#FFFDF8;border:1px solid #ECDFCD;padding:10px 18px;border-radius:11px;">Tennis</span></div>
+              <label style="font-size:12.5px;font-weight:600;color:#241C13;margin:15px 0 7px;display:block;">Training venue</label>
+              <input value="Festival Hotel Pool" style="width:100%;height:50px;border-radius:13px;border:1px solid #ECDFCD;background:#FFFDF8;padding:0 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:#241C13;outline:none;" />
+              <label style="font-size:12.5px;font-weight:600;color:#241C13;margin:15px 0 7px;display:block;">Price per session</label>
+              <input value="₦12,000" style="width:100%;height:50px;border-radius:13px;border:1px solid #ECDFCD;background:#FFFDF8;padding:0 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:#241C13;outline:none;" />
+              <div style="font-size:11.5px;color:#8a7b68;margin-top:7px;">Recommended for swimming: ₦5,000 – ₦15,000</div>
+              <label style="font-size:12.5px;font-weight:600;color:#241C13;margin:15px 0 7px;display:block;">About</label>
+              <textarea style="width:100%;height:84px;border-radius:13px;border:1px solid #ECDFCD;background:#FFFDF8;padding:13px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:#241C13;resize:none;outline:none;">Professional swimming coach with 5 years working with kids and adults at all levels.</textarea>
+              <div style="height:90px;"></div>
+            </div>
+            <div style="flex:none;padding:14px 22px 22px;background:#F3E9DC;border-top:1px solid #ECDFCD;"><button onClick="{{ nav.cdash }}" style="width:100%;height:54px;border:none;border-radius:15px;background:#E1623C;color:#FFFDF8;font-weight:700;font-size:15.5px;cursor:pointer;">Save profile</button></div>
+          </div>
+        </sc-if>
+
+        <!-- ===== EARNINGS ===== -->
+        <sc-if value="{{ is.cearnings }}" hint-placeholder-val="{{ true }}">
+          <div style="height:100%;display:flex;flex-direction:column;">
+            <div class="scr" style="flex:1;overflow-y:auto;">
+              <div style="padding:0 22px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;height:46px;"><span style="font-weight:700;font-size:14px;color:#241C13;">9:41</span><span style="width:18px;height:11px;border:1.6px solid #241C13;border-radius:3px;"></span></div>
+                <h1 style="font-family:'Schibsted Grotesk',sans-serif;font-weight:800;font-size:26px;letter-spacing:-.03em;color:#241C13;margin:8px 0 16px;">Earnings</h1>
+                <div style="background:#241C13;border-radius:20px;padding:20px;"><div style="font-size:12.5px;color:#bfae97;">Available to withdraw</div><div style="font-family:'Schibsted Grotesk',sans-serif;font-weight:800;font-size:36px;color:#FFFDF8;margin:4px 0 2px;">₦68,000</div><div style="font-size:12px;color:#bfae97;">₦248,000 earned this month</div><button style="margin-top:15px;width:100%;height:48px;border:none;border-radius:13px;background:#E1623C;color:#FFFDF8;font-weight:700;font-size:14.5px;cursor:pointer;">Withdraw to bank</button></div>
+                <div style="display:flex;gap:10px;margin-top:14px;">
+                  <div style="flex:1;background:#FFFDF8;border:1px solid #ECDFCD;border-radius:16px;padding:14px;"><div style="font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:20px;color:#241C13;">21</div><div style="font-size:11.5px;color:#8a7b68;margin-top:2px;">Sessions</div></div>
+                  <div style="flex:1;background:#FFFDF8;border:1px solid #ECDFCD;border-radius:16px;padding:14px;"><div style="font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:20px;color:#241C13;">₦12k</div><div style="font-size:11.5px;color:#8a7b68;margin-top:2px;">Avg / session</div></div>
+                  <div style="flex:1;background:#FFFDF8;border:1px solid #ECDFCD;border-radius:16px;padding:14px;"><div style="font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:20px;color:#241C13;">+18%</div><div style="font-size:11.5px;color:#8a7b68;margin-top:2px;">vs April</div></div>
+                </div>
+                <h4 style="font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:15px;color:#241C13;margin:22px 0 8px;">Transactions</h4>
+                <sc-for list="{{ earningsTx }}" as="tx" hint-placeholder-count="4">
+                  <div style="display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #ECDFCD;"><div style="width:38px;height:38px;border-radius:11px;background:#F0E5D5;"></div><div style="flex:1;min-width:0;"><div style="font-weight:600;font-size:13.5px;color:#241C13;">{{ tx.name }}</div><div style="font-size:11.5px;color:#8a7b68;">{{ tx.date }}</div></div><span style="font-weight:700;font-size:14px;color:#241C13;">{{ tx.amount }}</span></div>
+                </sc-for>
+                <div style="height:96px;"></div>
+              </div>
+            </div>
+            <div style="flex:none;display:flex;justify-content:space-around;padding:11px 6px 20px;border-top:1px solid #ECDFCD;background:#F3E9DC;">
+              <div onClick="{{ nav.cdash }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;"><div style="width:21px;height:21px;border-radius:7px;border:1.6px solid #c2b09a;"></div><span style="font-size:10px;font-weight:600;color:#a08e76;">Home</span></div>
+              <div onClick="{{ nav.crequests }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;"><div style="width:21px;height:21px;border-radius:7px;border:1.6px solid #c2b09a;"></div><span style="font-size:10px;font-weight:600;color:#a08e76;">Requests</span></div>
+              <div onClick="{{ nav.cavailability }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;"><div style="width:21px;height:21px;border-radius:7px;border:1.6px solid #c2b09a;"></div><span style="font-size:10px;font-weight:600;color:#a08e76;">Calendar</span></div>
+              <div onClick="{{ nav.cearnings }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;"><div style="width:21px;height:21px;border-radius:7px;background:#241C13;"></div><span style="font-size:10px;font-weight:700;color:#241C13;">Earnings</span></div>
+              <div onClick="{{ nav.cprofile }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;"><div style="width:21px;height:21px;border-radius:7px;border:1.6px solid #c2b09a;"></div><span style="font-size:10px;font-weight:600;color:#a08e76;">Profile</span></div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!--APPEND-->
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== NAVIGATOR ===================== -->
+  <aside style="width:300px;flex:none;">
+    <span style="display:inline-block;font-family:monospace;font-size:11px;letter-spacing:.08em;color:#8a7b68;border:1px solid #ECDFCD;border-radius:999px;padding:5px 11px;">PROTOTYPE · CLAY</span>
+    <h1 style="font-family:'Schibsted Grotesk',sans-serif;font-weight:800;font-size:27px;letter-spacing:-.025em;color:#241C13;margin:16px 0 4px;">CoachLink</h1>
+    <p style="font-size:13.5px;line-height:1.5;color:#6e5f4d;margin:0 0 14px;">Click through the phone, or jump to any screen. <strong style="color:#241C13;">Now viewing:</strong> {{ routeLabel }}</p>
+
+    <div style="background:#FFFDF8;border:1px solid #ECDFCD;border-radius:18px;padding:16px;">
+      <div style="font-family:monospace;font-size:10.5px;letter-spacing:.1em;color:#a08e76;margin-bottom:9px;">PUBLIC &amp; AUTH</div>
+      <div style="display:flex;flex-wrap:wrap;gap:7px;">
+        <button onClick="{{ nav.splash }}" style="border:1px solid #ECDFCD;background:#F0E5D5;border-radius:9px;padding:7px 11px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12.5px;font-weight:600;color:#241C13;cursor:pointer;">Splash</button>
+        <button onClick="{{ nav.welcome }}" style="border:1px solid #ECDFCD;background:#F0E5D5;border-radius:9px;padding:7px 11px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12.5px;font-weight:600;color:#241C13;cursor:pointer;">Welcome</button>
+        <button onClick="{{ nav.signin }}" style="border:1px solid #ECDFCD;background:#F0E5D5;border-radius:9px;padding:7px 11px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12.5px;font-weight:600;color:#241C13;cursor:pointer;">Sign in</button>
+        <button onClick="{{ nav.signup }}" style="border:1px solid #ECDFCD;background:#F0E5D5;border-radius:9px;padding:7px 11px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12.5px;font-weight:600;color:#241C13;cursor:pointer;">Sign up</button>
+        <button onClick="{{ nav.forgot }}" style="border:1px solid #ECDFCD;background:#F0E5D5;border-radius:9px;padding:7px 11px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12.5px;font-weight:600;color:#241C13;cursor:pointer;">Forgot</button>
+        <button onClick="{{ nav.otp }}" style="border:1px solid #ECDFCD;background:#F0E5D5;border-radius:9px;padding:7px 11px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12.5px;font-weight:600;color:#241C13;cursor:pointer;">OTP</button>
+        <button onClick="{{ nav.role }}" style="border:1px solid #ECDFCD;background:#F0E5D5;border-radius:9px;padding:7px 11px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12.5px;font-weight:600;color:#241C13;cursor:pointer;">Role select</button>
+      </div>
+
+      <div style="font-family:monospace;font-size:10.5px;letter-spacing:.1em;color:#a08e76;margin:16px 0 9px;">ATHLETE &amp; PARENT</div>
+      <div style="display:flex;flex-wrap:wrap;gap:7px;">
+        <button onClick="{{ nav.home }}" style="border:1px solid #ECDFCD;background:#F0E5D5;border-radius:9px;padding:7px 11px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12.5px;font-weight:600;color:#241C13;cursor:pointer;">Home</button>
+        <button onClick="{{ nav.search }}" style="border:1px solid #ECDFCD;background:#F0E5D5;border-radius:9px;padding:7px 11px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12.5px;font-weight:600;color:#241C13;cursor:pointer;">Search</button>
+        <button onClick="{{ nav.listing }}" style="border:1px solid #ECDFCD;background:#F0E5D5;border-radius:9px;padding:7px 11px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12.5px;font-weight:600;color:#241C13;cursor:pointer;">Coach listing</button>
+        <button onClick="{{ nav.coach }}" style="border:1px solid #ECDFCD;background:#F0E5D5;border-radius:9px;padding:7px 11px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12.5px;font-weight:600;color:#241C13;cursor:pointer;">Coach details</button>
+        <button onClick="{{ nav.booking }}" style="border:1px solid #ECDFCD;background:#F0E5D5;border-radius:9px;padding:7px 11px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12.5px;font-weight:600;color:#241C13;cursor:pointer;">Booking</button>
+        <button onClick="{{ nav.payment }}" style="border:1px solid #ECDFCD;background:#F0E5D5;border-radius:9px;padding:7px 11px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12.5px;font-weight:600;color:#241C13;cursor:pointer;">Payment</button>
+        <button onClick="{{ nav.success }}" style="border:1px solid #ECDFCD;background:#F0E5D5;border-radius:9px;padding:7px 11px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12.5px;font-weight:600;color:#241C13;cursor:pointer;">Success</button>
+        <button onClick="{{ nav.bookings }}" style="border:1px solid #ECDFCD;background:#F0E5D5;border-radius:9px;padding:7px 11px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12.5px;font-weight:600;color:#241C13;cursor:pointer;">My bookings</button>
+        <button onClick="{{ nav.notifications }}" style="border:1px solid #ECDFCD;background:#F0E5D5;border-radius:9px;padding:7px 11px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12.5px;font-weight:600;color:#241C13;cursor:pointer;">Notifications</button>
+        <button onClick="{{ nav.profile }}" style="border:1px solid #ECDFCD;background:#F0E5D5;border-radius:9px;padding:7px 11px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12.5px;font-weight:600;color:#241C13;cursor:pointer;">Profile</button>
+        <button onClick="{{ nav.settings }}" style="border:1px solid #ECDFCD;background:#F0E5D5;border-radius:9px;padding:7px 11px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12.5px;font-weight:600;color:#241C13;cursor:pointer;">Settings</button>
+      </div>
+
+      <div style="font-family:monospace;font-size:10.5px;letter-spacing:.1em;color:#a08e76;margin:16px 0 9px;">COACH</div>
+      <div style="display:flex;flex-wrap:wrap;gap:7px;">
+        <button onClick="{{ nav.cdash }}" style="border:1px solid #ECDFCD;background:#F0E5D5;border-radius:9px;padding:7px 11px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12.5px;font-weight:600;color:#241C13;cursor:pointer;">Dashboard</button>
+        <button onClick="{{ nav.crequests }}" style="border:1px solid #ECDFCD;background:#F0E5D5;border-radius:9px;padding:7px 11px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12.5px;font-weight:600;color:#241C13;cursor:pointer;">Incoming requests</button>
+        <button onClick="{{ nav.crequest }}" style="border:1px solid #ECDFCD;background:#F0E5D5;border-radius:9px;padding:7px 11px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12.5px;font-weight:600;color:#241C13;cursor:pointer;">Request details</button>
+        <button onClick="{{ nav.cavailability }}" style="border:1px solid #ECDFCD;background:#F0E5D5;border-radius:9px;padding:7px 11px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12.5px;font-weight:600;color:#241C13;cursor:pointer;">Availability</button>
+        <button onClick="{{ nav.cprofile }}" style="border:1px solid #ECDFCD;background:#F0E5D5;border-radius:9px;padding:7px 11px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12.5px;font-weight:600;color:#241C13;cursor:pointer;">Profile mgmt</button>
+        <button onClick="{{ nav.cearnings }}" style="border:1px solid #ECDFCD;background:#F0E5D5;border-radius:9px;padding:7px 11px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12.5px;font-weight:600;color:#241C13;cursor:pointer;">Earnings</button>
+      </div>
+    </div>
+  </aside>
+
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { route: 'splash', stack: [], role: 'athlete', coach: 0, req: 0, paid: false };
+
+  renderVals() {
+    const coaches = [
+      { name: 'Tobi Adebayo',    sport: 'Swimming', venue: 'Festival Hotel Pool', price: '₦12,000', rating: '4.8', reviews: 32, dist: '1.2km', exp: '5 yrs', sessions: '286', initials: 'TA' },
+      { name: 'Chidinma Okafor', sport: 'Tennis',   venue: 'MU Court',            price: '₦15,000', rating: '4.9', reviews: 27, dist: '2.1km', exp: '7 yrs', sessions: '340', initials: 'CO' },
+      { name: 'Emeka Johnson',   sport: 'Swimming', venue: 'Golden Tulip Pool',   price: '₦9,000',  rating: '4.7', reviews: 18, dist: '3.0km', exp: '4 yrs', sessions: '150', initials: 'EJ' },
+      { name: 'Sarah Danjuma',   sport: 'Tennis',   venue: 'MU Court',            price: '₦18,000', rating: '4.6', reviews: 14, dist: '2.4km', exp: '6 yrs', sessions: '210', initials: 'SD' },
+      { name: 'Yusuf Bello',     sport: 'Swimming', venue: 'School Facilities',   price: '₦7,500',  rating: '4.5', reviews: 21, dist: '4.1km', exp: '3 yrs', sessions: '98',  initials: 'YB' },
+    ];
+
+    const myBookings = [
+      { coach: 'Tobi Adebayo',    initials: 'TA', sport: 'Swimming', date: 'Wed, 15 May', time: '8:00 AM', venue: 'Festival Hotel Pool', status: 'Pending',   price: '₦12,000' },
+      { coach: 'Chidinma Okafor', initials: 'CO', sport: 'Tennis',   date: 'Fri, 17 May', time: '5:00 PM', venue: 'MU Court',            status: 'Confirmed', price: '₦15,000' },
+      { coach: 'Emeka Johnson',   initials: 'EJ', sport: 'Swimming', date: 'Sat, 18 May', time: '7:00 AM', venue: 'Golden Tulip Pool',   status: 'Completed', price: '₦9,000' },
+    ];
+
+    const notifications = [
+      { title: 'Request accepted',  body: 'Tobi Adebayo accepted your session request. Complete payment to confirm.', time: '2m', unread: true },
+      { title: 'Payment confirmed', body: 'Your booking with Chidinma Okafor is confirmed for Fri, 17 May.',           time: '1h', unread: true },
+      { title: 'Leave a review',    body: 'How was your session with Emeka Johnson? Share your feedback.',             time: '1d', unread: false },
+      { title: 'Session reminder',  body: 'Your swimming session is tomorrow at 8:00 AM, Festival Hotel Pool.',        time: '2d', unread: false },
+    ];
+
+    const requests = [
+      { name: 'John Doe',   initials: 'JD', sport: 'Swimming', date: 'Wed, 15 May', time: '8:00 AM', venue: 'Festival Hotel Pool', note: 'Beginner — would like to learn freestyle and build confidence in deep water.', price: '₦12,000', child: '' },
+      { name: 'Amara Eze',  initials: 'AE', sport: 'Swimming', date: 'Thu, 16 May', time: '4:00 PM', venue: 'Festival Hotel Pool', note: 'Booking for my daughter. She is a complete beginner.', price: '₦12,000', child: 'Zara, age 9' },
+      { name: 'Bola Smith', initials: 'BS', sport: 'Swimming', date: 'Sat, 18 May', time: '7:00 AM', venue: 'Festival Hotel Pool', note: 'Intermediate — focus on endurance and lap times.', price: '₦12,000', child: '' },
+    ];
+
+    const earningsTx = [
+      { name: 'Chidinma — Tennis', date: 'Fri, 17 May', amount: '+₦15,000' },
+      { name: 'John Doe — Swimming', date: 'Wed, 15 May', amount: '+₦12,000' },
+      { name: 'Bola Smith — Swimming', date: 'Sat, 11 May', amount: '+₦12,000' },
+      { name: 'Payout to GTBank ••• 4021', date: 'Mon, 6 May', amount: '−₦180,000' },
+    ];
+
+    const coachRoutes = ['cdash', 'crequests', 'crequest', 'cavailability', 'cprofile', 'cearnings'];
+    const athleteRoutes = ['home', 'search', 'listing', 'coach', 'booking', 'payment', 'success', 'bookings', 'notifications', 'profile', 'settings'];
+
+    const go = (route) => this.setState(s => ({
+      route,
+      stack: [...s.stack, s.route],
+      role: coachRoutes.includes(route) ? 'coach'
+          : (athleteRoutes.includes(route) && s.role === 'coach') ? 'athlete'
+          : s.role,
+    }));
+    const back = () => this.setState(s => {
+      const st = [...s.stack];
+      const prev = st.pop() || 'home';
+      return { route: prev, stack: st };
+    });
+    const openCoach = (i) => this.setState(s => ({ coach: i, route: 'coach', stack: [...s.stack, s.route], role: s.role === 'coach' ? 'athlete' : s.role }));
+    const openReq = (i) => this.setState(s => ({ req: i, route: 'crequest', stack: [...s.stack, s.route], role: 'coach' }));
+
+    const routeNames = ['splash','welcome','signin','signup','forgot','otp','role', ...athleteRoutes, ...coachRoutes];
+    const nav = {};
+    routeNames.forEach(rt => { nav[rt] = () => go(rt); });
+    nav.roleAthlete = () => this.setState(s => ({ role: 'athlete', route: 'home', stack: [...s.stack, s.route] }));
+    nav.roleParent  = () => this.setState(s => ({ role: 'parent',  route: 'home', stack: [...s.stack, s.route] }));
+    nav.roleCoach   = () => this.setState(s => ({ role: 'coach',   route: 'cdash', stack: [...s.stack, s.route] }));
+    nav.sendRequest = () => this.setState(s => ({ paid: false, route: 'success', stack: [...s.stack, s.route] }));
+    nav.payNow      = () => this.setState(s => ({ paid: true,  route: 'success', stack: [...s.stack, s.route] }));
+
+    const labels = {
+      splash:'Splash', welcome:'Welcome', signin:'Sign in', signup:'Sign up', forgot:'Forgot password', otp:'OTP verification', role:'Role selection',
+      home:'Home', search:'Search coaches', listing:'Coach listing', coach:'Coach details', booking:'Booking request', payment:'Payment', success:'Booking success',
+      bookings:'My bookings', notifications:'Notifications', profile:'Profile', settings:'Settings',
+      cdash:'Coach · Dashboard', crequests:'Coach · Incoming requests', crequest:'Coach · Request details', cavailability:'Coach · Availability', cprofile:'Coach · Profile', cearnings:'Coach · Earnings',
+    };
+
+    const r = this.state.route;
+    const is = {};
+    routeNames.forEach(rt => { is[rt] = r === rt; });
+
+    return {
+      is, nav, back,
+      routeLabel: labels[r] || r,
+      role: this.state.role,
+      isParent: this.state.role === 'parent',
+      paid: this.state.paid,
+      notPaid: !this.state.paid,
+      coach: coaches[this.state.coach],
+      coaches: coaches.map((co, i) => ({ ...co, open: () => openCoach(i) })),
+      myBookings,
+      notifications,
+      requests: requests.map((rq, i) => ({ ...rq, open: () => openReq(i) })),
+      request: requests[this.state.req],
+      earningsTx,
+    };
+  }
+}
+</script>
+</body>
+</html>

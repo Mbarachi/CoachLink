@@ -11,79 +11,68 @@ const SplashPage: React.FC = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       if (isAuthenticated && user) {
-        if (user.role === 'COACH') {
-          history.replace('/coach/dashboard');
-        } else {
-          history.replace('/athlete/home');
-        }
+        history.replace(user.role === 'COACH' ? '/coach/dashboard' : '/athlete/home');
       } else {
         history.replace('/welcome');
       }
-    }, 2000);
+    }, 1800);
     return () => clearTimeout(timer);
   }, [isAuthenticated, user, history]);
 
   return (
     <IonPage>
-      <IonContent
-        fullscreen
-        style={{ '--background': 'var(--cl-primary)' } as React.CSSProperties}
-      >
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            height: '100%',
-            gap: 16,
-          }}
-        >
-          {/* Logo mark */}
-          <div
-            style={{
-              width: 80,
-              height: 80,
-              borderRadius: '50%',
-              background: 'rgba(255,255,255,0.25)',
+      <IonContent scrollY={false} style={{ '--background': 'var(--cl-ink)' } as React.CSSProperties}>
+        <div style={{
+          height: '100%',
+          background: 'var(--cl-ink)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          position: 'relative',
+          overflow: 'hidden',
+        }}>
+          {/* radial glow */}
+          <div style={{
+            position: 'absolute',
+            top: -50,
+            right: -50,
+            width: 240,
+            height: 240,
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(225,98,60,.22), transparent 68%)',
+            pointerEvents: 'none',
+          }} />
+
+          {/* brand mark */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 13 }}>
+            <div style={{
+              width: 46,
+              height: 46,
+              borderRadius: 14,
+              background: 'var(--cl-accent)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-            }}
-          >
-            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-              <circle cx="24" cy="24" r="22" stroke="white" strokeWidth="3" />
-              <path
-                d="M14 24 C14 18 19 14 24 14 C29 14 34 18 34 24"
-                stroke="white"
-                strokeWidth="3"
-                fill="none"
-                strokeLinecap="round"
-              />
-              <circle cx="24" cy="31" r="5" fill="white" />
-            </svg>
-          </div>
-          <h1
-            style={{
-              fontFamily: 'Poppins, sans-serif',
-              fontWeight: 700,
+            }}>
+              <div style={{ width: 19, height: 19, borderRadius: '50%', background: 'var(--cl-ink)' }} />
+            </div>
+            <span style={{
+              fontFamily: 'var(--cl-font-display)',
+              fontWeight: 800,
               fontSize: 32,
-              color: '#fff',
-              margin: 0,
-            }}
-          >
-            CoachLink
-          </h1>
-          <p
-            style={{
-              fontFamily: 'Poppins, sans-serif',
-              fontSize: 14,
-              color: 'rgba(255,255,255,0.85)',
-              margin: 0,
-            }}
-          >
-            Find the right coach. Train better.
-          </p>
+              color: 'var(--cl-canvas)',
+              letterSpacing: '-0.03em',
+            }}>CoachLink</span>
+          </div>
+
+          <span style={{
+            position: 'absolute',
+            bottom: 54,
+            fontSize: 13,
+            color: 'var(--cl-muted-2)',
+            fontFamily: 'var(--cl-font-body)',
+          }}>Tap to continue</span>
         </div>
       </IonContent>
     </IonPage>

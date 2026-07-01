@@ -1,103 +1,136 @@
-/* CoachLink Brand Tokens — Ionic v8 Custom Properties */
+/* ============================================================
+   CoachLink — Clay Design Tokens (single source of truth)
+   Swap only the hex values here to re-theme the whole app.
+   ============================================================ */
+
 :root {
-  /* Primary – brand teal */
-  --ion-color-primary: #17B8A6;
-  --ion-color-primary-rgb: 23, 184, 166;
-  --ion-color-primary-contrast: #ffffff;
-  --ion-color-primary-contrast-rgb: 255, 255, 255;
-  --ion-color-primary-shade: #14a292;
-  --ion-color-primary-tint: #2ebfaf;
+  /* ── Clay palette ──────────────────────────────────────── */
+  --cl-canvas:        #F3E9DC;   /* screen / page background   */
+  --cl-surface:       #FFFDF8;   /* cards, inputs, list rows   */
+  --cl-ink:           #241C13;   /* headings, body, dark fills */
+  --cl-accent:        #E1623C;   /* primary buttons, selected  */
+  --cl-on-accent:     #FFFFFF;   /* text/icons on accent fill  */
+  --cl-border:        #ECDFCD;   /* card / input borders       */
+  --cl-border-alt:    #E2D2BD;   /* dividers on canvas         */
+  --cl-subtle:        #F0E5D5;   /* muted chip bg, placeholders*/
+  --cl-muted-1:       #8a7b68;   /* secondary text             */
+  --cl-muted-2:       #a08e76;   /* tertiary / labels          */
+  --cl-muted-3:       #6e5f4d;   /* body-muted                 */
+  --cl-muted-line:    #c2b09a;   /* inactive icons, off-toggle */
+  --cl-photo-dark:    #2b2117;   /* image placeholder stripe A */
+  --cl-photo-dark-2:  #352818;   /* image placeholder stripe B */
+  --cl-success-text:  #2c6e2c;   /* Confirmed pill text        */
+  --cl-success-bg:    #e3f4e3;   /* Confirmed pill bg          */
+  --cl-destructive:   #c0392b;   /* Log out / danger           */
+  --cl-bfae97:        #bfae97;   /* pricing card subtext       */
 
-  /* Secondary – dark navy */
-  --ion-color-secondary: #2D3748;
-  --ion-color-secondary-rgb: 45, 55, 72;
-  --ion-color-secondary-contrast: #ffffff;
-  --ion-color-secondary-contrast-rgb: 255, 255, 255;
-  --ion-color-secondary-shade: #273040;
-  --ion-color-secondary-tint: #424b5a;
+  /* ── Typography ───────────────────────────────────────── */
+  --cl-font-display:  'Schibsted Grotesk', sans-serif;
+  --cl-font-body:     'Plus Jakarta Sans', sans-serif;
 
-  /* Tertiary – accent blue */
-  --ion-color-tertiary: #4A90E2;
-  --ion-color-tertiary-rgb: 74, 144, 226;
-  --ion-color-tertiary-contrast: #ffffff;
-  --ion-color-tertiary-contrast-rgb: 255, 255, 255;
-  --ion-color-tertiary-shade: #417ec7;
-  --ion-color-tertiary-tint: #5c9be5;
+  /* ── Radius scale ─────────────────────────────────────── */
+  --cl-radius-btn:    16px;
+  --cl-radius-input:  14px;
+  --cl-radius-card:   18px;
+  --cl-radius-chip:   999px;
+  --cl-radius-avatar: 16px;
+
+  /* ── Spacing ──────────────────────────────────────────── */
+  --cl-px:            22px;   /* screen horizontal padding    */
+  --cl-px-auth:       26px;   /* auth screen h-padding        */
+
+  /* ──────────────────────────────────────────────────────
+     Ionic CSS custom property overrides
+     All Ionic components inherit from these.
+  ─────────────────────────────────────────────────────── */
+  --ion-background-color:     var(--cl-canvas);
+  --ion-background-color-rgb: 243, 233, 220;
+  --ion-text-color:           var(--cl-ink);
+  --ion-font-family:          var(--cl-font-body);
+
+  /* Primary → accent */
+  --ion-color-primary:           var(--cl-accent);
+  --ion-color-primary-rgb:       225, 98, 60;
+  --ion-color-primary-contrast:  var(--cl-on-accent);
+  --ion-color-primary-shade:     #c9572f;
+  --ion-color-primary-tint:      #e47250;
+
+  /* Secondary → ink */
+  --ion-color-secondary:          var(--cl-ink);
+  --ion-color-secondary-rgb:      36, 28, 19;
+  --ion-color-secondary-contrast: var(--cl-canvas);
+  --ion-color-secondary-shade:    #1a1410;
+  --ion-color-secondary-tint:     #3a2f25;
+
+  /* Light → surface */
+  --ion-color-light:           var(--cl-surface);
+  --ion-color-light-rgb:       255, 253, 248;
+  --ion-color-light-contrast:  var(--cl-ink);
+  --ion-color-light-shade:     var(--cl-border);
+  --ion-color-light-tint:      #fffefa;
+
+  /* Medium → muted */
+  --ion-color-medium:          var(--cl-muted-1);
+  --ion-color-medium-rgb:      138, 123, 104;
+  --ion-color-medium-contrast: #ffffff;
+  --ion-color-medium-shade:    #7a6d5b;
+  --ion-color-medium-tint:     #9a8a78;
+
+  /* Danger → destructive */
+  --ion-color-danger:          var(--cl-destructive);
+  --ion-color-danger-rgb:      192, 57, 43;
+  --ion-color-danger-contrast: #ffffff;
 
   /* Success */
-  --ion-color-success: #6FCF97;
-  --ion-color-success-rgb: 111, 207, 151;
+  --ion-color-success:         var(--cl-success-text);
+  --ion-color-success-rgb:     44, 110, 44;
   --ion-color-success-contrast: #ffffff;
-  --ion-color-success-contrast-rgb: 255, 255, 255;
-  --ion-color-success-shade: #62b785;
-  --ion-color-success-tint: #7ed4a1;
 
-  /* Warning */
-  --ion-color-warning: #F4B740;
-  --ion-color-warning-rgb: 244, 183, 64;
-  --ion-color-warning-contrast: #000000;
-  --ion-color-warning-contrast-rgb: 0, 0, 0;
-  --ion-color-warning-shade: #d7a138;
-  --ion-color-warning-tint: #f5be53;
-
-  /* Danger */
-  --ion-color-danger: #EB5757;
-  --ion-color-danger-rgb: 235, 87, 87;
-  --ion-color-danger-contrast: #ffffff;
-  --ion-color-danger-contrast-rgb: 255, 255, 255;
-  --ion-color-danger-shade: #cf4c4c;
-  --ion-color-danger-tint: #ed6868;
-
-  /* Dark */
-  --ion-color-dark: #1F2937;
-  --ion-color-dark-rgb: 31, 41, 55;
-  --ion-color-dark-contrast: #ffffff;
-  --ion-color-dark-contrast-rgb: 255, 255, 255;
-  --ion-color-dark-shade: #1b2430;
-  --ion-color-dark-tint: #353e4b;
-
-  /* Medium */
-  --ion-color-medium: #64748B;
-  --ion-color-medium-rgb: 100, 116, 139;
-  --ion-color-medium-contrast: #ffffff;
-  --ion-color-medium-contrast-rgb: 255, 255, 255;
-  --ion-color-medium-shade: #58667b;
-  --ion-color-medium-tint: #748297;
-
-  /* Light */
-  --ion-color-light: #F8FAFC;
-  --ion-color-light-rgb: 248, 250, 252;
-  --ion-color-light-contrast: #1F2937;
-  --ion-color-light-contrast-rgb: 31, 41, 55;
-  --ion-color-light-shade: #dae0e8;
-  --ion-color-light-tint: #f9fbfc;
-
-  /* App-level background */
-  --ion-background-color: #F8FAFC;
-  --ion-background-color-rgb: 248, 250, 252;
-
-  --ion-font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-
-  /* CoachLink custom tokens */
-  --cl-primary: #6FCF97;
-  --cl-secondary: #2D3748;
-  --cl-accent: #4A90E2;
-  --cl-background: #F8FAFC;
-  --cl-surface: #FFFFFF;
-  --cl-success: #6FCF97;
-  --cl-warning: #F4B740;
-  --cl-error: #EB5757;
-  --cl-border: #E2E8F0;
-  --cl-text-main: #1F2937;
-  --cl-text-light: #64748B;
+  /* Legacy aliases kept for any component still referencing them */
+  --cl-primary:    var(--cl-accent);
+  --cl-secondary:  var(--cl-ink);
+  --cl-background: var(--cl-canvas);
+  --cl-error:      var(--cl-destructive);
+  --cl-border-color: var(--cl-border);
+  --cl-text-main:  var(--cl-ink);
+  --cl-text-light: var(--cl-muted-1);
 }
 
-/* Dark mode overrides */
-/* @media (prefers-color-scheme: dark) {
-  :root {
-    --ion-background-color: #0f0f1a;
-    --ion-background-color-rgb: 15, 15, 26;
-    --ion-text-color: #f4f5f8;
-    --ion-text-color-rgb: 244, 245, 248;
-  }
-} */
+/* ── Tab bar — Clay skin ──────────────────────────────────── */
+ion-tab-bar {
+  --background: var(--cl-canvas);
+  --border:     1px solid var(--cl-border);
+  height: 60px;
+}
+
+ion-tab-button {
+  --color:          var(--cl-muted-2);
+  --color-selected: var(--cl-ink);
+  font-family: var(--cl-font-body);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+ion-tab-button ion-label {
+  font-family: var(--cl-font-body) !important;
+  font-size: 10px !important;
+}
+
+ion-tab-button.tab-selected ion-label {
+  font-weight: 700;
+}
+
+/* ── Global resets ────────────────────────────────────────── */
+* { box-sizing: border-box; }
+
+ion-content {
+  --background: var(--cl-canvas);
+}
+
+/* IonInput / IonTextarea inside our styled wrappers */
+ion-input, ion-textarea {
+  --color:              var(--cl-ink);
+  --placeholder-color:  var(--cl-muted-2);
+  font-family:          var(--cl-font-body) !important;
+}

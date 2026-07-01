@@ -31,48 +31,40 @@ import SettingsPage from '@/pages/athlete/SettingsPage';
 const AthleteRoutes: React.FC = () => (
   <IonTabs>
     <IonRouterOutlet>
-      {/* ── Tab screens ──────────────────────────────────── */}
-      <Route path="/athlete/home" component={HomePage} exact />
-      <Route path="/athlete/search" component={SearchCoachesPage} exact />
-      <Route path="/athlete/bookings" component={MyBookingsPage} exact />
+      <Route path="/athlete/home"          component={HomePage}          exact />
+      <Route path="/athlete/search"        component={SearchCoachesPage} exact />
+      <Route path="/athlete/bookings"      component={MyBookingsPage}    exact />
       <Route path="/athlete/notifications" component={NotificationsPage} exact />
-      <Route path="/athlete/profile" component={ProfilePage} exact />
+      <Route path="/athlete/profile"       component={ProfilePage}       exact />
 
-      {/* ── Stack screens (no tab highlight) ─────────────── */}
-      <Route path='/athlete/coaches' component={CoachListingPage} exact />
-      <Route path="/athlete/coaches/:id" component={CoachDetailsPage} exact />
-      <Route path="/athlete/booking-request/:coachId" component={BookingRequestPage} exact />
-      <Route path="/athlete/payment/:bookingRequestId" component={PaymentPage} exact />
-      <Route path="/athlete/booking-success/:bookingId" component={BookingSuccessPage} exact />
-      <Route path="/athlete/settings" component={SettingsPage} exact />
+      <Route path="/athlete/coaches"                              component={CoachListingPage}   exact />
+      <Route path="/athlete/coaches/:id"                          component={CoachDetailsPage}   exact />
+      <Route path="/athlete/booking-request/:coachId"             component={BookingRequestPage} exact />
+      <Route path="/athlete/payment/:bookingRequestId"            component={PaymentPage}        exact />
+      <Route path="/athlete/booking-success/:bookingId"           component={BookingSuccessPage} exact />
+      <Route path="/athlete/settings"                             component={SettingsPage}       exact />
 
-      <Route exact path="/athlete">
-        <Redirect to="/athlete/home" />
-      </Route>
+      <Route exact path="/athlete"><Redirect to="/athlete/home" /></Route>
     </IonRouterOutlet>
 
     <IonTabBar slot="bottom">
-      <IonTabButton tab="home" href="/athlete/home">
+      <IonTabButton tab="home"          href="/athlete/home">
         <IonIcon icon={homeOutline} />
         <IonLabel>Home</IonLabel>
       </IonTabButton>
-
-      <IonTabButton tab="search" href="/athlete/search">
+      <IonTabButton tab="search"        href="/athlete/search">
         <IonIcon icon={searchOutline} />
         <IonLabel>Search</IonLabel>
       </IonTabButton>
-
-      <IonTabButton tab="bookings" href="/athlete/bookings">
+      <IonTabButton tab="bookings"      href="/athlete/bookings">
         <IonIcon icon={calendarOutline} />
         <IonLabel>Bookings</IonLabel>
       </IonTabButton>
-
       <IonTabButton tab="notifications" href="/athlete/notifications">
         <IonIcon icon={notificationsOutline} />
         <IonLabel>Alerts</IonLabel>
       </IonTabButton>
-
-      <IonTabButton tab="profile" href="/athlete/profile">
+      <IonTabButton tab="profile"       href="/athlete/profile">
         <IonIcon icon={personOutline} />
         <IonLabel>Profile</IonLabel>
       </IonTabButton>

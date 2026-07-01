@@ -1,247 +1,116 @@
-import { IonContent, IonPage, IonToast } from '@ionic/react';
-import { arrowBackOutline, locationOutline, timeOutline } from 'ionicons/icons';
-import { IonIcon } from '@ionic/react';
-import React, { useState } from 'react';
+import { IonContent, IonPage } from '@ionic/react';
+import React from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 
-import { AppButton } from '@/components/ui';
-import { CoachBadge, PriceTag, RatingDisplay } from '@/features/coaches/components';
-import { mockCoaches } from '@/features/coaches/data/mockCoaches';
-
-interface Params {
-  id: string;
-}
+const COACHES = [
+  { id: '0', name: 'Tobi Adebayo',    sport: 'Swimming', venue: 'Festival Hotel Pool', price: '₦12,000', rating: '4.8', reviews: 32, dist: '1.2km', exp: '5 yrs', sessions: '286', initials: 'TA' },
+  { id: '1', name: 'Chidinma Okafor', sport: 'Tennis',   venue: 'MU Court',            price: '₦15,000', rating: '4.9', reviews: 27, dist: '2.1km', exp: '7 yrs', sessions: '340', initials: 'CO' },
+  { id: '2', name: 'Emeka Johnson',   sport: 'Swimming', venue: 'Golden Tulip Pool',   price: '₦9,000',  rating: '4.7', reviews: 18, dist: '3.0km', exp: '4 yrs', sessions: '150', initials: 'EJ' },
+  { id: '3', name: 'Sarah Danjuma',   sport: 'Tennis',   venue: 'MU Court',            price: '₦18,000', rating: '4.6', reviews: 14, dist: '2.4km', exp: '6 yrs', sessions: '210', initials: 'SD' },
+  { id: '4', name: 'Yusuf Bello',     sport: 'Swimming', venue: 'School Facilities',   price: '₦7,500',  rating: '4.5', reviews: 21, dist: '4.1km', exp: '3 yrs', sessions: '98',  initials: 'YB' },
+];
 
 const CoachDetailsPage: React.FC = () => {
-  const { id } = useParams<Params>();
   const history = useHistory();
-  const [showToast, setShowToast] = useState(false);
-
-  const coach = mockCoaches.find((c) => c.id === id);
-
-  if (!coach) {
-    return (
-      <IonPage>
-        <IonContent className="ion-padding">
-          <p style={{ fontFamily: 'Poppins, sans-serif', color: 'var(--cl-text-light)', marginTop: 80, textAlign: 'center' }}>
-            Coach not found.
-          </p>
-        </IonContent>
-      </IonPage>
-    );
-  }
-
-  const fullName = `${coach.firstName} ${coach.lastName}`;
+  const { id } = useParams<{ id: string }>();
+  const coach = COACHES[Number(id)] ?? COACHES[0];
 
   return (
     <IonPage>
-      <IonContent
-        fullscreen
-        style={{ '--background': 'var(--cl-background)' } as React.CSSProperties}
-      >
-        {/* Back button */}
-        <button
-          onClick={() => history.goBack()}
-          style={{
-            position: 'absolute',
-            top: 16,
-            left: 16,
-            zIndex: 10,
-            background: 'rgba(255,255,255,0.9)',
-            border: '1px solid var(--cl-border)',
-            borderRadius: '50%',
-            width: 38,
-            height: 38,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-          }}
-        >
-          <IonIcon icon={arrowBackOutline} style={{ fontSize: 20, color: 'var(--cl-text-main)' }} />
-        </button>
+      <IonContent scrollY={false} style={{ '--background': 'var(--cl-canvas)' } as React.CSSProperties}>
+        <div style={{ height: '100%', display: 'flex', flexDirection: 'column', fontFamily: 'var(--cl-font-body)' }}>
 
-        <div style={{ paddingBottom: 100 }}>
-          {/* Hero avatar */}
-          <div
-            style={{
-              background: 'linear-gradient(160deg, #e6f7f5 0%, #f8fafc 100%)',
-              padding: '60px 24px 24px',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-            }}
-          >
-            <img
-              src={coach.profileImage}
-              alt={fullName}
-              style={{
-                width: 96,
-                height: 96,
-                borderRadius: '50%',
-                objectFit: 'cover',
-                border: '3px solid #fff',
-                boxShadow: '0 4px 16px rgba(0,0,0,0.12)',
-                marginBottom: 14,
-              }}
-            />
-
-            {/* Name + verified */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-              <h1
-                style={{
-                  fontFamily: 'Poppins, sans-serif',
-                  fontWeight: 700,
-                  fontSize: 20,
-                  color: 'var(--cl-text-main)',
-                  margin: 0,
-                }}
-              >
-                {fullName}
-              </h1>
-              {coach.isVerified && <CoachBadge label="Verified" variant="verified" />}
+          {/* scroll area */}
+          <div style={{ flex: 1, overflowY: 'auto' }}>
+            {/* photo header */}
+            <div style={{
+              height: 236,
+              backgroundImage: 'repeating-linear-gradient(125deg, var(--cl-photo-dark) 0 13px, var(--cl-photo-dark-2) 13px 26px)',
+              position: 'relative', display: 'flex', alignItems: 'flex-end', padding: 16,
+            }}>
+              <button onClick={() => history.goBack()} style={{ position: 'absolute', top: 50, left: 18, width: 38, height: 38, borderRadius: '50%', border: 'none', background: 'rgba(255,253,248,.92)', fontSize: 18, cursor: 'pointer' }}>‹</button>
+              <div style={{ position: 'absolute', top: 50, right: 18, width: 38, height: 38, borderRadius: '50%', border: 'none', background: 'rgba(255,253,248,.92)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17, cursor: 'pointer' }}>♡</div>
+              <span style={{ fontFamily: 'monospace', fontSize: 11, color: '#d8c6ab', background: 'rgba(0,0,0,.35)', padding: '4px 9px', borderRadius: 7 }}>coach · action photo</span>
             </div>
 
-            {/* Badges */}
-            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center', marginBottom: 10 }}>
-              <CoachBadge label={coach.sport} variant="sport" />
-              <CoachBadge label={`${coach.yearsOfExperience} yrs exp`} variant="experience" />
-            </div>
+            <div style={{ padding: '0 var(--cl-px)', marginTop: -36, position: 'relative' }}>
+              {/* avatar */}
+              <div style={{ width: 72, height: 72, borderRadius: 20, background: 'var(--cl-ink)', color: 'var(--cl-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--cl-font-display)', fontWeight: 700, fontSize: 24, border: '3px solid var(--cl-canvas)' }}>{coach.initials}</div>
 
-            {/* Rating */}
-            <RatingDisplay rating={coach.rating} reviewCount={coach.reviewCount} size="md" />
+              <h2 style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 800, fontSize: 25, letterSpacing: '-0.02em', color: 'var(--cl-ink)', margin: '14px 0 3px' }}>
+                {coach.name} <span style={{ color: 'var(--cl-accent)' }}>✓</span>
+              </h2>
+              <div style={{ fontSize: 14, color: 'var(--cl-muted-1)' }}>{coach.sport} Coach · {coach.venue}</div>
+              <div style={{ fontSize: 13.5, color: 'var(--cl-ink)', marginTop: 7, fontWeight: 600 }}>
+                ★ {coach.rating} <span style={{ color: 'var(--cl-muted-2)', fontWeight: 400 }}>({coach.reviews} reviews)</span>
+              </div>
+
+              {/* stat tiles */}
+              <div style={{ display: 'flex', gap: 9, marginTop: 18 }}>
+                {[{ val: coach.exp, label: 'Experience' }, { val: coach.sessions, label: 'Sessions' }, { val: coach.rating, label: 'Rating' }].map(s => (
+                  <div key={s.label} style={{ flex: 1, background: 'var(--cl-surface)', border: '1px solid var(--cl-border)', borderRadius: 15, padding: '13px 12px' }}>
+                    <div style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 700, fontSize: 19, color: 'var(--cl-ink)' }}>{s.val}</div>
+                    <div style={{ fontSize: 11, color: 'var(--cl-muted-1)', marginTop: 2 }}>{s.label}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* About */}
+              <h3 style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 700, fontSize: 15, color: 'var(--cl-ink)', margin: '22px 0 7px' }}>About</h3>
+              <p style={{ fontSize: 13.5, lineHeight: 1.55, color: 'var(--cl-muted-3)', margin: 0 }}>
+                Professional coach with {coach.exp} working with kids and adults across all levels. Focused on technique, endurance and steady, measurable progress.
+              </p>
+
+              {/* Training venue */}
+              <h3 style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 700, fontSize: 15, color: 'var(--cl-ink)', margin: '20px 0 7px' }}>Training venue</h3>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 11, background: 'var(--cl-surface)', border: '1px solid var(--cl-border)', borderRadius: 15, padding: '13px 14px' }}>
+                <div style={{ width: 34, height: 34, borderRadius: 10, background: 'var(--cl-subtle)', flexShrink: 0 }} />
+                <div>
+                  <div style={{ fontWeight: 600, fontSize: 13.5, color: 'var(--cl-ink)' }}>{coach.venue}</div>
+                  <div style={{ fontSize: 12, color: 'var(--cl-muted-1)' }}>Amuwo Odofin, Lagos · {coach.dist}</div>
+                </div>
+              </div>
+
+              {/* Pricing */}
+              <h3 style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 700, fontSize: 15, color: 'var(--cl-ink)', margin: '20px 0 7px' }}>Pricing</h3>
+              <div style={{ background: 'var(--cl-ink)', borderRadius: 17, padding: 16, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div>
+                  <div style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 700, fontSize: 22, color: 'var(--cl-surface)' }}>{coach.price}</div>
+                  <div style={{ fontSize: 12, color: '#bfae97', marginTop: 2 }}>per session</div>
+                </div>
+                <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--cl-surface)', background: 'var(--cl-accent)', padding: '6px 11px', borderRadius: 'var(--cl-radius-chip)' }}>Within range</span>
+              </div>
+
+              {/* Reviews */}
+              <h3 style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 700, fontSize: 15, color: 'var(--cl-ink)', margin: '20px 0 7px' }}>Reviews</h3>
+              <div style={{ background: 'var(--cl-surface)', border: '1px solid var(--cl-border)', borderRadius: 15, padding: 14 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <div style={{ width: 34, height: 34, borderRadius: '50%', background: 'var(--cl-subtle)', color: 'var(--cl-ink)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 13 }}>NK</div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: 700, fontSize: 13.5, color: 'var(--cl-ink)' }}>Ngozi K.</div>
+                    <div style={{ fontSize: 11, color: 'var(--cl-muted-1)' }}>★ 5.0 · 2 weeks ago</div>
+                  </div>
+                </div>
+                <p style={{ fontSize: 13, lineHeight: 1.5, color: 'var(--cl-muted-3)', margin: '10px 0 0' }}>
+                  Patient and encouraging. My son went from scared of water to swimming a full lap in a month.
+                </p>
+              </div>
+
+              <div style={{ height: 96 }} />
+            </div>
           </div>
 
-          {/* Details body */}
-          <div style={{ padding: '20px 24px 0' }}>
-
-            {/* Venue row */}
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 8,
-                background: '#fff',
-                border: '1px solid var(--cl-border)',
-                borderRadius: 12,
-                padding: '12px 16px',
-                marginBottom: 16,
-              }}
-            >
-              <IonIcon icon={locationOutline} style={{ fontSize: 18, color: 'var(--cl-primary)', flexShrink: 0 }} />
-              <div>
-                <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 11, color: 'var(--cl-text-light)', margin: 0 }}>
-                  Coaching Venue
-                </p>
-                <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 600, color: 'var(--cl-text-main)', margin: 0 }}>
-                  {coach.venue} · {coach.area}
-                </p>
-              </div>
+          {/* sticky footer */}
+          <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', gap: 14, padding: '14px var(--cl-px) 22px', background: 'var(--cl-canvas)', borderTop: '1px solid var(--cl-border)' }}>
+            <div>
+              <div style={{ fontWeight: 700, fontSize: 16, color: 'var(--cl-ink)' }}>{coach.price}</div>
+              <div style={{ fontSize: 11, color: 'var(--cl-muted-1)' }}>per session</div>
             </div>
-
-            {/* About */}
-            <section style={{ marginBottom: 20 }}>
-              <h3
-                style={{
-                  fontFamily: 'Poppins, sans-serif',
-                  fontWeight: 600,
-                  fontSize: 15,
-                  color: 'var(--cl-text-main)',
-                  margin: '0 0 8px',
-                }}
-              >
-                About Coach
-              </h3>
-              <p
-                style={{
-                  fontFamily: 'Poppins, sans-serif',
-                  fontSize: 14,
-                  color: 'var(--cl-text-light)',
-                  lineHeight: 1.65,
-                  margin: 0,
-                }}
-              >
-                {coach.bio}
-              </p>
-            </section>
-
-            {/* Pricing */}
-            <section
-              style={{
-                background: '#fff',
-                border: '1px solid var(--cl-border)',
-                borderRadius: 12,
-                padding: '14px 16px',
-                marginBottom: 20,
-              }}
-            >
-              <h3
-                style={{
-                  fontFamily: 'Poppins, sans-serif',
-                  fontWeight: 600,
-                  fontSize: 15,
-                  color: 'var(--cl-text-main)',
-                  margin: '0 0 6px',
-                }}
-              >
-                Pricing
-              </h3>
-              <PriceTag amount={coach.sessionRate} size="md" />
-            </section>
-
-            {/* Reviews Summary */}
-            <section
-              style={{
-                background: '#fff',
-                border: '1px solid var(--cl-border)',
-                borderRadius: 12,
-                padding: '14px 16px',
-                marginBottom: 28,
-              }}
-            >
-              <h3
-                style={{
-                  fontFamily: 'Poppins, sans-serif',
-                  fontWeight: 600,
-                  fontSize: 15,
-                  color: 'var(--cl-text-main)',
-                  margin: '0 0 8px',
-                }}
-              >
-                Reviews
-              </h3>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                <div style={{ textAlign: 'center' }}>
-                  <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 28, fontWeight: 700, color: 'var(--cl-text-main)', margin: 0 }}>
-                    {coach.rating.toFixed(1)}
-                  </p>
-                  <RatingDisplay rating={coach.rating} size="sm" />
-                </div>
-                <div style={{ width: 1, height: 40, background: 'var(--cl-border)' }} />
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <IonIcon icon={timeOutline} style={{ fontSize: 16, color: 'var(--cl-text-light)' }} />
-                  <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 13, color: 'var(--cl-text-light)', margin: 0 }}>
-                    {coach.reviewCount} reviews total
-                  </p>
-                </div>
-              </div>
-            </section>
-
-            {/* CTA */}
-            <AppButton onClick={() => setShowToast(true)}>
-              Request Session
-            </AppButton>
+            <button onClick={() => history.push(`/athlete/booking-request/${coach.id}`)} style={{ flex: 1, height: 54, border: 'none', borderRadius: 15, background: 'var(--cl-accent)', color: 'var(--cl-on-accent)', fontFamily: 'var(--cl-font-body)', fontWeight: 700, fontSize: 15.5, cursor: 'pointer' }}>
+              Request session
+            </button>
           </div>
         </div>
-
-        <IonToast
-          isOpen={showToast}
-          onDidDismiss={() => setShowToast(false)}
-          message="Booking requests will be available in Sprint 3"
-          duration={3000}
-          position="bottom"
-          color="medium"
-        />
       </IonContent>
     </IonPage>
   );

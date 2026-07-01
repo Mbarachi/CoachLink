@@ -1,178 +1,62 @@
 import { IonContent, IonPage } from '@ionic/react';
-import { arrowBackOutline } from 'ionicons/icons';
-import { IonIcon } from '@ionic/react';
-import React, { useMemo, useState } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import React from 'react';
+import { useHistory } from 'react-router-dom';
 
-import { CoachCard } from '@/features/coaches/components';
-import { mockCoaches } from '@/features/coaches/data/mockCoaches';
-
-type SortKey = 'rating' | 'price' | 'experience';
-
-const SORT_OPTIONS: { label: string; key: SortKey }[] = [
-  { label: 'Highest Rated', key: 'rating' },
-  { label: 'Lowest Price', key: 'price' },
-  { label: 'Most Experienced', key: 'experience' },
+const COACHES = [
+  { id: '0', name: 'Tobi Adebayo',    sport: 'Swimming', venue: 'Festival Hotel Pool', price: '₦12,000', rating: '4.8', dist: '1.2km', exp: '5 yrs', initials: 'TA' },
+  { id: '1', name: 'Chidinma Okafor', sport: 'Tennis',   venue: 'MU Court',            price: '₦15,000', rating: '4.9', dist: '2.1km', exp: '7 yrs', initials: 'CO' },
+  { id: '2', name: 'Emeka Johnson',   sport: 'Swimming', venue: 'Golden Tulip Pool',   price: '₦9,000',  rating: '4.7', dist: '3.0km', exp: '4 yrs', initials: 'EJ' },
+  { id: '3', name: 'Sarah Danjuma',   sport: 'Tennis',   venue: 'MU Court',            price: '₦18,000', rating: '4.6', dist: '2.4km', exp: '6 yrs', initials: 'SD' },
+  { id: '4', name: 'Yusuf Bello',     sport: 'Swimming', venue: 'School Facilities',   price: '₦7,500',  rating: '4.5', dist: '4.1km', exp: '3 yrs', initials: 'YB' },
 ];
-
-const sortChip = (active: boolean): React.CSSProperties => ({
-  display: 'inline-flex',
-  alignItems: 'center',
-  padding: '6px 14px',
-  borderRadius: 20,
-  fontFamily: 'Poppins, sans-serif',
-  fontSize: 12,
-  fontWeight: active ? 600 : 400,
-  background: active ? 'var(--cl-primary)' : '#fff',
-  color: active ? '#fff' : 'var(--cl-text-light)',
-  border: `1.5px solid ${active ? 'var(--cl-primary)' : 'var(--cl-border)'}`,
-  cursor: 'pointer',
-  whiteSpace: 'nowrap',
-  flexShrink: 0,
-  transition: 'all 0.15s',
-});
 
 const CoachListingPage: React.FC = () => {
   const history = useHistory();
-  const location = useLocation();
-  const [sortKey, setSortKey] = useState<SortKey>('rating');
-
-  const params = new URLSearchParams(location.search);
-  const sportFilter = params.get('sport') ?? '';
-  const venueFilter = params.get('venue') ?? '';
-  const queryFilter = (params.get('query') ?? '').toLowerCase();
-
-  const filtered = useMemo(() => {
-    let list = [...mockCoaches];
-
-    if (sportFilter) list = list.filter((c) => c.sport === sportFilter);
-    if (venueFilter) list = list.filter((c) => c.venue === venueFilter);
-    if (queryFilter) list = list.filter((c) => `${c.firstName} ${c.lastName}`.toLowerCase().includes(queryFilter));
-
-    switch (sortKey) {
-      case 'rating':
-        list.sort((a, b) => b.rating - a.rating);
-        break;
-      case 'price':
-        list.sort((a, b) => a.sessionRate - b.sessionRate);
-        break;
-      case 'experience':
-        list.sort((a, b) => b.yearsOfExperience - a.yearsOfExperience);
-        break;
-    }
-
-    return list;
-  }, [sportFilter, venueFilter, queryFilter, sortKey]);
-
-  const subtitle = [sportFilter, venueFilter].filter(Boolean).join(' · ') || 'All Coaches';
 
   return (
     <IonPage>
-      <IonContent
-        fullscreen
-        style={{ '--background': 'var(--cl-background)' } as React.CSSProperties}
-      >
-        <div style={{ padding: '56px 24px 100px' }}>
-          {/* Header */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 4 }}>
-            <button
-              onClick={() => history.goBack()}
-              style={{
-                background: 'none',
-                border: 'none',
-                padding: 0,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-              }}
-            >
-              <IonIcon
-                icon={arrowBackOutline}
-                style={{ fontSize: 22, color: 'var(--cl-text-main)' }}
-              />
-            </button>
-            <div>
-              <h2
-                style={{
-                  fontFamily: 'Poppins, sans-serif',
-                  fontWeight: 700,
-                  fontSize: 20,
-                  color: 'var(--cl-text-main)',
-                  margin: 0,
-                }}
-              >
-                Coaches
-              </h2>
-              <p
-                style={{
-                  fontFamily: 'Poppins, sans-serif',
-                  fontSize: 12,
-                  color: 'var(--cl-text-light)',
-                  margin: 0,
-                }}
-              >
-                {subtitle} · {filtered.length} found
-              </p>
+      <IonContent scrollY={false} style={{ '--background': 'var(--cl-canvas)' } as React.CSSProperties}>
+        <div style={{ height: '100%', display: 'flex', flexDirection: 'column', fontFamily: 'var(--cl-font-body)' }}>
+
+          <div style={{ padding: '0 var(--cl-px)', flexShrink: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 46 }}>
+              <span style={{ fontWeight: 700, fontSize: 14, color: 'var(--cl-ink)' }}>9:41</span>
+              <span style={{ width: 18, height: 11, border: '1.6px solid var(--cl-ink)', borderRadius: 3, display: 'block' }} />
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 13, padding: '4px 0 12px' }}>
+              <button onClick={() => history.goBack()} style={{ width: 38, height: 38, borderRadius: '50%', border: '1px solid var(--cl-border)', background: 'var(--cl-surface)', fontSize: 18, cursor: 'pointer' }}>‹</button>
+              <span style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 700, fontSize: 19, color: 'var(--cl-ink)' }}>Coaches near you</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span style={{ fontSize: 12.5, color: 'var(--cl-muted-1)' }}>{COACHES.length} results · Amuwo Odofin</span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12.5, fontWeight: 600, color: 'var(--cl-ink)', background: 'var(--cl-surface)', border: '1px solid var(--cl-border)', padding: '7px 13px', borderRadius: 'var(--cl-radius-chip)' }}>Sort: Nearest</span>
             </div>
           </div>
 
-          {/* Sort chips */}
-          <div
-            style={{
-              display: 'flex',
-              gap: 8,
-              overflowX: 'auto',
-              paddingBottom: 4,
-              margin: '16px 0 20px',
-            }}
-          >
-            {SORT_OPTIONS.map((opt) => (
-              <button
-                key={opt.key}
-                onClick={() => setSortKey(opt.key)}
-                style={sortChip(sortKey === opt.key)}
-              >
-                {opt.label}
-              </button>
+          <div style={{ flex: 1, overflowY: 'auto', padding: '14px var(--cl-px) 12px' }}>
+            {COACHES.map(co => (
+              <div key={co.id} onClick={() => history.push(`/athlete/coaches/${co.id}`)} style={{ display: 'flex', gap: 13, padding: 14, marginBottom: 11, borderRadius: 18, background: 'var(--cl-surface)', border: '1px solid var(--cl-border)', cursor: 'pointer' }}>
+                <div style={{
+                  width: 62, height: 62, borderRadius: 16, flexShrink: 0,
+                  backgroundImage: 'repeating-linear-gradient(125deg, var(--cl-photo-dark) 0 9px, var(--cl-photo-dark-2) 9px 18px)',
+                  display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-start',
+                }}>
+                  <span style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 700, fontSize: 15, color: 'var(--cl-accent)', padding: '6px 8px' }}>{co.initials}</span>
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span style={{ fontWeight: 700, fontSize: 15, color: 'var(--cl-ink)' }}>{co.name}</span>
+                    <span style={{ fontWeight: 700, fontSize: 13.5, color: 'var(--cl-ink)' }}>{co.price}</span>
+                  </div>
+                  <div style={{ fontSize: 12.5, color: 'var(--cl-muted-1)', marginTop: 3 }}>{co.sport} Coach · {co.exp} exp</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginTop: 8 }}>
+                    <span style={{ fontSize: 11.5, fontWeight: 600, color: 'var(--cl-ink)', background: 'var(--cl-subtle)', padding: '4px 9px', borderRadius: 7 }}>★ {co.rating}</span>
+                    <span style={{ fontSize: 11.5, color: 'var(--cl-muted-1)' }}>{co.venue} · {co.dist}</span>
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
-
-          {/* Coach cards */}
-          {filtered.length === 0 ? (
-            <div
-              style={{
-                textAlign: 'center',
-                padding: '48px 0',
-              }}
-            >
-              <p
-                style={{
-                  fontFamily: 'Poppins, sans-serif',
-                  fontSize: 15,
-                  color: 'var(--cl-text-light)',
-                }}
-              >
-                No coaches found for your filters.
-              </p>
-              <button
-                onClick={() => history.push('/athlete/search')}
-                style={{
-                  marginTop: 12,
-                  background: 'none',
-                  border: 'none',
-                  fontFamily: 'Poppins, sans-serif',
-                  fontSize: 14,
-                  color: 'var(--cl-primary)',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                }}
-              >
-                Adjust Filters
-              </button>
-            </div>
-          ) : (
-            filtered.map((coach) => <CoachCard key={coach.id} coach={coach} />)
-          )}
         </div>
       </IonContent>
     </IonPage>

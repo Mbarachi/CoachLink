@@ -1,251 +1,78 @@
 import { IonContent, IonPage } from '@ionic/react';
-import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  mailOutline,
-  personOutline,
-  callOutline,
-  lockClosedOutline,
-} from 'ionicons/icons';
-import React from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { z } from 'zod';
 
-import { AppButton, AppInput, AppPageHeader } from '@/components/ui';
-import { useAuthStore } from '@/store/auth.store';
+import { authService } from '@/services/auth.service';
 
-const signUpSchema = z
-  .object({
-    firstName: z.string().min(1, 'First name is required'),
-    lastName: z.string().min(1, 'Last name is required'),
-    email: z.string().email('Enter a valid email'),
-    phoneNumber: z.string().min(7, 'Enter a valid phone number'),
-    password: z.string().min(6, 'Password must be at least 6 characters'),
-    confirmPassword: z.string().min(1, 'Please confirm your password'),
-  })
-  .refine((d) => d.password === d.confirmPassword, {
-    message: 'Passwords do not match',
-    path: ['confirmPassword'],
-  });
-
-type SignUpForm = z.infer<typeof signUpSchema>;
+const S = {
+  label: { fontSize: 12.5, fontWeight: 600, color: 'var(--cl-ink)', marginBottom: 7, display: 'block' } as React.CSSProperties,
+  input: {
+    width: '100%', height: 52, borderRadius: 'var(--cl-radius-input)',
+    border: '1px solid var(--cl-border)', background: 'var(--cl-surface)',
+    padding: '0 15px', fontFamily: 'var(--cl-font-body)', fontSize: 14.5,
+    color: 'var(--cl-ink)', outline: 'none', boxSizing: 'border-box',
+  } as React.CSSProperties,
+};
 
 const SignUpPage: React.FC = () => {
   const history = useHistory();
-  const setAuth = useAuthStore((s) => s.setAuth);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<SignUpForm>({
-    resolver: zodResolver(signUpSchema),
-    defaultValues: {
-      firstName: '',
-      lastName: '',
-      email: '',
-      phoneNumber: '',
-      password: '',
-      confirmPassword: '',
-    },
-  });
-
-  const onSubmit = (data: SignUpForm) => {
-    // Mock: store temp user without role yet
-    setAuth(
-      {
-        id: `mock-${Date.now()}`,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
-        phoneNumber: data.phoneNumber,
-        role: 'ATHLETE', // will be overwritten on role selection
-        profileImage: null,
-        isVerified: false,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-      'mock-token',
-    );
-    history.push('/auth/role');
+  const handleSignUp = async () => {
+    if (!name || !email || !password) { setError('Please fill in all fields.'); return; }
+    setLoading(true);
+    setError('');
+    try {
+      const [firstName, ...rest] = name.trim().split(' ');
+      await authService.signUp({ firstName, lastName: rest.join(' ') || '-', email, password, phoneNumber: '' });
+      history.push('/auth/otp');
+    } catch {
+      setError('Could not create account. Try a different email.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <IonPage>
-      <AppPageHeader backHref="/welcome" />
-      <IonContent
-        fullscreen
-        style={{ '--background': 'var(--cl-background)' } as React.CSSProperties}
-      >
-        <div style={{ padding: '8px 24px 40px' }}>
-          <h2
-            style={{
-              fontFamily: 'Poppins, sans-serif',
-              fontWeight: 700,
-              fontSize: 24,
-              color: 'var(--cl-text-main)',
-              margin: '0 0 4px',
-            }}
-          >
-            Create your account
-          </h2>
-          <p
-            style={{
-              fontFamily: 'Poppins, sans-serif',
-              fontSize: 14,
-              color: 'var(--cl-text-light)',
-              margin: '0 0 28px',
-            }}
-          >
-            Join CoachLink to get started
-          </p>
+      <IonContent scrollY={false} style={{ '--background': 'var(--cl-canvas)' } as React.CSSProperties}>
+        <div style={{ height: '100%', display: 'flex', flexDirection: 'column', padding: '0 var(--cl-px-auth)', fontFamily: 'var(--cl-font-body)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 46, flexShrink: 0 }}>
+            <span style={{ fontWeight: 700, fontSize: 14, color: 'var(--cl-ink)' }}>9:41</span>
+            <span style={{ width: 18, height: 11, border: '1.6px solid var(--cl-ink)', borderRadius: 3, display: 'block' }} />
+          </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} noValidate>
-            {/* Name row */}
-            <div style={{ display: 'flex', gap: 12 }}>
-              <div style={{ flex: 1 }}>
-                <Controller
-                  name="firstName"
-                  control={control}
-                  render={({ field }) => (
-                    <AppInput
-                      placeholder="First Name"
-                      icon={personOutline}
-                      value={field.value}
-                      onIonInput={(e) => field.onChange((e.target as HTMLInputElement).value)}
-                      onIonBlur={field.onBlur}
-                      error={errors.firstName?.message}
-                    />
-                  )}
-                />
-              </div>
-              <div style={{ flex: 1 }}>
-                <Controller
-                  name="lastName"
-                  control={control}
-                  render={({ field }) => (
-                    <AppInput
-                      placeholder="Last Name"
-                      icon={personOutline}
-                      value={field.value}
-                      onIonInput={(e) => field.onChange((e.target as HTMLInputElement).value)}
-                      onIonBlur={field.onBlur}
-                      error={errors.lastName?.message}
-                    />
-                  )}
-                />
-              </div>
-            </div>
+          <button onClick={() => history.goBack()} style={{ width: 40, height: 40, borderRadius: '50%', border: '1px solid var(--cl-border)', background: 'var(--cl-surface)', fontSize: 18, cursor: 'pointer', marginTop: 6, flexShrink: 0 }}>‹</button>
 
-            <Controller
-              name="email"
-              control={control}
-              render={({ field }) => (
-                <AppInput
-                  placeholder="Email"
-                  type="email"
-                  icon={mailOutline}
-                  value={field.value}
-                  onIonInput={(e) => field.onChange((e.target as HTMLInputElement).value)}
-                  onIonBlur={field.onBlur}
-                  error={errors.email?.message}
-                  autocomplete="email"
-                />
-              )}
-            />
+          <h1 style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 800, fontSize: 32, letterSpacing: '-0.03em', color: 'var(--cl-ink)', margin: '22px 0 6px' }}>Create account</h1>
+          <p style={{ fontSize: 14.5, color: 'var(--cl-muted-1)', margin: '0 0 22px' }}>Join CoachLink in under a minute.</p>
 
-            <Controller
-              name="phoneNumber"
-              control={control}
-              render={({ field }) => (
-                <AppInput
-                  placeholder="Phone Number"
-                  type="tel"
-                  icon={callOutline}
-                  value={field.value}
-                  onIonInput={(e) => field.onChange((e.target as HTMLInputElement).value)}
-                  onIonBlur={field.onBlur}
-                  error={errors.phoneNumber?.message}
-                  autocomplete="tel"
-                />
-              )}
-            />
+          <label style={S.label}>Full name</label>
+          <input value={name} onChange={e => setName(e.target.value)} placeholder="Ada Obi" style={{ ...S.input, marginBottom: 15 }} />
 
-            <Controller
-              name="password"
-              control={control}
-              render={({ field }) => (
-                <AppInput
-                  placeholder="Password"
-                  type="password"
-                  icon={lockClosedOutline}
-                  value={field.value}
-                  onIonInput={(e) => field.onChange((e.target as HTMLInputElement).value)}
-                  onIonBlur={field.onBlur}
-                  error={errors.password?.message}
-                  autocomplete="new-password"
-                />
-              )}
-            />
+          <label style={S.label}>Email</label>
+          <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" style={{ ...S.input, marginBottom: 15 }} />
 
-            <Controller
-              name="confirmPassword"
-              control={control}
-              render={({ field }) => (
-                <AppInput
-                  placeholder="Confirm Password"
-                  type="password"
-                  icon={lockClosedOutline}
-                  value={field.value}
-                  onIonInput={(e) => field.onChange((e.target as HTMLInputElement).value)}
-                  onIonBlur={field.onBlur}
-                  error={errors.confirmPassword?.message}
-                  autocomplete="new-password"
-                />
-              )}
-            />
+          <label style={S.label}>Password</label>
+          <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Create a password" style={S.input} />
 
-            {/* Terms */}
-            <p
-              style={{
-                fontFamily: 'Poppins, sans-serif',
-                fontSize: 12,
-                color: 'var(--cl-text-light)',
-                textAlign: 'center',
-                margin: '4px 0 20px',
-              }}
-            >
-              I agree to the{' '}
-              <span style={{ color: 'var(--cl-accent)', cursor: 'pointer' }}>
-                Terms of Service
-              </span>{' '}
-              and{' '}
-              <span style={{ color: 'var(--cl-accent)', cursor: 'pointer' }}>
-                Privacy Policy
-              </span>
-            </p>
+          {error && <p style={{ fontSize: 12.5, color: 'var(--cl-destructive)', marginTop: 8 }}>{error}</p>}
 
-            <AppButton type="submit" loading={isSubmitting}>
-              Sign Up
-            </AppButton>
-          </form>
+          <button onClick={handleSignUp} disabled={loading} style={{
+            marginTop: 22, border: 'none', height: 56, borderRadius: 'var(--cl-radius-btn)',
+            background: 'var(--cl-accent)', color: 'var(--cl-on-accent)',
+            fontFamily: 'var(--cl-font-body)', fontWeight: 700, fontSize: 16, cursor: 'pointer', width: '100%',
+            opacity: loading ? 0.7 : 1,
+          }}>{loading ? 'Creating…' : 'Continue'}</button>
 
-          <p
-            style={{
-              fontFamily: 'Poppins, sans-serif',
-              fontSize: 14,
-              color: 'var(--cl-text-light)',
-              textAlign: 'center',
-              marginTop: 24,
-            }}
-          >
+          <div style={{ flex: 1 }} />
+          <p style={{ textAlign: 'center', fontSize: 13.5, color: 'var(--cl-muted-1)', marginBottom: 24 }}>
             Already have an account?{' '}
-            <span
-              onClick={() => history.push('/auth/signin')}
-              style={{ color: 'var(--cl-accent)', fontWeight: 600, cursor: 'pointer' }}
-            >
-              Sign In
-            </span>
+            <span onClick={() => history.push('/auth/signin')} style={{ color: 'var(--cl-ink)', fontWeight: 700, cursor: 'pointer' }}>Sign in</span>
           </p>
         </div>
       </IonContent>

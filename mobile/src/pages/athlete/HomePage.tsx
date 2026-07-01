@@ -1,225 +1,114 @@
-import { IonContent, IonIcon, IonPage } from '@ionic/react';
-import { searchOutline, calendarOutline, notificationsOutline } from 'ionicons/icons';
+import { IonContent, IonPage } from '@ionic/react';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { AppCard } from '@/components/ui';
-import { useAuthStore } from '@/store/auth.store';
+const COACHES = [
+  { id: '0', name: 'Tobi Adebayo',    sport: 'Swimming', venue: 'Festival Hotel Pool', price: '₦12,000', rating: '4.8', dist: '1.2km', initials: 'TA' },
+  { id: '1', name: 'Chidinma Okafor', sport: 'Tennis',   venue: 'MU Court',            price: '₦15,000', rating: '4.9', dist: '2.1km', initials: 'CO' },
+  { id: '2', name: 'Emeka Johnson',   sport: 'Swimming', venue: 'Golden Tulip Pool',   price: '₦9,000',  rating: '4.7', dist: '3.0km', initials: 'EJ' },
+  { id: '3', name: 'Sarah Danjuma',   sport: 'Tennis',   venue: 'MU Court',            price: '₦18,000', rating: '4.6', dist: '2.4km', initials: 'SD' },
+  { id: '4', name: 'Yusuf Bello',     sport: 'Swimming', venue: 'School Facilities',   price: '₦7,500',  rating: '4.5', dist: '4.1km', initials: 'YB' },
+];
 
 const HomePage: React.FC = () => {
   const history = useHistory();
-  const user = useAuthStore((s) => s.user);
-
-  const firstName = user?.firstName ?? 'there';
-  const role = user?.role === 'PARENT' ? 'Parent' : 'Athlete';
 
   return (
     <IonPage>
-      <IonContent
-        fullscreen
-        style={{ '--background': 'var(--cl-background)' } as React.CSSProperties}
-      >
-        <div style={{ padding: '56px 24px 100px' }}>
-          {/* Top bar */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-            <div>
-              <p
-                style={{
-                  fontFamily: 'Poppins, sans-serif',
-                  fontSize: 13,
-                  color: 'var(--cl-text-light)',
-                  margin: 0,
-                }}
-              >
-                Lagos, Nigeria
-              </p>
-              <h2
-                style={{
-                  fontFamily: 'Poppins, sans-serif',
-                  fontWeight: 700,
-                  fontSize: 22,
-                  color: 'var(--cl-text-main)',
-                  margin: '2px 0 0',
-                }}
-              >
-                Hello, {firstName}! 👋
-              </h2>
-              <p
-                style={{
-                  fontFamily: 'Poppins, sans-serif',
-                  fontSize: 13,
-                  color: 'var(--cl-text-light)',
-                  margin: '2px 0 0',
-                }}
-              >
-                Welcome back
-              </p>
-            </div>
-            <div
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: '50%',
-                background: '#e8f8f0',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-              }}
-            >
-              <IonIcon icon={notificationsOutline} style={{ fontSize: 22, color: 'var(--cl-primary)' }} />
-            </div>
-          </div>
+      <IonContent scrollY={false} style={{ '--background': 'var(--cl-canvas)' } as React.CSSProperties}>
+        <div style={{ height: '100%', display: 'flex', flexDirection: 'column', fontFamily: 'var(--cl-font-body)' }}>
 
-          {/* Info cards */}
-          <div style={{ display: 'flex', gap: 14, marginBottom: 28 }}>
-            <div
-              style={{
-                flex: 1,
-                background: 'var(--cl-surface)',
-                borderRadius: 16,
-                padding: '16px',
-                border: '1px solid var(--cl-border)',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-                <div
-                  style={{
-                    width: 36,
-                    height: 36,
-                    borderRadius: 10,
-                    background: '#e8f8f0',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  {/* Person / human */}
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--cl-primary)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="7" r="4" />
-                    <path d="M4 21 C4 17 7.6 14 12 14 C16.4 14 20 17 20 21" />
-                  </svg>
-                </div>
-                <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 12, color: 'var(--cl-text-light)', margin: 0 }}>
-                  Your Role
-                </p>
+          {/* fixed header */}
+          <div style={{ padding: '0 var(--cl-px)', flexShrink: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 46 }}>
+              <span style={{ fontWeight: 700, fontSize: 14, color: 'var(--cl-ink)' }}>9:41</span>
+              <span style={{ width: 18, height: 11, border: '1.6px solid var(--cl-ink)', borderRadius: 3, display: 'block' }} />
+            </div>
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginTop: 4 }}>
+              <div>
+                <div style={{ fontFamily: 'monospace', fontSize: 10, letterSpacing: '.1em', color: 'var(--cl-muted-2)' }}>YOUR AREA</div>
+                <div style={{ fontWeight: 700, fontSize: 16, color: 'var(--cl-ink)', marginTop: 2 }}>Amuwo Odofin, Lagos</div>
               </div>
-              <p style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 600, fontSize: 15, color: 'var(--cl-text-main)', margin: 0 }}>
-                {role}
-              </p>
-            </div>
-
-            <div
-              style={{
-                flex: 1,
-                background: 'var(--cl-surface)',
-                borderRadius: 16,
-                padding: '16px',
-                border: '1px solid var(--cl-border)',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-                <div
-                  style={{
-                    width: 36,
-                    height: 36,
-                    borderRadius: 10,
-                    background: '#e8f8f0',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  {/* Swimming – swimmer with waves */}
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--cl-primary)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="17" cy="3.5" r="1.8" />
-                    <path d="M2 11 C5 9 8 13 11 11 L17 7" />
-                    <path d="M14 10 L16 15" />
-                    <path d="M2 16 Q5.5 14 9 16 Q12.5 18 16 16 Q19 14 22 16" />
-                    <path d="M2 19.5 Q5.5 17.5 9 19.5 Q12.5 21.5 16 19.5 Q19 17.5 22 19.5" />
-                  </svg>
-                </div>
-                <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 12, color: 'var(--cl-text-light)', margin: 0 }}>
-                  Preferred Sport
-                </p>
+              <div
+                onClick={() => history.push('/athlete/notifications')}
+                style={{
+                  width: 40, height: 40, borderRadius: 13,
+                  border: '1px solid var(--cl-border)', background: 'var(--cl-surface)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  position: 'relative', cursor: 'pointer',
+                }}
+              >
+                <div style={{ width: 14, height: 14, border: '1.8px solid var(--cl-ink)', borderRadius: '4px 4px 7px 7px' }} />
+                <div style={{ position: 'absolute', top: 9, right: 10, width: 7, height: 7, borderRadius: '50%', background: 'var(--cl-accent)', border: '1.5px solid var(--cl-surface)' }} />
               </div>
-              <p style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 600, fontSize: 15, color: 'var(--cl-text-main)', margin: 0 }}>
-                Swimming
-              </p>
             </div>
-          </div>
-
-          {/* Upcoming Bookings */}
-          <div
-            style={{
-              background: 'var(--cl-surface)',
-              borderRadius: 16,
-              padding: '16px',
-              border: '1px solid var(--cl-border)',
-              marginBottom: 28,
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-              <IonIcon icon={calendarOutline} style={{ fontSize: 20, color: 'var(--cl-text-light)' }} />
-              <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 13, color: 'var(--cl-text-light)', margin: 0 }}>
-                Upcoming Bookings
-              </p>
-            </div>
-            <p style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 700, fontSize: 28, color: 'var(--cl-text-main)', margin: 0 }}>
-              0
-            </p>
-            <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 13, color: 'var(--cl-text-light)', margin: '4px 0 0' }}>
-              You have no upcoming bookings yet.
-            </p>
-          </div>
-
-          {/* Quick Actions */}
-          <p
-            style={{
-              fontFamily: 'Poppins, sans-serif',
-              fontWeight: 600,
-              fontSize: 16,
-              color: 'var(--cl-text-main)',
-              margin: '0 0 14px',
-            }}
-          >
-            Quick Actions
-          </p>
-          <div style={{ display: 'flex', gap: 14 }}>
-            <AppCard
+            <h1 style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 800, fontSize: 29, letterSpacing: '-0.03em', color: 'var(--cl-ink)', margin: '15px 0 12px' }}>Find a coach</h1>
+            <div
               onClick={() => history.push('/athlete/search')}
-              style={{ flex: 1, textAlign: 'center', padding: '20px 12px' }}
+              style={{ display: 'flex', alignItems: 'center', gap: 10, height: 50, borderRadius: 15, background: 'var(--cl-surface)', border: '1px solid var(--cl-border)', padding: '0 15px', cursor: 'pointer' }}
             >
-              <IonIcon icon={searchOutline} style={{ fontSize: 28, color: 'var(--cl-primary)' }} />
-              <p
-                style={{
-                  fontFamily: 'Poppins, sans-serif',
-                  fontSize: 13,
-                  fontWeight: 500,
-                  color: 'var(--cl-text-main)',
-                  margin: '8px 0 0',
-                }}
-              >
-                Find Coaches
-              </p>
-            </AppCard>
-            <AppCard
-              onClick={() => history.push('/athlete/bookings')}
-              style={{ flex: 1, textAlign: 'center', padding: '20px 12px' }}
-            >
-              <IonIcon icon={calendarOutline} style={{ fontSize: 28, color: 'var(--cl-primary)' }} />
-              <p
-                style={{
-                  fontFamily: 'Poppins, sans-serif',
-                  fontSize: 13,
-                  fontWeight: 500,
-                  color: 'var(--cl-text-main)',
-                  margin: '8px 0 0',
-                }}
-              >
-                My Bookings
-              </p>
-            </AppCard>
+              <div style={{ width: 14, height: 14, borderRadius: '50%', border: '2px solid var(--cl-muted-line)' }} />
+              <span style={{ color: 'var(--cl-muted-2)', fontSize: 14.5 }}>Search coaches or venues</span>
+            </div>
+          </div>
+
+          {/* scroll body */}
+          <div style={{ flex: 1, overflowY: 'auto', padding: '16px 0 12px' }}>
+            {/* Browse by sport */}
+            <div style={{ padding: '0 var(--cl-px)' }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 11 }}>
+                <span style={{ fontWeight: 700, fontSize: 15, color: 'var(--cl-ink)' }}>Browse by sport</span>
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: 11, overflowX: 'auto', padding: '0 var(--cl-px) 4px' }}>
+              {/* Swimming */}
+              <div onClick={() => history.push('/athlete/search')} style={{ flex: 'none', width: 138, height: 92, borderRadius: 18, background: 'var(--cl-ink)', padding: 14, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', cursor: 'pointer' }}>
+                <div style={{ width: 26, height: 26, borderRadius: '50%', background: 'var(--cl-accent)' }} />
+                <div>
+                  <div style={{ color: 'var(--cl-surface)', fontWeight: 700, fontSize: 15 }}>Swimming</div>
+                  <div style={{ color: 'var(--cl-muted-2)', fontSize: 11.5 }}>18 coaches</div>
+                </div>
+              </div>
+              {/* Tennis */}
+              <div onClick={() => history.push('/athlete/search')} style={{ flex: 'none', width: 138, height: 92, borderRadius: 18, background: 'var(--cl-accent)', padding: 14, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', cursor: 'pointer' }}>
+                <div style={{ width: 26, height: 26, borderRadius: '50%', background: 'var(--cl-ink)' }} />
+                <div>
+                  <div style={{ color: 'var(--cl-ink)', fontWeight: 700, fontSize: 15 }}>Tennis</div>
+                  <div style={{ color: 'var(--cl-surface)', fontSize: 11.5 }}>11 coaches</div>
+                </div>
+              </div>
+              {/* All venues */}
+              <div onClick={() => history.push('/athlete/search')} style={{ flex: 'none', width: 138, height: 92, borderRadius: 18, background: 'var(--cl-surface)', border: '1px solid var(--cl-border)', padding: 14, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', cursor: 'pointer' }}>
+                <div style={{ width: 26, height: 26, borderRadius: 8, background: 'var(--cl-subtle)' }} />
+                <div>
+                  <div style={{ color: 'var(--cl-ink)', fontWeight: 700, fontSize: 15 }}>All venues</div>
+                  <div style={{ color: 'var(--cl-muted-2)', fontSize: 11.5 }}>5 nearby</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Top coaches */}
+            <div style={{ padding: '20px var(--cl-px) 0' }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 4 }}>
+                <span style={{ fontWeight: 700, fontSize: 15, color: 'var(--cl-ink)' }}>Top coaches near you</span>
+                <span onClick={() => history.push('/athlete/coaches')} style={{ fontSize: 12.5, color: 'var(--cl-ink)', fontWeight: 600, cursor: 'pointer' }}>See all</span>
+              </div>
+            </div>
+            <div style={{ padding: '0 var(--cl-px)' }}>
+              {COACHES.map((co) => (
+                <div key={co.id} onClick={() => history.push(`/athlete/coaches/${co.id}`)} style={{ display: 'flex', alignItems: 'center', gap: 13, padding: '14px 0', borderBottom: '1px solid var(--cl-border)', cursor: 'pointer' }}>
+                  <div style={{ width: 52, height: 52, borderRadius: 15, background: 'var(--cl-ink)', color: 'var(--cl-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--cl-font-display)', fontWeight: 700, fontSize: 17, flexShrink: 0 }}>{co.initials}</div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--cl-ink)' }}>{co.name}</div>
+                    <div style={{ fontSize: 12.5, color: 'var(--cl-muted-1)', marginTop: 2 }}>{co.sport} · {co.venue}</div>
+                  </div>
+                  <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                    <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--cl-ink)' }}>{co.price}</div>
+                    <div style={{ fontSize: 11.5, color: 'var(--cl-muted-1)', marginTop: 2 }}>★ {co.rating} · {co.dist}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </IonContent>

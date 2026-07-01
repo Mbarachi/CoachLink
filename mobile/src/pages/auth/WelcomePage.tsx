@@ -2,156 +2,56 @@ import { IonContent, IonPage } from '@ionic/react';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 
-import AppButton from '@/components/ui/AppButton';
-
 const WelcomePage: React.FC = () => {
   const history = useHistory();
 
   return (
     <IonPage>
-      <IonContent
-        fullscreen
-        style={{ '--background': 'var(--cl-background)' } as React.CSSProperties}
-      >
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            height: '100%',
-            padding: '0 24px 40px',
-          }}
-        >
-          {/* Illustration area */}
-          <div
-            style={{
-              flex: 1,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              paddingTop: 30,
-            }}
-          >
-            {/* Logo */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 32 }}>
-              <div
-                style={{
-                  width: 44,
-                  height: 44,
-                  borderRadius: '50%',
-                  background: 'var(--cl-primary)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <svg width="26" height="26" viewBox="0 0 48 48" fill="none">
-                  <circle cx="24" cy="24" r="22" stroke="white" strokeWidth="3" />
-                  <path
-                    d="M14 24 C14 18 19 14 24 14 C29 14 34 18 34 24"
-                    stroke="white"
-                    strokeWidth="3"
-                    fill="none"
-                    strokeLinecap="round"
-                  />
-                  <circle cx="24" cy="31" r="5" fill="white" />
-                </svg>
-              </div>
-              <span
-                style={{
-                  fontFamily: 'Poppins, sans-serif',
-                  fontWeight: 700,
-                  fontSize: 26,
-                  color: 'var(--cl-secondary)',
-                }}
-              >
-                CoachLink
-              </span>
-            </div>
-
-            {/* Illustration placeholder */}
-            <div
-              style={{
-                width: '100%',
-                maxWidth: 300,
-                height: 220,
-                borderRadius: 20,
-                background: 'linear-gradient(135deg, #e8f8f0 0%, #d0f0e0 100%)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginBottom: 36,
-                overflow: 'hidden',
-              }}
-            >
-              {/* Simple sports illustration */}
-              <svg width="160" height="160" viewBox="0 0 160 160" fill="none">
-                {/* Ground */}
-                <ellipse cx="80" cy="140" rx="60" ry="8" fill="#b2e8c8" opacity="0.6" />
-                {/* Person 1 - running */}
-                <circle cx="50" cy="55" r="12" fill="#6FCF97" />
-                <rect x="44" y="67" width="12" height="28" rx="6" fill="#6FCF97" />
-                <line x1="44" y1="80" x2="35" y2="95" stroke="#6FCF97" strokeWidth="5" strokeLinecap="round" />
-                <line x1="56" y1="80" x2="62" y2="95" stroke="#6FCF97" strokeWidth="5" strokeLinecap="round" />
-                {/* Person 2 */}
-                <circle cx="110" cy="55" r="12" fill="#4A90E2" />
-                <rect x="104" y="67" width="12" height="28" rx="6" fill="#4A90E2" />
-                <line x1="104" y1="80" x2="98" y2="95" stroke="#4A90E2" strokeWidth="5" strokeLinecap="round" />
-                <line x1="116" y1="80" x2="122" y2="95" stroke="#4A90E2" strokeWidth="5" strokeLinecap="round" />
-                {/* Ball */}
-                <circle cx="80" cy="100" r="10" fill="#F4B740" />
-                <path d="M72 100 Q80 92 88 100 Q80 108 72 100" stroke="white" strokeWidth="1.5" fill="none" />
-              </svg>
-            </div>
-
-            {/* Headline */}
-            <h1
-              style={{
-                fontFamily: 'Poppins, sans-serif',
-                fontWeight: 700,
-                fontSize: 25,
-                color: 'var(--cl-text-main)',
-                textAlign: 'center',
-                margin: '0 0 8px',
-                lineHeight: 1.3,
-              }}
-            >
-              Find the right coach{' '}
-              <span style={{ display: 'block' }}>Train better.</span>
-              {/* <span style={{ color: 'var(--cl-primary)', display: 'block' }}>
-                Achieve more.
-              </span> */}
-            </h1>
-
-            <p
-              style={{
-                fontFamily: 'Poppins, sans-serif',
-                fontSize: 14,
-                color: 'var(--cl-text-light)',
-                textAlign: 'center',
-                margin: '0 0 8px',
-                lineHeight: 1.6,
-              }}
-            >
-              A platform that connects athletes and parents with verified sports coaches nearby.
-            </p>
+      <IonContent scrollY={false} style={{ '--background': 'var(--cl-canvas)' } as React.CSSProperties}>
+        <div style={{ height: '100%', display: 'flex', flexDirection: 'column', padding: '0 var(--cl-px-auth)', fontFamily: 'var(--cl-font-body)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 46, flexShrink: 0 }}>
+            <span style={{ fontWeight: 700, fontSize: 14, color: 'var(--cl-ink)' }}>9:41</span>
+            <span style={{ width: 18, height: 11, border: '1.6px solid var(--cl-ink)', borderRadius: 3, display: 'block' }} />
           </div>
 
-          {/* CTA buttons */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <AppButton
-              onClick={() => history.push('/auth/signup')}
-              variant="primary"
-            >
-              Get Started
-            </AppButton>
-            <AppButton
-              onClick={() => history.push('/auth/signin')}
-              variant="outline"
-            >
-              I already have an account
-            </AppButton>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginTop: 8, flexShrink: 0 }}>
+            <div style={{ width: 28, height: 28, borderRadius: 9, background: 'var(--cl-ink)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ width: 12, height: 12, borderRadius: '50%', background: 'var(--cl-accent)' }} />
+            </div>
+            <span style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 800, fontSize: 20, color: 'var(--cl-ink)', letterSpacing: '-0.03em' }}>CoachLink</span>
           </div>
+
+          <div style={{
+            marginTop: 22, borderRadius: 26, height: 316, flexShrink: 0,
+            backgroundImage: 'repeating-linear-gradient(125deg, #E7D7C2 0 13px, #EFE3D3 13px 26px)',
+            border: '1px solid var(--cl-border)',
+            display: 'flex', alignItems: 'flex-end', padding: 16, overflow: 'hidden',
+          }}>
+            <span style={{ fontFamily: 'monospace', fontSize: 11, color: 'var(--cl-muted-2)', background: 'var(--cl-surface)', padding: '4px 9px', borderRadius: 7 }}>
+              athlete · hero photo
+            </span>
+          </div>
+
+          <div style={{ flex: 1 }} />
+
+          <h1 style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 800, fontSize: 37, lineHeight: 1.02, letterSpacing: '-0.035em', color: 'var(--cl-ink)', margin: '18px 0 0' }}>
+            Find your coach.<br />Train with intent.
+          </h1>
+          <p style={{ fontSize: 14.5, lineHeight: 1.5, color: 'var(--cl-muted-1)', margin: '13px 0 0' }}>
+            Verified swimming &amp; tennis coaches in Amuwo Odofin. Book by the session, train near home.
+          </p>
+
+          <button onClick={() => history.push('/auth/signup')} style={{
+            marginTop: 20, border: 'none', height: 56, borderRadius: 'var(--cl-radius-btn)',
+            background: 'var(--cl-accent)', color: 'var(--cl-on-accent)',
+            fontFamily: 'var(--cl-font-body)', fontWeight: 700, fontSize: 16, cursor: 'pointer', width: '100%',
+          }}>Create an account</button>
+
+          <button onClick={() => history.push('/auth/signin')} style={{
+            margin: '11px 0 22px', border: 'none', background: 'none',
+            color: 'var(--cl-ink)', fontWeight: 600, fontSize: 14,
+            cursor: 'pointer', fontFamily: 'var(--cl-font-body)',
+          }}>I already have an account</button>
         </div>
       </IonContent>
     </IonPage>
