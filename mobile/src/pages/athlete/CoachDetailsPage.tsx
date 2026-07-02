@@ -2,18 +2,16 @@ import { IonContent, IonPage } from '@ionic/react';
 import React from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 
-const COACHES = [
-  { id: '0', name: 'Tobi Adebayo',    sport: 'Swimming', venue: 'Festival Hotel Pool', price: '₦12,000', rating: '4.8', reviews: 32, dist: '1.2km', exp: '5 yrs', sessions: '286', initials: 'TA' },
-  { id: '1', name: 'Chidinma Okafor', sport: 'Tennis',   venue: 'MU Court',            price: '₦15,000', rating: '4.9', reviews: 27, dist: '2.1km', exp: '7 yrs', sessions: '340', initials: 'CO' },
-  { id: '2', name: 'Emeka Johnson',   sport: 'Swimming', venue: 'Golden Tulip Pool',   price: '₦9,000',  rating: '4.7', reviews: 18, dist: '3.0km', exp: '4 yrs', sessions: '150', initials: 'EJ' },
-  { id: '3', name: 'Sarah Danjuma',   sport: 'Tennis',   venue: 'MU Court',            price: '₦18,000', rating: '4.6', reviews: 14, dist: '2.4km', exp: '6 yrs', sessions: '210', initials: 'SD' },
-  { id: '4', name: 'Yusuf Bello',     sport: 'Swimming', venue: 'School Facilities',   price: '₦7,500',  rating: '4.5', reviews: 21, dist: '4.1km', exp: '3 yrs', sessions: '98',  initials: 'YB' },
-];
+import { mockCoaches } from '@/features/coaches/data/mockCoaches';
 
 const CoachDetailsPage: React.FC = () => {
   const history = useHistory();
   const { id } = useParams<{ id: string }>();
-  const coach = COACHES[Number(id)] ?? COACHES[0];
+  const coach = mockCoaches.find(c => c.id === id) ?? mockCoaches[0];
+
+  const fullName = `${coach.firstName} ${coach.lastName}`;
+  const initials = `${coach.firstName[0]}${coach.lastName[0]}`;
+  const price = `₦${coach.sessionRate.toLocaleString()}`;
 
   return (
     <IonPage>
@@ -35,19 +33,23 @@ const CoachDetailsPage: React.FC = () => {
 
             <div style={{ padding: '0 var(--cl-px)', marginTop: -36, position: 'relative' }}>
               {/* avatar */}
-              <div style={{ width: 72, height: 72, borderRadius: 20, background: 'var(--cl-ink)', color: 'var(--cl-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--cl-font-display)', fontWeight: 700, fontSize: 24, border: '3px solid var(--cl-canvas)' }}>{coach.initials}</div>
+              <div style={{ width: 72, height: 72, borderRadius: 20, background: 'var(--cl-ink)', color: 'var(--cl-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--cl-font-display)', fontWeight: 700, fontSize: 24, border: '3px solid var(--cl-canvas)' }}>{initials}</div>
 
               <h2 style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 800, fontSize: 25, letterSpacing: '-0.02em', color: 'var(--cl-ink)', margin: '14px 0 3px' }}>
-                {coach.name} <span style={{ color: 'var(--cl-accent)' }}>✓</span>
+                {fullName} {coach.isVerified && <span style={{ color: 'var(--cl-accent)' }}>✓</span>}
               </h2>
               <div style={{ fontSize: 14, color: 'var(--cl-muted-1)' }}>{coach.sport} Coach · {coach.venue}</div>
               <div style={{ fontSize: 13.5, color: 'var(--cl-ink)', marginTop: 7, fontWeight: 600 }}>
-                ★ {coach.rating} <span style={{ color: 'var(--cl-muted-2)', fontWeight: 400 }}>({coach.reviews} reviews)</span>
+                ★ {coach.rating} <span style={{ color: 'var(--cl-muted-2)', fontWeight: 400 }}>({coach.reviewCount} reviews)</span>
               </div>
 
               {/* stat tiles */}
               <div style={{ display: 'flex', gap: 9, marginTop: 18 }}>
-                {[{ val: coach.exp, label: 'Experience' }, { val: coach.sessions, label: 'Sessions' }, { val: coach.rating, label: 'Rating' }].map(s => (
+                {[
+                  { val: `${coach.yearsOfExperience} yrs`, label: 'Experience' },
+                  { val: String(coach.reviewCount), label: 'Reviews' },
+                  { val: String(coach.rating), label: 'Rating' },
+                ].map(s => (
                   <div key={s.label} style={{ flex: 1, background: 'var(--cl-surface)', border: '1px solid var(--cl-border)', borderRadius: 15, padding: '13px 12px' }}>
                     <div style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 700, fontSize: 19, color: 'var(--cl-ink)' }}>{s.val}</div>
                     <div style={{ fontSize: 11, color: 'var(--cl-muted-1)', marginTop: 2 }}>{s.label}</div>
@@ -58,7 +60,7 @@ const CoachDetailsPage: React.FC = () => {
               {/* About */}
               <h3 style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 700, fontSize: 15, color: 'var(--cl-ink)', margin: '22px 0 7px' }}>About</h3>
               <p style={{ fontSize: 13.5, lineHeight: 1.55, color: 'var(--cl-muted-3)', margin: 0 }}>
-                Professional coach with {coach.exp} working with kids and adults across all levels. Focused on technique, endurance and steady, measurable progress.
+                {coach.bio}
               </p>
 
               {/* Training venue */}
@@ -67,7 +69,7 @@ const CoachDetailsPage: React.FC = () => {
                 <div style={{ width: 34, height: 34, borderRadius: 10, background: 'var(--cl-subtle)', flexShrink: 0 }} />
                 <div>
                   <div style={{ fontWeight: 600, fontSize: 13.5, color: 'var(--cl-ink)' }}>{coach.venue}</div>
-                  <div style={{ fontSize: 12, color: 'var(--cl-muted-1)' }}>Amuwo Odofin, Lagos · {coach.dist}</div>
+                  <div style={{ fontSize: 12, color: 'var(--cl-muted-1)' }}>{coach.area}</div>
                 </div>
               </div>
 
@@ -75,7 +77,7 @@ const CoachDetailsPage: React.FC = () => {
               <h3 style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 700, fontSize: 15, color: 'var(--cl-ink)', margin: '20px 0 7px' }}>Pricing</h3>
               <div style={{ background: 'var(--cl-ink)', borderRadius: 17, padding: 16, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div>
-                  <div style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 700, fontSize: 22, color: 'var(--cl-surface)' }}>{coach.price}</div>
+                  <div style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 700, fontSize: 22, color: 'var(--cl-surface)' }}>{price}</div>
                   <div style={{ fontSize: 12, color: '#bfae97', marginTop: 2 }}>per session</div>
                 </div>
                 <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--cl-surface)', background: 'var(--cl-accent)', padding: '6px 11px', borderRadius: 'var(--cl-radius-chip)' }}>Within range</span>
@@ -103,10 +105,13 @@ const CoachDetailsPage: React.FC = () => {
           {/* sticky footer */}
           <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', gap: 14, padding: '14px var(--cl-px) 22px', background: 'var(--cl-canvas)', borderTop: '1px solid var(--cl-border)' }}>
             <div>
-              <div style={{ fontWeight: 700, fontSize: 16, color: 'var(--cl-ink)' }}>{coach.price}</div>
+              <div style={{ fontWeight: 700, fontSize: 16, color: 'var(--cl-ink)' }}>{price}</div>
               <div style={{ fontSize: 11, color: 'var(--cl-muted-1)' }}>per session</div>
             </div>
-            <button onClick={() => history.push(`/athlete/booking-request/${coach.id}`)} style={{ flex: 1, height: 54, border: 'none', borderRadius: 15, background: 'var(--cl-accent)', color: 'var(--cl-on-accent)', fontFamily: 'var(--cl-font-body)', fontWeight: 700, fontSize: 15.5, cursor: 'pointer' }}>
+            <button
+              onClick={() => history.push(`/athlete/booking-request/${coach.id}`)}
+              style={{ flex: 1, height: 54, border: 'none', borderRadius: 15, background: 'var(--cl-accent)', color: 'var(--cl-on-accent)', fontFamily: 'var(--cl-font-body)', fontWeight: 700, fontSize: 15.5, cursor: 'pointer' }}
+            >
               Request session
             </button>
           </div>

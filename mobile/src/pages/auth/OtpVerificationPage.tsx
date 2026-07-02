@@ -39,7 +39,8 @@ const OtpVerificationPage: React.FC = () => {
             We sent a 6-digit code to your email. Enter it below.
           </p>
 
-          <div style={{ display: 'flex', gap: 10, justifyContent: 'space-between' }}>
+          {/* Grid prevents Ionic's input { width: 100% } reset from breaking flex layout */}
+          <div style={{ display: 'grid', gridTemplateColumns: `repeat(${DIGITS}, 1fr)`, gap: 10 }}>
             {Array(DIGITS).fill(0).map((_, i) => (
               <input
                 key={i}
@@ -50,12 +51,18 @@ const OtpVerificationPage: React.FC = () => {
                 maxLength={1}
                 inputMode="numeric"
                 style={{
-                  flex: 1, height: 60, borderRadius: 14,
+                  width: '100%',
+                  height: 60,
+                  borderRadius: 14,
                   border: otp[i] ? '1.6px solid var(--cl-ink)' : '1px solid var(--cl-border)',
                   background: 'var(--cl-surface)',
                   textAlign: 'center',
-                  fontFamily: 'var(--cl-font-display)', fontWeight: 700, fontSize: 24,
-                  color: 'var(--cl-ink)', outline: 'none',
+                  fontFamily: 'var(--cl-font-display)',
+                  fontWeight: 700,
+                  fontSize: 24,
+                  color: 'var(--cl-ink)',
+                  outline: 'none',
+                  boxSizing: 'border-box',
                 }}
               />
             ))}

@@ -2,45 +2,73 @@ import { IonContent, IonPage } from '@ionic/react';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { authService } from '@/services/auth.service';
+import { useAuthStore } from '@/store/auth.store';
 
 const S = {
   label: { fontSize: 12.5, fontWeight: 600, color: 'var(--cl-ink)', marginBottom: 7, display: 'block' } as React.CSSProperties,
   input: {
     width: '100%', height: 52, borderRadius: 'var(--cl-radius-input)',
     border: '1px solid var(--cl-border)', background: 'var(--cl-surface)',
-    padding: '0 15px', fontFamily: 'var(--cl-font-body)', fontSize: 14.5,
+    padding: '0 15px', fontFamily: 'var(--cl-font-body)', fontSize: 16,
     color: 'var(--cl-ink)', outline: 'none', boxSizing: 'border-box',
   } as React.CSSProperties,
 };
 
 const SignUpPage: React.FC = () => {
   const history = useHistory();
+  const setAuth = useAuthStore(s => s.setAuth);
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const handleSignUp = async () => {
-    if (!name || !email || !password) { setError('Please fill in all fields.'); return; }
+    if (!name.trim() || !email.trim() || !password || !confirmPassword) {
+      setError('Please fill in all fields.');
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters.');
+      return;
+    }
+
     setLoading(true);
     setError('');
-    try {
-      const [firstName, ...rest] = name.trim().split(' ');
-      await authService.signUp({ firstName, lastName: rest.join(' ') || '-', email, password, phoneNumber: '' });
-      history.push('/auth/otp');
-    } catch {
-      setError('Could not create account. Try a different email.');
-    } finally {
-      setLoading(false);
-    }
+
+    const [firstName, ...rest] = name.trim().split(' ');
+    const lastName = rest.join(' ') || '-';
+
+    setAuth(
+      {
+        id: `mock-${Date.now()}`,
+        firstName,
+        lastName,
+        email: email.trim(),
+        phoneNumber: '',
+        role: 'ATHLETE',
+        profileImage: null,
+        isVerified: false,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+      'mock-token',
+    );
+
+    setLoading(false);
+    history.push('/auth/otp');
   };
 
   return (
     <IonPage>
-      <IonContent scrollY={false} style={{ '--background': 'var(--cl-canvas)' } as React.CSSProperties}>
-        <div style={{ height: '100%', display: 'flex', flexDirection: 'column', padding: '0 var(--cl-px-auth)', fontFamily: 'var(--cl-font-body)' }}>
+      <IonContent style={{ '--background': 'var(--cl-canvas)' } as React.CSSProperties}>
+        <div style={{ display: 'flex', flexDirection: 'column', padding: '0 var(--cl-px-auth)', fontFamily: 'var(--cl-font-body)', minHeight: '100%' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 46, flexShrink: 0 }}>
             <span style={{ fontWeight: 700, fontSize: 14, color: 'var(--cl-ink)' }}>9:41</span>
             <span style={{ width: 18, height: 11, border: '1.6px solid var(--cl-ink)', borderRadius: 3, display: 'block' }} />
@@ -58,7 +86,10 @@ const SignUpPage: React.FC = () => {
           <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" style={{ ...S.input, marginBottom: 15 }} />
 
           <label style={S.label}>Password</label>
-          <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Create a password" style={S.input} />
+          <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Create a password" style={{ ...S.input, marginBottom: 15 }} />
+
+          <label style={S.label}>Confirm password</label>
+          <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} placeholder="Re-enter your password" style={S.input} />
 
           {error && <p style={{ fontSize: 12.5, color: 'var(--cl-destructive)', marginTop: 8 }}>{error}</p>}
 
@@ -69,7 +100,7 @@ const SignUpPage: React.FC = () => {
             opacity: loading ? 0.7 : 1,
           }}>{loading ? 'Creating…' : 'Continue'}</button>
 
-          <div style={{ flex: 1 }} />
+          <div style={{ flex: 1, minHeight: 32 }} />
           <p style={{ textAlign: 'center', fontSize: 13.5, color: 'var(--cl-muted-1)', marginBottom: 24 }}>
             Already have an account?{' '}
             <span onClick={() => history.push('/auth/signin')} style={{ color: 'var(--cl-ink)', fontWeight: 700, cursor: 'pointer' }}>Sign in</span>
