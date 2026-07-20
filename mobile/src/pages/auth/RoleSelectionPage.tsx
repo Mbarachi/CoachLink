@@ -36,7 +36,7 @@ const roles = [
     iconColor: 'var(--cl-on-accent)',
     border: '1px solid var(--cl-border)',
     chevronColor: 'var(--cl-muted-1)',
-    dest: '/coach/dashboard',
+    dest: '/auth/coach-onboarding',
   },
 ];
 
