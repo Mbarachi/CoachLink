@@ -1,367 +1,76 @@
-import { IonContent, IonPage, IonSelect, IonSelectOption } from '@ionic/react';
-import { zodResolver } from '@hookform/resolvers/zod';
-import React, { useRef } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { IonContent, IonPage } from '@ionic/react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { z } from 'zod';
 
-import { AppButton, AppInput, AppAvatar, AppPageHeader } from '@/components/ui';
-import { useAuthStore } from '@/store/auth.store';
-
-// Schemas per role
-const athleteSchema = z.object({
-  fullName: z.string().min(1, 'Full name is required'),
-  area: z.string().min(1, 'Area is required'),
-  preferredSport: z.string().min(1, 'Please select a sport'),
-});
-
-const coachSchema = z.object({
-  fullName: z.string().min(1, 'Full name is required'),
-  sport: z.string().min(1, 'Please select a sport'),
-  yearsOfExperience: z.string().min(1, 'Please select experience'),
-  area: z.string().min(1, 'Area is required'),
-  sessionRate: z.string().min(1, 'Session rate is required'),
-  bio: z.string().min(10, 'Bio must be at least 10 characters'),
-});
-
-type AthleteForm = z.infer<typeof athleteSchema>;
-type CoachForm = z.infer<typeof coachSchema>;
-
-const formatComma = (val: string) =>
-  val.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-
-const SPORTS = ['Tennis', 'Swimming'];
-const AREAS = ['Lekki', 'Ikoyi', 'Yaba', 'Victoria Island', 'Ikeja', 'Surulere'];
-const EXPERIENCE_OPTIONS = ['< 1 year', '1-2 years', '3-5 years', '6-10 years', '10+ years'];
-
-const labelStyle: React.CSSProperties = {
-  display: 'block',
-  fontSize: 13,
-  fontWeight: 500,
-  color: 'var(--cl-text-main)',
-  marginBottom: 6,
-  fontFamily: 'Poppins, sans-serif',
-};
-
-const selectWrapStyle: React.CSSProperties = {
-  background: '#fff',
-  border: '1.5px solid var(--cl-border)',
-  borderRadius: 12,
-  marginBottom: 16,
-  minHeight: 52,
-  display: 'flex',
-  alignItems: 'center',
-  paddingLeft: 14,
-};
+const SPORTS = [
+  { key: 'Swimming', emoji: '🏊' },
+  { key: 'Tennis', emoji: '🎾' },
+] as const;
 
 const CompleteProfilePage: React.FC = () => {
   const history = useHistory();
-  const { user, updateUser } = useAuthStore();
-  const role = user?.role ?? 'ATHLETE';
-  const isCoach = role === 'COACH';
+  const [sport, setSport] = useState<'Swimming' | 'Tennis'>('Swimming');
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [avatarSrc, setAvatarSrc] = React.useState<string | null>(null);
-  const [avatarError, setAvatarError] = React.useState<string | null>(null);
-
-  const schema = isCoach ? coachSchema : athleteSchema;
-
-  const {
-    control,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<any>({
-    resolver: zodResolver(schema),
-    defaultValues: isCoach
-      ? { fullName: '', sport: '', yearsOfExperience: '', area: '', sessionRate: '', bio: '' }
-      : { fullName: '', area: '', preferredSport: '' },
-  });
-
-  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        setAvatarSrc(ev.target?.result as string);
-        setAvatarError(null);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const onSubmit = (data: AthleteForm | CoachForm) => {
-    if (isCoach && !avatarSrc) {
-      setAvatarError('Profile photo is required for coaches');
-      return;
-    }
-    const [firstName, ...rest] = (data as AthleteForm).fullName.trim().split(' ');
-    updateUser({
-      firstName,
-      lastName: rest.join(' ') || '',
-      profileImage: avatarSrc,
-    });
-    if (isCoach) {
-      history.replace('/coach/dashboard');
-    } else {
-      history.replace('/athlete/home');
-    }
-  };
+  const finish = () => history.replace('/athlete/home');
 
   return (
     <IonPage>
-      <AppPageHeader title="Complete Profile" showBack={false} />
-      <IonContent
-        fullscreen
-        style={{ '--background': 'var(--cl-background)' } as React.CSSProperties}
-      >
-        <div style={{ padding: '8px 24px 60px' }}>
-          {/* Avatar upload */}
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              marginBottom: 28,
-            }}
-          >
-            <AppAvatar
-              src={avatarSrc}
-              size={90}
-              showEditBadge
-              onClick={() => fileInputRef.current?.click()}
-            />
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              style={{ display: 'none' }}
-              onChange={handleAvatarChange}
-            />
-            <p
-              style={{
-                fontFamily: 'Poppins, sans-serif',
-                fontSize: 13,
-                color: 'var(--cl-accent)',
-                marginTop: 8,
-                cursor: 'pointer',
-              }}
-              onClick={() => fileInputRef.current?.click()}
-            >
-              {avatarSrc ? 'Change Photo' : 'Add Profile Photo'}
-            </p>
-            {isCoach && avatarError && (
-              <p
-                style={{
-                  fontFamily: 'Poppins, sans-serif',
-                  fontSize: 12,
-                  color: 'var(--cl-error)',
-                  marginTop: 4,
-                }}
-              >
-                {avatarError}
-              </p>
-            )}
+      <IonContent style={{ '--background': 'var(--cl-canvas)' } as React.CSSProperties}>
+        <div style={{ display: 'flex', flexDirection: 'column', padding: '0 var(--cl-px-auth)', fontFamily: 'var(--cl-font-body)', minHeight: '100%' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 46, flexShrink: 0 }}>
+            <span style={{ fontWeight: 700, fontSize: 14, color: 'var(--cl-ink)' }}>9:41</span>
+            <span style={{ width: 18, height: 11, border: '1.6px solid var(--cl-ink)', borderRadius: 3, display: 'block' }} />
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} noValidate>
-            {/* Full Name */}
-            <Controller
-              name="fullName"
-              control={control}
-              render={({ field }) => (
-                <AppInput
-                  label="Full Name"
-                  placeholder="Enter your full name"
-                  value={field.value}
-                  onIonInput={(e) => field.onChange((e.target as HTMLInputElement).value)}
-                  onIonBlur={field.onBlur}
-                  error={(errors as any).fullName?.message}
-                />
-              )}
-            />
+          <h1 style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 800, fontSize: 30, letterSpacing: '-0.03em', color: 'var(--cl-ink)', margin: '26px 0 6px' }}>
+            What are you<br />training for?
+          </h1>
+          <p style={{ fontSize: 14.5, lineHeight: 1.5, color: 'var(--cl-muted-1)', margin: '0 0 22px' }}>
+            Helps us show you the right coaches first. You can change this anytime.
+          </p>
 
-            {/* Coach-specific: Sport */}
-            {isCoach && (
-              <>
-                <div>
-                  <label style={labelStyle}>Sport</label>
-                  <Controller
-                    name="sport"
-                    control={control}
-                    render={({ field }) => (
-                      <div style={selectWrapStyle}>
-                        <IonSelect
-                          placeholder="Select your sport"
-                          value={field.value}
-                          onIonChange={(e) => field.onChange(e.detail.value)}
-                          style={{ width: '100%', fontFamily: 'Poppins, sans-serif', fontSize: 15 }}
-                        >
-                          {SPORTS.map((s) => (
-                            <IonSelectOption key={s} value={s}>
-                              {s}
-                            </IonSelectOption>
-                          ))}
-                        </IonSelect>
-                      </div>
-                    )}
-                  />
-                  {(errors as any).sport && (
-                    <p style={{ margin: '-12px 0 8px 4px', fontSize: 12, color: 'var(--cl-error)', fontFamily: 'Poppins, sans-serif' }}>
-                      {(errors as any).sport.message}
-                    </p>
-                  )}
+          <div style={{ display: 'flex', gap: 10 }}>
+            {SPORTS.map((s) => {
+              const active = sport === s.key;
+              return (
+                <div
+                  key={s.key}
+                  onClick={() => setSport(s.key)}
+                  style={{
+                    flex: 1,
+                    background: active ? 'var(--cl-ink)' : 'var(--cl-surface)',
+                    border: active ? 'none' : '1px solid var(--cl-border)',
+                    borderRadius: 18,
+                    padding: 16,
+                    cursor: 'pointer',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div style={{ fontSize: 26 }}>{s.emoji}</div>
+                  <div style={{ fontWeight: 700, fontSize: 14, color: active ? 'var(--cl-surface)' : 'var(--cl-ink)', marginTop: 8 }}>{s.key}</div>
                 </div>
+              );
+            })}
+          </div>
 
-                <div>
-                  <label style={labelStyle}>Years of Experience</label>
-                  <Controller
-                    name="yearsOfExperience"
-                    control={control}
-                    render={({ field }) => (
-                      <div style={selectWrapStyle}>
-                        <IonSelect
-                          placeholder="Select experience"
-                          value={field.value}
-                          onIonChange={(e) => field.onChange(e.detail.value)}
-                          style={{ width: '100%', fontFamily: 'Poppins, sans-serif', fontSize: 15 }}
-                        >
-                          {EXPERIENCE_OPTIONS.map((opt) => (
-                            <IonSelectOption key={opt} value={opt}>
-                              {opt}
-                            </IonSelectOption>
-                          ))}
-                        </IonSelect>
-                      </div>
-                    )}
-                  />
-                  {(errors as any).yearsOfExperience && (
-                    <p style={{ margin: '-12px 0 8px 4px', fontSize: 12, color: 'var(--cl-error)', fontFamily: 'Poppins, sans-serif' }}>
-                      {(errors as any).yearsOfExperience.message}
-                    </p>
-                  )}
-                </div>
-              </>
-            )}
+          <label style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--cl-ink)', margin: '22px 0 7px', display: 'block' }}>Your location</label>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, height: 52, borderRadius: 14, background: 'var(--cl-surface)', border: '1px solid var(--cl-border)', padding: '0 15px' }}>
+            <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--cl-accent)', flexShrink: 0 }} />
+            <span style={{ fontSize: 14.5, fontWeight: 600, color: 'var(--cl-ink)' }}>Amuwo Odofin, Lagos</span>
+          </div>
 
-            {/* Area */}
-            <div>
-              <label style={labelStyle}>Area / Location</label>
-              <Controller
-                name="area"
-                control={control}
-                render={({ field }) => (
-                  <div style={selectWrapStyle}>
-                    <IonSelect
-                      placeholder="Select your area"
-                      value={field.value}
-                      onIonChange={(e) => field.onChange(e.detail.value)}
-                      style={{ width: '100%', fontFamily: 'Poppins, sans-serif', fontSize: 15 }}
-                    >
-                      {AREAS.map((a) => (
-                        <IonSelectOption key={a} value={a}>
-                          {a}
-                        </IonSelectOption>
-                      ))}
-                    </IonSelect>
-                  </div>
-                )}
-              />
-              {(errors as any).area && (
-                <p style={{ margin: '-12px 0 8px 4px', fontSize: 12, color: 'var(--cl-error)', fontFamily: 'Poppins, sans-serif' }}>
-                  {(errors as any).area.message}
-                </p>
-              )}
-            </div>
-
-            {/* Athlete-specific: Preferred Sport */}
-            {!isCoach && (
-              <div>
-                <label style={labelStyle}>Preferred Sport</label>
-                <Controller
-                  name="preferredSport"
-                  control={control}
-                  render={({ field }) => (
-                    <div style={selectWrapStyle}>
-                      <IonSelect
-                        placeholder="Select your preferred sport"
-                        value={field.value}
-                        onIonChange={(e) => field.onChange(e.detail.value)}
-                        style={{ width: '100%', fontFamily: 'Poppins, sans-serif', fontSize: 15 }}
-                      >
-                        {SPORTS.map((s) => (
-                          <IonSelectOption key={s} value={s}>
-                            {s}
-                          </IonSelectOption>
-                        ))}
-                      </IonSelect>
-                    </div>
-                  )}
-                />
-                {(errors as any).preferredSport && (
-                  <p style={{ margin: '-12px 0 8px 4px', fontSize: 12, color: 'var(--cl-error)', fontFamily: 'Poppins, sans-serif' }}>
-                    {(errors as any).preferredSport.message}
-                  </p>
-                )}
-              </div>
-            )}
-
-            {/* Coach-specific: Hourly Rate + Bio */}
-            {isCoach && (
-              <>
-                <Controller
-                  name="sessionRate"
-                  control={control}
-                  render={({ field }) => (
-                    <AppInput
-                      label="Session Rate (NGN)"
-                      placeholder="Enter your session rate"
-                      type="text"
-                      value={formatComma(field.value ?? '')}
-                      onIonInput={(e) => {
-                        const raw = (e.target as HTMLInputElement).value.replace(/,/g, '');
-                        field.onChange(raw);
-                      }}
-                      onIonBlur={field.onBlur}
-                      error={(errors as any).sessionRate?.message}
-                    />
-                  )}
-                />
-                <Controller
-                  name="bio"
-                  control={control}
-                  render={({ field }) => (
-                    <AppInput
-                      label="Bio"
-                      placeholder="Write a short bio about yourself"
-                      type="textarea"
-                      rows={2}
-                      value={field.value}
-                      onIonInput={(e) => field.onChange((e.target as HTMLInputElement).value)}
-                      onIonBlur={field.onBlur}
-                      error={(errors as any).bio?.message}
-                    />
-                  )}
-                />
-              </>
-            )}
-
-            <div style={{ marginTop: 8 }}>
-              <AppButton type="submit" loading={isSubmitting}>
-                Continue
-              </AppButton>
-            </div>
-            <p
-              style={{
-                fontFamily: 'Poppins, sans-serif',
-                fontSize: 12,
-                color: 'var(--cl-text-light)',
-                textAlign: 'center',
-                marginTop: 12,
-              }}
-            >
-              You can change this later
-            </p>
-          </form>
+          <button
+            onClick={finish}
+            style={{ marginTop: 24, border: 'none', height: 56, borderRadius: 'var(--cl-radius-btn)', background: 'var(--cl-accent)', color: 'var(--cl-on-accent)', fontFamily: 'var(--cl-font-body)', fontWeight: 700, fontSize: 16, cursor: 'pointer' }}
+          >
+            Continue
+          </button>
+          <button
+            onClick={finish}
+            style={{ margin: '11px 0 22px', border: 'none', background: 'none', color: 'var(--cl-muted-1)', fontWeight: 600, fontSize: 14, cursor: 'pointer' }}
+          >
+            Skip for now
+          </button>
         </div>
       </IonContent>
     </IonPage>

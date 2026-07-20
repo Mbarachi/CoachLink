@@ -14,7 +14,7 @@ const roles = [
     iconColor: 'var(--cl-accent)',
     border: '1.6px solid var(--cl-ink)',
     chevronColor: 'var(--cl-ink)',
-    dest: '/athlete/home',
+    dest: '/auth/complete-profile',
   },
   {
     key: 'parent',
@@ -25,7 +25,7 @@ const roles = [
     iconColor: 'var(--cl-ink)',
     border: '1px solid var(--cl-border)',
     chevronColor: 'var(--cl-muted-1)',
-    dest: '/athlete/home',
+    dest: '/auth/complete-profile',
   },
   {
     key: 'coach',
