@@ -1,5 +1,5 @@
 import { IonContent, IonPage } from '@ionic/react';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { useAuthStore } from '@/store/auth.store';
@@ -21,6 +21,27 @@ const HomePage: React.FC = () => {
   const history = useHistory();
   const user = useAuthStore(s => s.user);
   const [hero, setHero] = useState<0 | 1>(0);
+  const heroSlideCount = 2;
+  const heroIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const startHeroAutoSlide = () => {
+    if (heroIntervalRef.current) clearInterval(heroIntervalRef.current);
+    heroIntervalRef.current = setInterval(() => {
+      setHero(prev => ((prev + 1) % heroSlideCount) as 0 | 1);
+    }, 3000);
+  };
+
+  useEffect(() => {
+    startHeroAutoSlide();
+    return () => {
+      if (heroIntervalRef.current) clearInterval(heroIntervalRef.current);
+    };
+  }, []);
+
+  const handleHeroDotClick = (index: 0 | 1) => {
+    setHero(index);
+    startHeroAutoSlide();
+  };
 
   const firstName = user?.firstName ?? 'Ada';
   const lastName = user?.lastName ?? 'Obi';
@@ -149,8 +170,8 @@ const HomePage: React.FC = () => {
 
               {/* dots */}
               <div style={{ display: 'flex', justifyContent: 'center', gap: 7, marginTop: 13 }}>
-                <div onClick={() => setHero(0)} style={{ width: hero === 0 ? 20 : 7, height: 7, borderRadius: 'var(--cl-radius-chip)', background: hero === 0 ? 'var(--cl-ink)' : 'var(--cl-muted-line)', transition: 'all .3s', cursor: 'pointer' }} />
-                <div onClick={() => setHero(1)} style={{ width: hero === 1 ? 20 : 7, height: 7, borderRadius: 'var(--cl-radius-chip)', background: hero === 1 ? 'var(--cl-ink)' : 'var(--cl-muted-line)', transition: 'all .3s', cursor: 'pointer' }} />
+                <div onClick={() => handleHeroDotClick(0)} style={{ width: hero === 0 ? 20 : 7, height: 7, borderRadius: 'var(--cl-radius-chip)', background: hero === 0 ? 'var(--cl-ink)' : 'var(--cl-muted-line)', transition: 'all .3s', cursor: 'pointer' }} />
+                <div onClick={() => handleHeroDotClick(1)} style={{ width: hero === 1 ? 20 : 7, height: 7, borderRadius: 'var(--cl-radius-chip)', background: hero === 1 ? 'var(--cl-ink)' : 'var(--cl-muted-line)', transition: 'all .3s', cursor: 'pointer' }} />
               </div>
             </div>
 
