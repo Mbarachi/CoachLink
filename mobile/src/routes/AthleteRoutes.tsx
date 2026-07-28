@@ -16,15 +16,18 @@ import {
 import React from 'react';
 import { Redirect, Route } from 'react-router-dom';
 
+import BookingDetailsPage from '@/pages/athlete/BookingDetailsPage';
 import BookingRequestPage from '@/pages/athlete/BookingRequestPage';
 import BookingSuccessPage from '@/pages/athlete/BookingSuccessPage';
 import CoachDetailsPage from '@/pages/athlete/CoachDetailsPage';
 import CoachListingPage from '@/pages/athlete/CoachListingPage';
 import HomePage from '@/pages/athlete/HomePage';
+import LeaveReviewPage from '@/pages/athlete/LeaveReviewPage';
 import MyBookingsPage from '@/pages/athlete/MyBookingsPage';
 import NotificationsPage from '@/pages/athlete/NotificationsPage';
 import PaymentPage from '@/pages/athlete/PaymentPage';
 import ProfilePage from '@/pages/athlete/ProfilePage';
+import ReviewSentPage from '@/pages/athlete/ReviewSentPage';
 import SearchCoachesPage from '@/pages/athlete/SearchCoachesPage';
 import SettingsPage from '@/pages/athlete/SettingsPage';
 
@@ -34,6 +37,9 @@ const AthleteRoutes: React.FC = () => (
       <Route path="/athlete/home"          component={HomePage}          exact />
       <Route path="/athlete/search"        component={SearchCoachesPage} exact />
       <Route path="/athlete/bookings"      component={MyBookingsPage}    exact />
+      <Route path="/athlete/bookings/:bookingId"        component={BookingDetailsPage} exact />
+      <Route path="/athlete/bookings/:bookingId/review" component={LeaveReviewPage}    exact />
+      <Route path="/athlete/review-sent"                component={ReviewSentPage}     exact />
       <Route path="/athlete/notifications" component={NotificationsPage} exact />
       <Route path="/athlete/profile"       component={ProfilePage}       exact />
 

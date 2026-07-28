@@ -1,12 +1,13 @@
 import { IonContent, IonPage } from '@ionic/react';
 import React from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 
 const BookingSuccessPage: React.FC = () => {
   const history = useHistory();
   const { bookingId } = useParams<{ bookingId: string }>();
+  const location = useLocation<{ coachName?: string } | undefined>();
   const paid = bookingId === 'paid';
-  const coachName = 'Tobi Adebayo';
+  const coachName = location.state?.coachName ?? 'your coach';
 
   return (
     <IonPage>

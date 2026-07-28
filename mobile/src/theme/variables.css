@@ -21,6 +21,8 @@
   --cl-photo-dark-2:  #352818;   /* image placeholder stripe B */
   --cl-success-text:  #2c6e2c;   /* Confirmed pill text        */
   --cl-success-bg:    #e3f4e3;   /* Confirmed pill bg          */
+  --cl-pending-text:  #9a7b3c;   /* Pending pill text          */
+  --cl-pending-bg:    #F3E7CE;   /* Pending pill bg            */
   --cl-destructive:   #c0392b;   /* Log out / danger           */
   --cl-bfae97:        #bfae97;   /* pricing card subtext       */
 

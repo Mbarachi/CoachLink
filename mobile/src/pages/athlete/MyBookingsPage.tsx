@@ -4,14 +4,23 @@ import { useHistory } from 'react-router-dom';
 
 const TABS = ['Upcoming', 'Completed', 'Cancelled'] as const;
 
-const BOOKINGS = [
-  { initials: 'TA', name: 'Tobi Adebayo',    sport: 'Swimming', venue: 'Festival Hotel Pool', date: 'Wed, 15 May', time: '8:00 AM', status: 'Accepted',  price: '₦12,000', coachId: '0' },
-  { initials: 'CO', name: 'Chidinma Okafor', sport: 'Tennis',   venue: 'MU Court',            date: 'Fri, 17 May', time: '5:00 PM', status: 'Confirmed', price: '₦15,000', coachId: '1' },
-  { initials: 'EJ', name: 'Emeka Johnson',   sport: 'Swimming', venue: 'Golden Tulip Pool',   date: 'Sat, 18 May', time: '7:00 AM', status: 'Completed', price: '₦9,000',  coachId: '2' },
+export const BOOKINGS = [
+  { id: 'pending',          initials: 'SD', name: 'Sarah Danjuma',   sport: 'Tennis',   venue: 'MU Court',            date: 'Sat, 18 May', time: '10:00 AM', status: 'Pending',   price: '₦18,000', coachId: '3' },
+  { id: 'accepted-package', initials: 'TA', name: 'Tobi Adebayo',    sport: 'Swimming', venue: 'Festival Hotel Pool', date: 'Wed & Fri',   time: '8:00 AM',  status: 'Accepted',  price: '₦96,000', coachId: '0' },
+  { id: 'confirmed-single', initials: 'CO', name: 'Chidinma Okafor', sport: 'Tennis',   venue: 'MU Court',            date: 'Fri, 17 May', time: '5:00 PM',  status: 'Confirmed', price: '₦15,000', coachId: '1' },
+  { id: 'completed',        initials: 'EJ', name: 'Emeka Johnson',   sport: 'Swimming', venue: 'Golden Tulip Pool',   date: 'Sat, 18 May', time: '7:00 AM',  status: 'Completed', price: '₦9,000',  coachId: '2' },
+  { id: 'cancelled',        initials: 'YB', name: 'Yusuf Bello',     sport: 'Swimming', venue: 'Golden Tulip Pool',   date: 'Mon, 13 May', time: '6:00 AM',  status: 'Cancelled', price: '₦7,500',  coachId: '4' },
 ];
+
+const TAB_STATUSES: Record<typeof TABS[number], string[]> = {
+  Upcoming: ['Pending', 'Accepted', 'Confirmed'],
+  Completed: ['Completed'],
+  Cancelled: ['Cancelled'],
+};
 
 const StatusPill: React.FC<{ status: string }> = ({ status }) => {
   const styles: Record<string, React.CSSProperties> = {
+    Pending:   { background: 'var(--cl-pending-bg)', color: 'var(--cl-pending-text)' },
     Accepted:  { background: 'var(--cl-accent)',    color: 'var(--cl-on-accent)' },
     Confirmed: { background: 'var(--cl-success-bg)', color: 'var(--cl-success-text)' },
     Completed: { background: 'var(--cl-subtle)',     color: 'var(--cl-muted-1)' },
@@ -27,6 +36,7 @@ const StatusPill: React.FC<{ status: string }> = ({ status }) => {
 const MyBookingsPage: React.FC = () => {
   const history = useHistory();
   const [tab, setTab] = useState<typeof TABS[number]>('Upcoming');
+  const visible = BOOKINGS.filter(b => TAB_STATUSES[tab].includes(b.status));
 
   return (
     <IonPage>
@@ -53,8 +63,8 @@ const MyBookingsPage: React.FC = () => {
           </div>
 
           <div style={{ flex: 1, overflowY: 'auto', padding: '16px var(--cl-px) 12px' }}>
-            {BOOKINGS.map((b, i) => (
-              <div key={i} style={{ background: 'var(--cl-surface)', border: '1px solid var(--cl-border)', borderRadius: 18, padding: 15, marginBottom: 13 }}>
+            {visible.map(b => (
+              <div key={b.id} onClick={() => history.push(`/athlete/bookings/${b.id}`)} style={{ background: 'var(--cl-surface)', border: '1px solid var(--cl-border)', borderRadius: 18, padding: 15, marginBottom: 13, cursor: 'pointer' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                   <div style={{ width: 46, height: 46, borderRadius: 13, background: 'var(--cl-ink)', color: 'var(--cl-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--cl-font-display)', fontWeight: 700, fontSize: 15, flexShrink: 0 }}>{b.initials}</div>
                   <div style={{ flex: 1 }}>
@@ -63,19 +73,10 @@ const MyBookingsPage: React.FC = () => {
                   </div>
                   <StatusPill status={b.status} />
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 16, margin: '13px 0', fontSize: 12.5, color: 'var(--cl-muted-3)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: 13, fontSize: 12.5, color: 'var(--cl-muted-3)' }}>
                   <span>📅 {b.date}</span>
                   <span>🕗 {b.time}</span>
                 </div>
-                {b.status === 'Accepted' && (
-                  <div style={{ display: 'flex', gap: 9 }}>
-                    <button onClick={() => history.push(`/athlete/payment/${b.coachId}`)} style={{ flex: 1, height: 44, border: 'none', borderRadius: 12, background: 'var(--cl-accent)', color: 'var(--cl-on-accent)', fontFamily: 'var(--cl-font-body)', fontWeight: 700, fontSize: 13.5, cursor: 'pointer' }}>Pay {b.price} to confirm</button>
-                    <button style={{ width: 44, height: 44, border: '1px solid var(--cl-border)', borderRadius: 12, background: 'var(--cl-surface)', cursor: 'pointer', fontSize: 16 }}>⋯</button>
-                  </div>
-                )}
-                {b.status === 'Completed' && (
-                  <button style={{ width: '100%', height: 44, border: '1.6px solid var(--cl-ink)', borderRadius: 12, background: 'var(--cl-surface)', color: 'var(--cl-ink)', fontFamily: 'var(--cl-font-body)', fontWeight: 700, fontSize: 13.5, cursor: 'pointer' }}>Leave a review</button>
-                )}
               </div>
             ))}
           </div>

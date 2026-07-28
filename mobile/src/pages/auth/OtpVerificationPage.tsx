@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 
 const DIGITS = 6;
 
-const OtpVerificationPage: React.FC = () => {
+const OtpVerificationPage: React.FC<{ mode?: 'signup' | 'reset' }> = ({ mode = 'signup' }) => {
   const history = useHistory();
   const [otp, setOtp] = useState<string[]>(Array(DIGITS).fill(''));
   const refs = useRef<(HTMLInputElement | null)[]>([]);
@@ -74,7 +74,7 @@ const OtpVerificationPage: React.FC = () => {
           </p>
 
           <button
-            onClick={() => history.push('/auth/role')}
+            onClick={() => history.push(mode === 'reset' ? '/auth/reset-success' : '/auth/role')}
             disabled={filled < DIGITS}
             style={{
               marginTop: 22, border: 'none', height: 56, borderRadius: 'var(--cl-radius-btn)',

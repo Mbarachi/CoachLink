@@ -14,19 +14,26 @@ const S = {
   } as React.CSSProperties,
 };
 
+const STATES = ['Lagos', 'Ogun', 'Oyo', 'Rivers', 'FCT Abuja'];
+const LGAS = ['Amuwo Odofin', 'Apapa', 'Ajeromi-Ifelodun', 'Ojo', 'Surulere'];
+
 const SignUpPage: React.FC = () => {
   const history = useHistory();
   const setAuth = useAuthStore(s => s.setAuth);
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [address, setAddress] = useState('');
+  const [state, setState] = useState(STATES[0]);
+  const [lga, setLga] = useState(LGAS[0]);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const handleSignUp = async () => {
-    if (!name.trim() || !email.trim() || !password || !confirmPassword) {
+    if (!name.trim() || !email.trim() || !phoneNumber.trim() || !address.trim() || !password || !confirmPassword) {
       setError('Please fill in all fields.');
       return;
     }
@@ -51,7 +58,7 @@ const SignUpPage: React.FC = () => {
         firstName,
         lastName,
         email: email.trim(),
-        phoneNumber: '',
+        phoneNumber: phoneNumber.trim(),
         role: 'ATHLETE',
         profileImage: null,
         isVerified: false,
@@ -84,6 +91,27 @@ const SignUpPage: React.FC = () => {
 
           <label style={S.label}>Email</label>
           <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" style={{ ...S.input, marginBottom: 15 }} />
+
+          <label style={S.label}>Phone number</label>
+          <input type="tel" value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} placeholder="0803 123 4567" style={{ ...S.input, marginBottom: 15 }} />
+
+          <label style={S.label}>Address</label>
+          <input value={address} onChange={e => setAddress(e.target.value)} placeholder="Street address" style={{ ...S.input, marginBottom: 15 }} />
+
+          <div style={{ display: 'flex', gap: 10, marginBottom: 15 }}>
+            <div style={{ flex: 1 }}>
+              <label style={S.label}>State</label>
+              <select value={state} onChange={e => setState(e.target.value)} style={{ ...S.input, padding: '0 12px' }}>
+                {STATES.map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </div>
+            <div style={{ flex: 1 }}>
+              <label style={S.label}>LGA</label>
+              <select value={lga} onChange={e => setLga(e.target.value)} style={{ ...S.input, padding: '0 12px' }}>
+                {LGAS.map(l => <option key={l} value={l}>{l}</option>)}
+              </select>
+            </div>
+          </div>
 
           <label style={S.label}>Password</label>
           <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Create a password" style={{ ...S.input, marginBottom: 15 }} />

@@ -1,5 +1,5 @@
 import { IonContent, IonPage } from '@ionic/react';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 
 import { useAuthStore } from '@/store/auth.store';
@@ -17,6 +17,11 @@ const DATES = [
   { day: 'Fri', date: '17' }, { day: 'Sat', date: '18' },
 ];
 const TIMES = ['6:00 AM', '8:00 AM', '10:00 AM', '4:00 PM'];
+const WEEK_OPTIONS = [2, 4, 8, 12];
+const DAY_OPTIONS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+const priceToNumber = (price: string) => Number(price.replace(/[^\d]/g, ''));
+const formatNaira = (n: number) => `₦${n.toLocaleString('en-NG')}`;
 
 const BookingRequestPage: React.FC = () => {
   const history = useHistory();
@@ -25,17 +30,42 @@ const BookingRequestPage: React.FC = () => {
   const isParent = user?.role === 'PARENT';
   const coach = COACHES[Number(coachId)] ?? COACHES[0];
 
+  const [mode, setMode] = useState<'single' | 'package'>('single');
   const [selectedDate, setSelectedDate] = useState(1);
   const [selectedTime, setSelectedTime] = useState(1);
+  const [weeks, setWeeks] = useState(WEEK_OPTIONS[1]);
+  const [pkgDays, setPkgDays] = useState<string[]>(['Wed', 'Fri']);
   const [note, setNote] = useState('');
   const [childName, setChildName] = useState('');
   const [childAge, setChildAge] = useState('');
+
+  const togglePkgDay = (d: string) => {
+    setPkgDays(prev => prev.includes(d) ? prev.filter(x => x !== d) : [...prev, d]);
+  };
+
+  const sessionCount = weeks * pkgDays.length;
+  const totalPrice = useMemo(() => priceToNumber(coach.price) * sessionCount, [coach.price, sessionCount]);
 
   const inputStyle: React.CSSProperties = {
     height: 50, borderRadius: 13, border: '1px solid var(--cl-border)',
     background: 'var(--cl-surface)', padding: '0 14px',
     fontFamily: 'var(--cl-font-body)', fontSize: 14, color: 'var(--cl-ink)', outline: 'none',
     boxSizing: 'border-box',
+  };
+
+  const handleSubmit = () => {
+    const state = mode === 'package'
+      ? {
+          coachId: coach.id, coachName: coach.name, coachInitials: coach.initials, coachSport: coach.sport,
+          mode: 'package' as const, sessionsCount: sessionCount, totalPrice: formatNaira(totalPrice),
+          schedule: pkgDays.join(' & '), time: TIMES[selectedTime], weeks,
+        }
+      : {
+          coachId: coach.id, coachName: coach.name, coachInitials: coach.initials, coachSport: coach.sport,
+          mode: 'single' as const, date: `${DATES[selectedDate].day} ${DATES[selectedDate].date}`, time: TIMES[selectedTime],
+          price: coach.price,
+        };
+    history.push('/athlete/booking-success/new', state);
   };
 
   return (
@@ -64,6 +94,12 @@ const BookingRequestPage: React.FC = () => {
               </div>
             </div>
 
+            {/* single / package toggle */}
+            <div style={{ display: 'flex', gap: 5, background: 'var(--cl-subtle)', borderRadius: 14, padding: 4, marginTop: 18 }}>
+              <div onClick={() => setMode('single')} style={{ flex: 1, textAlign: 'center', padding: '11px 0', borderRadius: 11, cursor: 'pointer', fontWeight: 700, fontSize: 13.5, background: mode === 'single' ? 'var(--cl-ink)' : 'transparent', color: mode === 'single' ? 'var(--cl-accent)' : 'var(--cl-muted-3)' }}>Single session</div>
+              <div onClick={() => setMode('package')} style={{ flex: 1, textAlign: 'center', padding: '11px 0', borderRadius: 11, cursor: 'pointer', fontWeight: 700, fontSize: 13.5, background: mode === 'package' ? 'var(--cl-ink)' : 'transparent', color: mode === 'package' ? 'var(--cl-accent)' : 'var(--cl-muted-3)' }}>Weekly package</div>
+            </div>
+
             {/* child fields (parent only) */}
             {isParent && (
               <>
@@ -75,21 +111,61 @@ const BookingRequestPage: React.FC = () => {
               </>
             )}
 
-            {/* date picker */}
-            <h4 style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 700, fontSize: 14, color: 'var(--cl-ink)', margin: '20px 0 11px' }}>Select date · May 2024</h4>
-            <div style={{ display: 'flex', gap: 7, justifyContent: 'space-between' }}>
-              {DATES.map((d, i) => (
-                <div key={i} onClick={() => setSelectedDate(i)} style={{
-                  flex: 1, textAlign: 'center', padding: '11px 0', borderRadius: 13,
-                  background: selectedDate === i ? 'var(--cl-accent)' : 'var(--cl-surface)',
-                  border: `1px solid ${selectedDate === i ? 'var(--cl-accent)' : 'var(--cl-border)'}`,
-                  cursor: 'pointer',
-                }}>
-                  <div style={{ fontSize: 10, color: selectedDate === i ? 'var(--cl-surface)' : 'var(--cl-muted-2)' }}>{d.day}</div>
-                  <div style={{ fontWeight: 700, fontSize: 15, color: selectedDate === i ? 'var(--cl-surface)' : 'var(--cl-ink)', marginTop: 3 }}>{d.date}</div>
+            {mode === 'single' ? (
+              <>
+                {/* date picker */}
+                <h4 style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 700, fontSize: 14, color: 'var(--cl-ink)', margin: '20px 0 11px' }}>Select date · May 2024</h4>
+                <div style={{ display: 'flex', gap: 7, justifyContent: 'space-between' }}>
+                  {DATES.map((d, i) => (
+                    <div key={i} onClick={() => setSelectedDate(i)} style={{
+                      flex: 1, textAlign: 'center', padding: '11px 0', borderRadius: 13,
+                      background: selectedDate === i ? 'var(--cl-accent)' : 'var(--cl-surface)',
+                      border: `1px solid ${selectedDate === i ? 'var(--cl-accent)' : 'var(--cl-border)'}`,
+                      cursor: 'pointer',
+                    }}>
+                      <div style={{ fontSize: 10, color: selectedDate === i ? 'var(--cl-surface)' : 'var(--cl-muted-2)' }}>{d.day}</div>
+                      <div style={{ fontWeight: 700, fontSize: 15, color: selectedDate === i ? 'var(--cl-surface)' : 'var(--cl-ink)', marginTop: 3 }}>{d.date}</div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </>
+            ) : (
+              <>
+                {/* package length */}
+                <h4 style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 700, fontSize: 14, color: 'var(--cl-ink)', margin: '20px 0 11px' }}>Package length</h4>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  {WEEK_OPTIONS.map(w => (
+                    <span key={w} onClick={() => setWeeks(w)} style={{
+                      flex: 1, textAlign: 'center', fontSize: 13, fontWeight: 700, padding: '10px 0', borderRadius: 11, cursor: 'pointer',
+                      background: weeks === w ? 'var(--cl-ink)' : 'var(--cl-surface)',
+                      color: weeks === w ? 'var(--cl-accent)' : 'var(--cl-muted-3)',
+                      border: '1px solid var(--cl-border)',
+                    }}>{w} wks</span>
+                  ))}
+                </div>
+
+                {/* package days */}
+                <h4 style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 700, fontSize: 14, color: 'var(--cl-ink)', margin: '20px 0 11px' }}>Which days each week?</h4>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  {DAY_OPTIONS.map(d => (
+                    <span key={d} onClick={() => togglePkgDay(d)} style={{
+                      flex: 1, textAlign: 'center', fontSize: 13, fontWeight: 700, padding: '10px 0', borderRadius: 11, cursor: 'pointer',
+                      background: pkgDays.includes(d) ? 'var(--cl-ink)' : 'var(--cl-surface)',
+                      color: pkgDays.includes(d) ? 'var(--cl-accent)' : 'var(--cl-muted-3)',
+                      border: '1px solid var(--cl-border)',
+                    }}>{d[0]}</span>
+                  ))}
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--cl-ink)', borderRadius: 16, padding: 16, marginTop: 16 }}>
+                  <div>
+                    <div style={{ fontSize: 12, color: 'var(--cl-bfae97)' }}>{sessionCount} sessions total</div>
+                    <div style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 800, fontSize: 22, color: 'var(--cl-surface)', marginTop: 3 }}>{formatNaira(totalPrice)}</div>
+                  </div>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--cl-ink)', background: 'var(--cl-accent)', padding: '6px 11px', borderRadius: 'var(--cl-radius-chip)' }}>Package rate</span>
+                </div>
+              </>
+            )}
 
             {/* time picker */}
             <h4 style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 700, fontSize: 14, color: 'var(--cl-ink)', margin: '20px 0 11px' }}>Select time</h4>
@@ -126,7 +202,23 @@ const BookingRequestPage: React.FC = () => {
 
           {/* sticky footer */}
           <div style={{ flexShrink: 0, padding: '14px var(--cl-px) 22px', background: 'var(--cl-canvas)', borderTop: '1px solid var(--cl-border)' }}>
-            <button onClick={() => history.push('/athlete/booking-success/new')} style={{ width: '100%', height: 54, border: 'none', borderRadius: 15, background: 'var(--cl-accent)', color: 'var(--cl-on-accent)', fontFamily: 'var(--cl-font-body)', fontWeight: 700, fontSize: 15.5, cursor: 'pointer' }}>Send request</button>
+            {mode === 'package' && (
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+                <span style={{ fontSize: 12.5, color: 'var(--cl-muted-1)' }}>{sessionCount} sessions</span>
+                <span style={{ fontWeight: 700, fontSize: 15, color: 'var(--cl-ink)' }}>{formatNaira(totalPrice)}</span>
+              </div>
+            )}
+            <button
+              onClick={handleSubmit}
+              disabled={mode === 'package' && pkgDays.length === 0}
+              style={{
+                width: '100%', height: 54, border: 'none', borderRadius: 15,
+                background: mode === 'package' && pkgDays.length === 0 ? 'var(--cl-subtle)' : 'var(--cl-accent)',
+                color: mode === 'package' && pkgDays.length === 0 ? 'var(--cl-muted-2)' : 'var(--cl-on-accent)',
+                fontFamily: 'var(--cl-font-body)', fontWeight: 700, fontSize: 15.5,
+                cursor: mode === 'package' && pkgDays.length === 0 ? 'default' : 'pointer',
+              }}
+            >Send request</button>
           </div>
         </div>
       </IonContent>

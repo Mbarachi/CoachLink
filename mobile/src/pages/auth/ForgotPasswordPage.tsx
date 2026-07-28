@@ -36,7 +36,7 @@ const ForgotPasswordPage: React.FC = () => {
             }}
           />
 
-          <button onClick={() => history.push('/auth/otp')} style={{
+          <button onClick={() => history.push('/auth/forgot-password/otp')} style={{
             marginTop: 22, border: 'none', height: 56, borderRadius: 'var(--cl-radius-btn)',
             background: 'var(--cl-accent)', color: 'var(--cl-on-accent)',
             fontFamily: 'var(--cl-font-body)', fontWeight: 700, fontSize: 16, cursor: 'pointer', width: '100%',

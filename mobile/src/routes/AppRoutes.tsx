@@ -10,6 +10,7 @@ import CoachOnboardingPage from '@/pages/auth/CoachOnboardingPage';
 import CompleteProfilePage from '@/pages/auth/CompleteProfilePage';
 import ForgotPasswordPage from '@/pages/auth/ForgotPasswordPage';
 import OtpVerificationPage from '@/pages/auth/OtpVerificationPage';
+import ResetPasswordSuccessPage from '@/pages/auth/ResetPasswordSuccessPage';
 import RoleSelectionPage from '@/pages/auth/RoleSelectionPage';
 import SignInPage from '@/pages/auth/SignInPage';
 import SignUpPage from '@/pages/auth/SignUpPage';
@@ -34,7 +35,9 @@ const AppRoutes: React.FC = () => {
       <Route path="/auth/signin" component={SignInPage} exact />
       <Route path="/auth/signup" component={SignUpPage} exact />
       <Route path="/auth/forgot-password" component={ForgotPasswordPage} exact />
-      <Route path="/auth/otp" component={OtpVerificationPage} exact />
+      <Route path="/auth/otp" render={() => <OtpVerificationPage mode="signup" />} exact />
+      <Route path="/auth/forgot-password/otp" render={() => <OtpVerificationPage mode="reset" />} exact />
+      <Route path="/auth/reset-success" component={ResetPasswordSuccessPage} exact />
       <Route path="/auth/role" component={RoleSelectionPage} exact />
       <Route path="/auth/complete-profile" component={CompleteProfilePage} exact />
       <Route path="/auth/coach-onboarding" component={CoachOnboardingPage} exact />

@@ -1,6 +1,6 @@
 import { IonContent, IonPage } from '@ionic/react';
 import React, { useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 
 const COACHES = [
   { id: '0', name: 'Tobi Adebayo',    sport: 'Swimming', price: '₦12,000' },
@@ -10,11 +10,27 @@ const COACHES = [
   { id: '4', name: 'Yusuf Bello',     sport: 'Swimming', price: '₦7,500'  },
 ];
 
+type PackageState = {
+  mode: 'package';
+  sessionsCount: number;
+  totalPrice: string;
+  coachName: string;
+  coachSport: string;
+};
+
 const PaymentPage: React.FC = () => {
   const history = useHistory();
   const { bookingRequestId } = useParams<{ bookingRequestId: string }>();
-  const coach = COACHES[Number(bookingRequestId)] ?? COACHES[0];
+  const location = useLocation<PackageState | undefined>();
+  const packageState = location.state?.mode === 'package' ? location.state : undefined;
+  const fallbackCoach = COACHES[Number(bookingRequestId)] ?? COACHES[0];
   const [method, setMethod] = useState<'card' | 'bank'>('card');
+
+  const totalDue = packageState ? packageState.totalPrice : fallbackCoach.price;
+  const subtitle = packageState
+    ? `${packageState.sessionsCount} sessions with ${packageState.coachName} · ${packageState.coachSport}`
+    : `1 session with ${fallbackCoach.name} · ${fallbackCoach.sport}`;
+  const feeLabel = packageState ? `${packageState.sessionsCount} sessions` : 'Session fee';
 
   return (
     <IonPage>
@@ -35,14 +51,14 @@ const PaymentPage: React.FC = () => {
           <div style={{ flex: 1, overflowY: 'auto', padding: '0 var(--cl-px) 12px' }}>
             {/* total due card */}
             <div style={{ background: 'var(--cl-ink)', borderRadius: 18, padding: 20 }}>
-              <div style={{ fontSize: 12.5, color: '#bfae97' }}>Total due</div>
-              <div style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 800, fontSize: 34, color: 'var(--cl-surface)', marginTop: 4 }}>{coach.price}</div>
-              <div style={{ fontSize: 12.5, color: '#bfae97', marginTop: 4 }}>1 session with {coach.name} · {coach.sport}</div>
+              <div style={{ fontSize: 12.5, color: 'var(--cl-bfae97)' }}>Total due</div>
+              <div style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 800, fontSize: 34, color: 'var(--cl-surface)', marginTop: 4 }}>{totalDue}</div>
+              <div style={{ fontSize: 12.5, color: 'var(--cl-bfae97)', marginTop: 4 }}>{subtitle}</div>
             </div>
 
             {/* fee breakdown */}
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13.5, color: 'var(--cl-muted-3)', margin: '18px 2px 0' }}>
-              <span>Session fee</span><span style={{ color: 'var(--cl-ink)', fontWeight: 600 }}>{coach.price}</span>
+              <span>{feeLabel}</span><span style={{ color: 'var(--cl-ink)', fontWeight: 600 }}>{totalDue}</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13.5, color: 'var(--cl-muted-3)', margin: '9px 2px 0' }}>
               <span>Service fee</span><span style={{ color: 'var(--cl-ink)', fontWeight: 600 }}>₦0</span>
@@ -83,8 +99,13 @@ const PaymentPage: React.FC = () => {
 
           {/* sticky footer */}
           <div style={{ flexShrink: 0, padding: '14px var(--cl-px) 22px', background: 'var(--cl-canvas)', borderTop: '1px solid var(--cl-border)' }}>
-            <button onClick={() => history.push('/athlete/booking-success/paid')} style={{ width: '100%', height: 54, border: 'none', borderRadius: 15, background: 'var(--cl-accent)', color: 'var(--cl-on-accent)', fontFamily: 'var(--cl-font-body)', fontWeight: 700, fontSize: 15.5, cursor: 'pointer' }}>
-              Pay {coach.price}
+            <button
+              onClick={() => history.push('/athlete/booking-success/paid', {
+                coachName: packageState ? packageState.coachName : fallbackCoach.name,
+              })}
+              style={{ width: '100%', height: 54, border: 'none', borderRadius: 15, background: 'var(--cl-accent)', color: 'var(--cl-on-accent)', fontFamily: 'var(--cl-font-body)', fontWeight: 700, fontSize: 15.5, cursor: 'pointer' }}
+            >
+              Pay {totalDue}
             </button>
           </div>
         </div>
