@@ -1,4 +1,5 @@
-import { IonContent, IonPage } from '@ionic/react';
+import { IonContent, IonIcon, IonPage } from '@ionic/react';
+import { eyeOffOutline, eyeOutline } from 'ionicons/icons';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
@@ -12,6 +13,34 @@ const S = {
     padding: '0 15px', fontFamily: 'var(--cl-font-body)', fontSize: 16,
     color: 'var(--cl-ink)', outline: 'none', boxSizing: 'border-box',
   } as React.CSSProperties,
+};
+
+const PasswordField: React.FC<{
+  label: string; placeholder: string; value: string; onChange: (v: string) => void; marginBottom?: number;
+}> = ({ label, placeholder, value, onChange, marginBottom }) => {
+  const [visible, setVisible] = useState(false);
+  return (
+    <>
+      <label style={S.label}>{label}</label>
+      <div style={{ position: 'relative', marginBottom }}>
+        <input
+          type={visible ? 'text' : 'password'}
+          value={value}
+          onChange={e => onChange(e.target.value)}
+          placeholder={placeholder}
+          style={{ ...S.input, paddingRight: 44 }}
+        />
+        <IonIcon
+          icon={visible ? eyeOutline : eyeOffOutline}
+          onClick={() => setVisible(v => !v)}
+          style={{
+            position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)',
+            fontSize: 19, color: 'var(--cl-muted-2)', cursor: 'pointer',
+          }}
+        />
+      </div>
+    </>
+  );
 };
 
 const STATES = ['Lagos', 'Ogun', 'Oyo', 'Rivers', 'FCT Abuja'];
@@ -113,11 +142,9 @@ const SignUpPage: React.FC = () => {
             </div>
           </div>
 
-          <label style={S.label}>Password</label>
-          <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Create a password" style={{ ...S.input, marginBottom: 15 }} />
+          <PasswordField label="Password" placeholder="Create a password" value={password} onChange={setPassword} marginBottom={15} />
 
-          <label style={S.label}>Confirm password</label>
-          <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} placeholder="Re-enter your password" style={S.input} />
+          <PasswordField label="Confirm password" placeholder="Re-enter your password" value={confirmPassword} onChange={setConfirmPassword} />
 
           {error && <p style={{ fontSize: 12.5, color: 'var(--cl-destructive)', marginTop: 8 }}>{error}</p>}
 

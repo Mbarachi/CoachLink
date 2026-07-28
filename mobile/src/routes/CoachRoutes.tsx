@@ -10,7 +10,7 @@ import {
   calendarOutline,
   cashOutline,
   gridOutline,
-  personOutline,
+  settingsOutline,
   listOutline,
 } from 'ionicons/icons';
 import React from 'react';
@@ -22,6 +22,7 @@ import EarningsSummaryPage   from '@/pages/coach/EarningsSummaryPage';
 import IncomingRequestsPage  from '@/pages/coach/IncomingRequestsPage';
 import ProfileManagementPage from '@/pages/coach/ProfileManagementPage';
 import RequestDetailsPage    from '@/pages/coach/RequestDetailsPage';
+import CoachSettingsPage     from '@/pages/coach/SettingsPage';
 
 const CoachRoutes: React.FC = () => (
   <IonTabs>
@@ -30,6 +31,7 @@ const CoachRoutes: React.FC = () => (
       <Route path="/coach/requests"     component={IncomingRequestsPage}  exact />
       <Route path="/coach/availability" component={AvailabilityPage}      exact />
       <Route path="/coach/earnings"     component={EarningsSummaryPage}   exact />
+      <Route path="/coach/settings"     component={CoachSettingsPage}     exact />
       <Route path="/coach/profile"      component={ProfileManagementPage} exact />
 
       <Route path="/coach/requests/:id" component={RequestDetailsPage}    exact />
@@ -54,9 +56,9 @@ const CoachRoutes: React.FC = () => (
         <IonIcon icon={cashOutline} />
         <IonLabel>Earnings</IonLabel>
       </IonTabButton>
-      <IonTabButton tab="profile"      href="/coach/profile">
-        <IonIcon icon={personOutline} />
-        <IonLabel>Profile</IonLabel>
+      <IonTabButton tab="settings"     href="/coach/settings">
+        <IonIcon icon={settingsOutline} />
+        <IonLabel>Settings</IonLabel>
       </IonTabButton>
     </IonTabBar>
   </IonTabs>
