@@ -25,7 +25,11 @@ contract the frontend expects each module to satisfy.
 
 ## Dev notes
 
-- OTPs (signup verification, password reset) have no email/SMS provider wired
-  up yet — codes are printed to the server console instead.
+- OTP emails send via [Resend](https://resend.com) (`src/mail/mail.service.ts`).
+  Set `RESEND_API_KEY` in `.env` to send real emails; leave it blank and codes
+  just print to the server console instead (dev fallback, always logged either
+  way). Until a custom sending domain is verified in Resend, the sandbox sender
+  (`onboarding@resend.dev`) can only deliver to the email on your Resend account.
+- SMS OTP delivery isn't wired up — email only for now.
 - `JWT_SECRET` in `.env` is a dev-only placeholder — replace it before any
   real deployment.

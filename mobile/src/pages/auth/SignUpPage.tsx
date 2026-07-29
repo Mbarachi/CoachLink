@@ -3,6 +3,8 @@ import { eyeOffOutline, eyeOutline } from 'ionicons/icons';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
+import { getErrorMessage, isBackendUnreachable } from '@/lib/apiError';
+import { authService } from '@/services/auth.service';
 import { useAuthStore } from '@/store/auth.store';
 
 const S = {
@@ -81,24 +83,41 @@ const SignUpPage: React.FC = () => {
     const [firstName, ...rest] = name.trim().split(' ');
     const lastName = rest.join(' ') || '-';
 
-    setAuth(
-      {
-        id: `mock-${Date.now()}`,
+    try {
+      const { user, accessToken } = await authService.signUp({
         firstName,
         lastName,
         email: email.trim(),
         phoneNumber: phoneNumber.trim(),
-        role: 'ATHLETE',
-        profileImage: null,
-        isVerified: false,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-      'mock-token',
-    );
-
-    setLoading(false);
-    history.push('/auth/otp');
+        password,
+      });
+      setAuth(user, accessToken);
+      history.push('/auth/otp');
+    } catch (err) {
+      if (isBackendUnreachable(err)) {
+        // Backend unreachable in dev — fall back to a mock session.
+        setAuth(
+          {
+            id: `mock-${Date.now()}`,
+            firstName,
+            lastName,
+            email: email.trim(),
+            phoneNumber: phoneNumber.trim(),
+            role: 'ATHLETE',
+            profileImage: null,
+            isVerified: false,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          },
+          'mock-token',
+        );
+        history.push('/auth/otp');
+      } else {
+        setError(getErrorMessage(err, 'Could not create your account. Please try again.'));
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

@@ -8,6 +8,7 @@ import { OtpPurpose } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
 
 import { sanitizeUser } from '../common/sanitize-user';
+import { MailService } from '../mail/mail.service';
 import { PrismaService } from '../prisma/prisma.service';
 
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
@@ -23,6 +24,7 @@ export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwt: JwtService,
+    private readonly mail: MailService,
   ) {}
 
   private generateOtpCode(): string {
@@ -40,8 +42,7 @@ export class AuthService {
         expiresAt: new Date(Date.now() + OTP_TTL_MINUTES * 60_000),
       },
     });
-    // No email/SMS provider configured yet — log so the flow is testable in dev.
-    console.log(`[OTP] ${purpose} code for ${email}: ${code}`);
+    await this.mail.sendOtpEmail(email, code, purpose);
   }
 
   private signToken(user: { id: string; email: string; role: string }) {

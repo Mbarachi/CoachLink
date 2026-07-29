@@ -2,9 +2,34 @@ import { IonContent, IonPage } from '@ionic/react';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
+import { authService } from '@/services/auth.service';
+
 const ForgotPasswordPage: React.FC = () => {
   const history = useHistory();
   const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSendCode = async () => {
+    if (!email.trim()) {
+      setError('Please enter your email.');
+      return;
+    }
+    setLoading(true);
+    setError('');
+
+    // The backend always reports success here regardless of whether the email is
+    // registered (avoids leaking account existence), and is best-effort even if
+    // unreachable — either way we move on to the OTP screen.
+    try {
+      await authService.forgotPassword({ email: email.trim() });
+    } catch {
+      // ignore — proceed to OTP screen either way
+    } finally {
+      setLoading(false);
+    }
+    history.push('/auth/forgot-password/otp', { email: email.trim() });
+  };
 
   return (
     <IonPage>
@@ -36,11 +61,14 @@ const ForgotPasswordPage: React.FC = () => {
             }}
           />
 
-          <button onClick={() => history.push('/auth/forgot-password/otp')} style={{
+          {error && <p style={{ fontSize: 12.5, color: 'var(--cl-destructive)', marginTop: 8 }}>{error}</p>}
+
+          <button onClick={handleSendCode} disabled={loading} style={{
             marginTop: 22, border: 'none', height: 56, borderRadius: 'var(--cl-radius-btn)',
             background: 'var(--cl-accent)', color: 'var(--cl-on-accent)',
             fontFamily: 'var(--cl-font-body)', fontWeight: 700, fontSize: 16, cursor: 'pointer', width: '100%',
-          }}>Send code</button>
+            opacity: loading ? 0.7 : 1,
+          }}>{loading ? 'Sending…' : 'Send code'}</button>
         </div>
       </IonContent>
     </IonPage>

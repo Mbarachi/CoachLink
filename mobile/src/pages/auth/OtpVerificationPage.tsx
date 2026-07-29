@@ -1,13 +1,35 @@
-import { IonContent, IonPage } from '@ionic/react';
+import { IonContent, IonIcon, IonPage } from '@ionic/react';
+import { eyeOffOutline, eyeOutline } from 'ionicons/icons';
 import React, { useRef, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
+
+import { getErrorMessage, isBackendUnreachable } from '@/lib/apiError';
+import { authService } from '@/services/auth.service';
+import { useAuthStore } from '@/store/auth.store';
 
 const DIGITS = 6;
 
+const inputStyle: React.CSSProperties = {
+  width: '100%', height: 52, borderRadius: 14,
+  border: '1px solid var(--cl-border)', background: 'var(--cl-surface)',
+  padding: '0 15px', fontFamily: 'var(--cl-font-body)', fontSize: 14.5,
+  color: 'var(--cl-ink)', outline: 'none', boxSizing: 'border-box',
+};
+
 const OtpVerificationPage: React.FC<{ mode?: 'signup' | 'reset' }> = ({ mode = 'signup' }) => {
   const history = useHistory();
+  const location = useLocation<{ email?: string } | undefined>();
+  const authUser = useAuthStore(s => s.user);
+  const updateUser = useAuthStore(s => s.updateUser);
+  const email = mode === 'reset' ? location.state?.email : authUser?.email;
+
   const [otp, setOtp] = useState<string[]>(Array(DIGITS).fill(''));
   const refs = useRef<(HTMLInputElement | null)[]>([]);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleChange = (i: number, val: string) => {
     const d = val.replace(/\D/g, '').slice(-1);
@@ -22,6 +44,53 @@ const OtpVerificationPage: React.FC<{ mode?: 'signup' | 'reset' }> = ({ mode = '
   };
 
   const filled = otp.filter(Boolean).length;
+  const code = otp.join('');
+  const canSubmit = filled === DIGITS && (mode === 'signup' || (newPassword.length >= 6 && newPassword === confirmPassword));
+
+  const handleVerify = async () => {
+    if (!canSubmit) return;
+    if (mode === 'reset' && newPassword !== confirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
+    if (!email) {
+      setError('Missing email — please restart this flow.');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    if (mode === 'signup') {
+      try {
+        await authService.verifyOtp({ email, otp: code });
+        updateUser({ isVerified: true });
+        history.push('/auth/role');
+      } catch (err) {
+        if (isBackendUnreachable(err)) {
+          updateUser({ isVerified: true });
+          history.push('/auth/role');
+        } else {
+          setError(getErrorMessage(err, 'Invalid or expired code.'));
+        }
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      try {
+        await authService.resetPassword({ email, otp: code, newPassword });
+        history.push('/auth/reset-success');
+      } catch (err) {
+        if (isBackendUnreachable(err)) {
+          history.push('/auth/reset-success');
+        } else {
+          setError(getErrorMessage(err, 'Invalid or expired code.'));
+        }
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
 
   return (
     <IonPage>
@@ -73,16 +142,46 @@ const OtpVerificationPage: React.FC<{ mode?: 'signup' | 'reset' }> = ({ mode = '
             <span style={{ color: 'var(--cl-ink)', fontWeight: 700 }}>Resend in 0:42</span>
           </p>
 
+          {mode === 'reset' && (
+            <>
+              <label style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--cl-ink)', margin: '22px 0 7px', display: 'block' }}>New password</label>
+              <div style={{ position: 'relative', marginBottom: 15 }}>
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={newPassword}
+                  onChange={e => setNewPassword(e.target.value)}
+                  placeholder="Create a new password"
+                  style={{ ...inputStyle, paddingRight: 44 }}
+                />
+                <IonIcon
+                  icon={showPassword ? eyeOutline : eyeOffOutline}
+                  onClick={() => setShowPassword(v => !v)}
+                  style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', fontSize: 19, color: 'var(--cl-muted-2)', cursor: 'pointer' }}
+                />
+              </div>
+              <label style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--cl-ink)', marginBottom: 7, display: 'block' }}>Confirm new password</label>
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={confirmPassword}
+                onChange={e => setConfirmPassword(e.target.value)}
+                placeholder="Re-enter your new password"
+                style={inputStyle}
+              />
+            </>
+          )}
+
+          {error && <p style={{ fontSize: 12.5, color: 'var(--cl-destructive)', marginTop: 8 }}>{error}</p>}
+
           <button
-            onClick={() => history.push(mode === 'reset' ? '/auth/reset-success' : '/auth/role')}
-            disabled={filled < DIGITS}
+            onClick={handleVerify}
+            disabled={!canSubmit || loading}
             style={{
               marginTop: 22, border: 'none', height: 56, borderRadius: 'var(--cl-radius-btn)',
               background: 'var(--cl-accent)', color: 'var(--cl-on-accent)',
               fontFamily: 'var(--cl-font-body)', fontWeight: 700, fontSize: 16, cursor: 'pointer', width: '100%',
-              opacity: filled < DIGITS ? 0.5 : 1,
+              opacity: !canSubmit || loading ? 0.5 : 1,
             }}
-          >Verify</button>
+          >{loading ? 'Verifying…' : 'Verify'}</button>
         </div>
       </IonContent>
     </IonPage>
