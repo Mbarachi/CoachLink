@@ -6,6 +6,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { getErrorMessage, isBackendUnreachable } from '@/lib/apiError';
 import { authService } from '@/services/auth.service';
 import { useAuthStore } from '@/store/auth.store';
+import { useUiStore } from '@/store/ui.store';
 
 const DIGITS = 6;
 
@@ -21,6 +22,7 @@ const OtpVerificationPage: React.FC<{ mode?: 'signup' | 'reset' }> = ({ mode = '
   const location = useLocation<{ email?: string } | undefined>();
   const authUser = useAuthStore(s => s.user);
   const updateUser = useAuthStore(s => s.updateUser);
+  const showToast = useUiStore(s => s.showToast);
   const email = mode === 'reset' ? location.state?.email : authUser?.email;
 
   const [otp, setOtp] = useState<string[]>(Array(DIGITS).fill(''));
@@ -29,7 +31,6 @@ const OtpVerificationPage: React.FC<{ mode?: 'signup' | 'reset' }> = ({ mode = '
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
 
   const handleChange = (i: number, val: string) => {
     const d = val.replace(/\D/g, '').slice(-1);
@@ -50,28 +51,28 @@ const OtpVerificationPage: React.FC<{ mode?: 'signup' | 'reset' }> = ({ mode = '
   const handleVerify = async () => {
     if (!canSubmit) return;
     if (mode === 'reset' && newPassword !== confirmPassword) {
-      setError('Passwords do not match.');
+      showToast('Passwords do not match.', 'warning');
       return;
     }
     if (!email) {
-      setError('Missing email — please restart this flow.');
+      showToast('Missing email — please restart this flow.', 'danger');
       return;
     }
 
     setLoading(true);
-    setError('');
 
     if (mode === 'signup') {
       try {
         await authService.verifyOtp({ email, otp: code });
         updateUser({ isVerified: true });
+        showToast('Email verified.', 'success');
         history.push('/auth/role');
       } catch (err) {
         if (isBackendUnreachable(err)) {
           updateUser({ isVerified: true });
           history.push('/auth/role');
         } else {
-          setError(getErrorMessage(err, 'Invalid or expired code.'));
+          showToast(getErrorMessage(err, 'Invalid or expired code.'), 'danger');
         }
       } finally {
         setLoading(false);
@@ -79,12 +80,13 @@ const OtpVerificationPage: React.FC<{ mode?: 'signup' | 'reset' }> = ({ mode = '
     } else {
       try {
         await authService.resetPassword({ email, otp: code, newPassword });
+        showToast('Password reset successfully.', 'success');
         history.push('/auth/reset-success');
       } catch (err) {
         if (isBackendUnreachable(err)) {
           history.push('/auth/reset-success');
         } else {
-          setError(getErrorMessage(err, 'Invalid or expired code.'));
+          showToast(getErrorMessage(err, 'Invalid or expired code.'), 'danger');
         }
       } finally {
         setLoading(false);
@@ -169,8 +171,6 @@ const OtpVerificationPage: React.FC<{ mode?: 'signup' | 'reset' }> = ({ mode = '
               />
             </>
           )}
-
-          {error && <p style={{ fontSize: 12.5, color: 'var(--cl-destructive)', marginTop: 8 }}>{error}</p>}
 
           <button
             onClick={handleVerify}

@@ -3,3 +3,4 @@ export { default as AppInput } from './AppInput';
 export { default as AppCard } from './AppCard';
 export { default as AppAvatar } from './AppAvatar';
 export { default as AppPageHeader } from './AppPageHeader';
+export { default as ToastContainer } from './ToastContainer';

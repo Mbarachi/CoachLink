@@ -6,6 +6,7 @@ import { useHistory } from 'react-router-dom';
 import { getErrorMessage, isBackendUnreachable } from '@/lib/apiError';
 import { authService } from '@/services/auth.service';
 import { useAuthStore } from '@/store/auth.store';
+import { useUiStore } from '@/store/ui.store';
 
 const S = {
   label: { fontSize: 12.5, fontWeight: 600, color: 'var(--cl-ink)', marginBottom: 7, display: 'block' } as React.CSSProperties,
@@ -51,6 +52,7 @@ const LGAS = ['Amuwo Odofin', 'Apapa', 'Ajeromi-Ifelodun', 'Ojo', 'Surulere'];
 const SignUpPage: React.FC = () => {
   const history = useHistory();
   const setAuth = useAuthStore(s => s.setAuth);
+  const showToast = useUiStore(s => s.showToast);
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -61,24 +63,22 @@ const SignUpPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
 
   const handleSignUp = async () => {
     if (!name.trim() || !email.trim() || !phoneNumber.trim() || !address.trim() || !password || !confirmPassword) {
-      setError('Please fill in all fields.');
+      showToast('Please fill in all fields.', 'warning');
       return;
     }
     if (password !== confirmPassword) {
-      setError('Passwords do not match.');
+      showToast('Passwords do not match.', 'warning');
       return;
     }
     if (password.length < 6) {
-      setError('Password must be at least 6 characters.');
+      showToast('Password must be at least 6 characters.', 'warning');
       return;
     }
 
     setLoading(true);
-    setError('');
 
     const [firstName, ...rest] = name.trim().split(' ');
     const lastName = rest.join(' ') || '-';
@@ -92,6 +92,7 @@ const SignUpPage: React.FC = () => {
         password,
       });
       setAuth(user, accessToken);
+      showToast('Account created — check your email for a verification code.', 'success');
       history.push('/auth/otp');
     } catch (err) {
       if (isBackendUnreachable(err)) {
@@ -113,7 +114,7 @@ const SignUpPage: React.FC = () => {
         );
         history.push('/auth/otp');
       } else {
-        setError(getErrorMessage(err, 'Could not create your account. Please try again.'));
+        showToast(getErrorMessage(err, 'Could not create your account. Please try again.'), 'danger');
       }
     } finally {
       setLoading(false);
@@ -164,8 +165,6 @@ const SignUpPage: React.FC = () => {
           <PasswordField label="Password" placeholder="Create a password" value={password} onChange={setPassword} marginBottom={15} />
 
           <PasswordField label="Confirm password" placeholder="Re-enter your password" value={confirmPassword} onChange={setConfirmPassword} />
-
-          {error && <p style={{ fontSize: 12.5, color: 'var(--cl-destructive)', marginTop: 8 }}>{error}</p>}
 
           <button onClick={handleSignUp} disabled={loading} style={{
             marginTop: 22, border: 'none', height: 56, borderRadius: 'var(--cl-radius-btn)',

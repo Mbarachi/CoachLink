@@ -2,8 +2,10 @@ import { IonContent, IonPage } from '@ionic/react';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { useAuthStore } from '@/store/auth.store';
+import { getErrorMessage, isBackendUnreachable } from '@/lib/apiError';
 import { authService } from '@/services/auth.service';
+import { useAuthStore } from '@/store/auth.store';
+import { useUiStore } from '@/store/ui.store';
 
 const S = {
   label: { fontSize: 12.5, fontWeight: 600, color: 'var(--cl-ink)', marginBottom: 7, display: 'block' } as React.CSSProperties,
@@ -18,10 +20,10 @@ const S = {
 const SignInPage: React.FC = () => {
   const history = useHistory();
   const setAuth = useAuthStore((s) => s.setAuth);
+  const showToast = useUiStore((s) => s.showToast);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
 
   const mockSignIn = (role: 'ATHLETE' | 'COACH') => {
     setAuth({
@@ -40,16 +42,19 @@ const SignInPage: React.FC = () => {
   };
 
   const handleSignIn = async () => {
-    if (!email || !password) { setError('Please enter your email and password.'); return; }
+    if (!email || !password) { showToast('Please enter your email and password.', 'warning'); return; }
     setLoading(true);
-    setError('');
     try {
       const { user, accessToken } = await authService.signIn({ email, password });
       setAuth(user, accessToken);
       history.replace(user.role === 'COACH' ? '/coach/dashboard' : '/athlete/home');
-    } catch {
-      // Backend unreachable in dev — fall back to mock session
-      mockSignIn('ATHLETE');
+    } catch (err) {
+      if (isBackendUnreachable(err)) {
+        // Backend unreachable in dev — fall back to mock session
+        // mockSignIn('ATHLETE');
+      } else {
+        showToast(getErrorMessage(err, 'Invalid email or password.'), 'danger');
+      }
     } finally {
       setLoading(false);
     }
@@ -74,8 +79,6 @@ const SignInPage: React.FC = () => {
 
           <label style={S.label}>Password</label>
           <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Your password" style={S.input} />
-
-          {error && <p style={{ fontSize: 12.5, color: 'var(--cl-destructive)', marginTop: 8 }}>{error}</p>}
 
           <button onClick={() => history.push('/auth/forgot-password')} style={{ alignSelf: 'flex-end', marginTop: 11, border: 'none', background: 'none', color: 'var(--cl-ink)', fontWeight: 600, fontSize: 13, cursor: 'pointer', fontFamily: 'var(--cl-font-body)' }}>Forgot password?</button>
 

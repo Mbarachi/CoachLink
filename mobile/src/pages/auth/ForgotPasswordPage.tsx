@@ -3,20 +3,20 @@ import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { authService } from '@/services/auth.service';
+import { useUiStore } from '@/store/ui.store';
 
 const ForgotPasswordPage: React.FC = () => {
   const history = useHistory();
+  const showToast = useUiStore(s => s.showToast);
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
 
   const handleSendCode = async () => {
     if (!email.trim()) {
-      setError('Please enter your email.');
+      showToast('Please enter your email.', 'warning');
       return;
     }
     setLoading(true);
-    setError('');
 
     // The backend always reports success here regardless of whether the email is
     // registered (avoids leaking account existence), and is best-effort even if
@@ -28,6 +28,7 @@ const ForgotPasswordPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
+    showToast('Code sent — check your email.', 'success');
     history.push('/auth/forgot-password/otp', { email: email.trim() });
   };
 
@@ -60,8 +61,6 @@ const ForgotPasswordPage: React.FC = () => {
               color: 'var(--cl-ink)', outline: 'none', boxSizing: 'border-box',
             }}
           />
-
-          {error && <p style={{ fontSize: 12.5, color: 'var(--cl-destructive)', marginTop: 8 }}>{error}</p>}
 
           <button onClick={handleSendCode} disabled={loading} style={{
             marginTop: 22, border: 'none', height: 56, borderRadius: 'var(--cl-radius-btn)',
