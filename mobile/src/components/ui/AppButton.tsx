@@ -1,52 +1,54 @@
-import { IonButton, IonSpinner } from '@ionic/react';
 import React from 'react';
+
+type Variant = 'primary' | 'ink' | 'outline' | 'destructive' | 'text';
+type Size = 'md' | 'lg';
+
+const VARIANTS: Record<Variant, React.CSSProperties> = {
+  primary: { border: 'none', background: 'var(--cl-accent)', color: 'var(--cl-on-accent)' },
+  ink: { border: 'none', background: 'var(--cl-ink)', color: 'var(--cl-surface)' },
+  outline: { border: '1.6px solid var(--cl-ink)', background: 'var(--cl-surface)', color: 'var(--cl-ink)' },
+  destructive: { border: '1px solid var(--cl-border)', background: 'var(--cl-surface)', color: 'var(--cl-destructive)' },
+  text: { border: 'none', background: 'none', color: 'var(--cl-ink)' },
+};
+
+const SIZES: Record<Size, React.CSSProperties> = {
+  md: { height: 54, fontSize: 15.5 },
+  lg: { height: 56, fontSize: 16 },
+};
 
 interface AppButtonProps {
   children: React.ReactNode;
   onClick?: () => void;
-  type?: 'button' | 'submit' | 'reset';
-  variant?: 'primary' | 'outline' | 'ghost';
-  expand?: 'block' | 'full';
+  variant?: Variant;
+  size?: Size;
   disabled?: boolean;
-  loading?: boolean;
-  className?: string;
+  fullWidth?: boolean;
+  style?: React.CSSProperties;
 }
 
 const AppButton: React.FC<AppButtonProps> = ({
-  children,
-  onClick,
-  type = 'button',
-  variant = 'primary',
-  expand = 'block',
-  disabled = false,
-  loading = false,
-  className = '',
+  children, onClick, variant = 'primary', size = 'lg', disabled = false, fullWidth = true, style,
 }) => {
-  const fill = variant === 'primary' ? 'solid' : variant === 'outline' ? 'outline' : 'clear';
-  const color = variant === 'ghost' ? 'medium' : 'primary';
+  const isText = variant === 'text';
 
   return (
-    <IonButton
-      expand={expand}
-      fill={fill}
-      color={color}
-      type={type}
-      disabled={disabled || loading}
+    <button
       onClick={onClick}
-      className={className}
+      disabled={disabled}
       style={{
-        '--border-radius': '12px',
-        '--padding-top': '16px',
-        '--padding-bottom': '16px',
-        fontFamily: 'Poppins, sans-serif',
-        fontWeight: 600,
-        fontSize: '16px',
-        letterSpacing: '0.01em',
-        textTransform: 'none',
+        ...(isText
+          ? { fontSize: 14, fontWeight: 600 }
+          : { ...SIZES[size], borderRadius: 'var(--cl-radius-btn)', fontWeight: 700 }),
+        ...VARIANTS[variant],
+        width: fullWidth && !isText ? '100%' : undefined,
+        fontFamily: 'var(--cl-font-body)',
+        cursor: disabled ? 'default' : 'pointer',
+        opacity: disabled ? 0.5 : 1,
+        ...style,
       }}
     >
-      {loading ? <IonSpinner name="crescent" /> : children}
-    </IonButton>
+      {children}
+    </button>
   );
 };
 

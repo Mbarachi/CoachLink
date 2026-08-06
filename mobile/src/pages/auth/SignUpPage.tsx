@@ -1,50 +1,15 @@
-import { IonContent, IonIcon, IonPage } from '@ionic/react';
-import { eyeOffOutline, eyeOutline } from 'ionicons/icons';
+import { useIonViewWillEnter } from '@ionic/react';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
+import {
+  AppButton, AppInput, AppPage, AppSelect, BackButton,
+  isPasswordValid, PasswordInput, PasswordRequirements, StatusBar,
+} from '@/components/ui';
 import { getErrorMessage, isBackendUnreachable } from '@/lib/apiError';
 import { authService } from '@/services/auth.service';
 import { useAuthStore } from '@/store/auth.store';
 import { useUiStore } from '@/store/ui.store';
-
-const S = {
-  label: { fontSize: 12.5, fontWeight: 600, color: 'var(--cl-ink)', marginBottom: 7, display: 'block' } as React.CSSProperties,
-  input: {
-    width: '100%', height: 52, borderRadius: 'var(--cl-radius-input)',
-    border: '1px solid var(--cl-border)', background: 'var(--cl-surface)',
-    padding: '0 15px', fontFamily: 'var(--cl-font-body)', fontSize: 16,
-    color: 'var(--cl-ink)', outline: 'none', boxSizing: 'border-box',
-  } as React.CSSProperties,
-};
-
-const PasswordField: React.FC<{
-  label: string; placeholder: string; value: string; onChange: (v: string) => void; marginBottom?: number;
-}> = ({ label, placeholder, value, onChange, marginBottom }) => {
-  const [visible, setVisible] = useState(false);
-  return (
-    <>
-      <label style={S.label}>{label}</label>
-      <div style={{ position: 'relative', marginBottom }}>
-        <input
-          type={visible ? 'text' : 'password'}
-          value={value}
-          onChange={e => onChange(e.target.value)}
-          placeholder={placeholder}
-          style={{ ...S.input, paddingRight: 44 }}
-        />
-        <IonIcon
-          icon={visible ? eyeOutline : eyeOffOutline}
-          onClick={() => setVisible(v => !v)}
-          style={{
-            position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)',
-            fontSize: 19, color: 'var(--cl-muted-2)', cursor: 'pointer',
-          }}
-        />
-      </div>
-    </>
-  );
-};
 
 const STATES = ['Lagos', 'Ogun', 'Oyo', 'Rivers', 'FCT Abuja'];
 const LGAS = ['Amuwo Odofin', 'Apapa', 'Ajeromi-Ifelodun', 'Ojo', 'Surulere'];
@@ -64,6 +29,19 @@ const SignUpPage: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // Ionic keeps this page mounted in the nav stack rather than unmounting it, so
+  // plain useState alone would leave stale values behind on the next visit.
+  useIonViewWillEnter(() => {
+    setName('');
+    setEmail('');
+    setPhoneNumber('');
+    setAddress('');
+    setState(STATES[0]);
+    setLga(LGAS[0]);
+    setPassword('');
+    setConfirmPassword('');
+  });
+
   const handleSignUp = async () => {
     if (!name.trim() || !email.trim() || !phoneNumber.trim() || !address.trim() || !password || !confirmPassword) {
       showToast('Please fill in all fields.', 'warning');
@@ -73,8 +51,8 @@ const SignUpPage: React.FC = () => {
       showToast('Passwords do not match.', 'warning');
       return;
     }
-    if (password.length < 6) {
-      showToast('Password must be at least 6 characters.', 'warning');
+    if (!isPasswordValid(password)) {
+      showToast('Password does not meet all the requirements below.', 'warning');
       return;
     }
 
@@ -122,65 +100,42 @@ const SignUpPage: React.FC = () => {
   };
 
   return (
-    <IonPage>
-      <IonContent style={{ '--background': 'var(--cl-canvas)' } as React.CSSProperties}>
-        <div style={{ display: 'flex', flexDirection: 'column', padding: '0 var(--cl-px-auth)', fontFamily: 'var(--cl-font-body)', minHeight: '100%' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 46, flexShrink: 0 }}>
-            <span style={{ fontWeight: 700, fontSize: 14, color: 'var(--cl-ink)' }}>9:41</span>
-            <span style={{ width: 18, height: 11, border: '1.6px solid var(--cl-ink)', borderRadius: 3, display: 'block' }} />
-          </div>
+    <AppPage scrollable padding="auth">
+      <StatusBar />
+      <BackButton size={40} style={{ marginTop: 6 }} />
 
-          <button onClick={() => history.goBack()} style={{ width: 40, height: 40, borderRadius: '50%', border: '1px solid var(--cl-border)', background: 'var(--cl-surface)', fontSize: 18, cursor: 'pointer', marginTop: 6, flexShrink: 0 }}>‹</button>
+      <h1 style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 800, fontSize: 32, letterSpacing: '-0.03em', color: 'var(--cl-ink)', margin: '22px 0 6px' }}>Create account</h1>
+      <p style={{ fontSize: 14.5, color: 'var(--cl-muted-1)', margin: '0 0 22px' }}>Join CoachLink in under a minute.</p>
 
-          <h1 style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 800, fontSize: 32, letterSpacing: '-0.03em', color: 'var(--cl-ink)', margin: '22px 0 6px' }}>Create account</h1>
-          <p style={{ fontSize: 14.5, color: 'var(--cl-muted-1)', margin: '0 0 22px' }}>Join CoachLink in under a minute.</p>
+      <AppInput label="Full name" value={name} onChange={setName} placeholder="Ada Obi" style={{ marginBottom: 15 }} />
+      <AppInput label="Email" type="email" value={email} onChange={setEmail} placeholder="you@example.com" style={{ marginBottom: 15 }} />
+      <AppInput label="Phone number" type="tel" value={phoneNumber} onChange={setPhoneNumber} placeholder="0803 123 4567" style={{ marginBottom: 15 }} />
+      <AppInput label="Address" value={address} onChange={setAddress} placeholder="Street address" style={{ marginBottom: 15 }} />
 
-          <label style={S.label}>Full name</label>
-          <input value={name} onChange={e => setName(e.target.value)} placeholder="Ada Obi" style={{ ...S.input, marginBottom: 15 }} />
-
-          <label style={S.label}>Email</label>
-          <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" style={{ ...S.input, marginBottom: 15 }} />
-
-          <label style={S.label}>Phone number</label>
-          <input type="tel" value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} placeholder="0803 123 4567" style={{ ...S.input, marginBottom: 15 }} />
-
-          <label style={S.label}>Address</label>
-          <input value={address} onChange={e => setAddress(e.target.value)} placeholder="Street address" style={{ ...S.input, marginBottom: 15 }} />
-
-          <div style={{ display: 'flex', gap: 10, marginBottom: 15 }}>
-            <div style={{ flex: 1 }}>
-              <label style={S.label}>State</label>
-              <select value={state} onChange={e => setState(e.target.value)} style={{ ...S.input, padding: '0 12px' }}>
-                {STATES.map(s => <option key={s} value={s}>{s}</option>)}
-              </select>
-            </div>
-            <div style={{ flex: 1 }}>
-              <label style={S.label}>LGA</label>
-              <select value={lga} onChange={e => setLga(e.target.value)} style={{ ...S.input, padding: '0 12px' }}>
-                {LGAS.map(l => <option key={l} value={l}>{l}</option>)}
-              </select>
-            </div>
-          </div>
-
-          <PasswordField label="Password" placeholder="Create a password" value={password} onChange={setPassword} marginBottom={15} />
-
-          <PasswordField label="Confirm password" placeholder="Re-enter your password" value={confirmPassword} onChange={setConfirmPassword} />
-
-          <button onClick={handleSignUp} disabled={loading} style={{
-            marginTop: 22, border: 'none', height: 56, borderRadius: 'var(--cl-radius-btn)',
-            background: 'var(--cl-accent)', color: 'var(--cl-on-accent)',
-            fontFamily: 'var(--cl-font-body)', fontWeight: 700, fontSize: 16, cursor: 'pointer', width: '100%',
-            opacity: loading ? 0.7 : 1,
-          }}>{loading ? 'Creating…' : 'Continue'}</button>
-
-          <div style={{ flex: 1, minHeight: 32 }} />
-          <p style={{ textAlign: 'center', fontSize: 13.5, color: 'var(--cl-muted-1)', marginBottom: 24 }}>
-            Already have an account?{' '}
-            <span onClick={() => history.push('/auth/signin')} style={{ color: 'var(--cl-ink)', fontWeight: 700, cursor: 'pointer' }}>Sign in</span>
-          </p>
+      <div style={{ display: 'flex', gap: 10, marginBottom: 15 }}>
+        <div style={{ flex: 1 }}>
+          <AppSelect label="State" value={state} onChange={setState} options={STATES} />
         </div>
-      </IonContent>
-    </IonPage>
+        <div style={{ flex: 1 }}>
+          <AppSelect label="LGA" value={lga} onChange={setLga} options={LGAS} />
+        </div>
+      </div>
+
+      <PasswordInput label="Password" value={password} onChange={setPassword} placeholder="Create a password" style={{ marginBottom: password ? 0 : 15 }} />
+      <PasswordRequirements password={password} />
+
+      <PasswordInput label="Confirm password" value={confirmPassword} onChange={setConfirmPassword} placeholder="Re-enter your password" />
+
+      <AppButton onClick={handleSignUp} disabled={loading} style={{ marginTop: 22 }}>
+        {loading ? 'Creating…' : 'Continue'}
+      </AppButton>
+
+      <div style={{ flex: 1, minHeight: 32 }} />
+      <p style={{ textAlign: 'center', fontSize: 13.5, color: 'var(--cl-muted-1)', marginBottom: 24 }}>
+        Already have an account?{' '}
+        <span onClick={() => history.push('/auth/signin')} style={{ color: 'var(--cl-ink)', fontWeight: 700, cursor: 'pointer' }}>Sign in</span>
+      </p>
+    </AppPage>
   );
 };
 

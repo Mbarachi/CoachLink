@@ -3,31 +3,23 @@ import React from 'react';
 interface AppCardProps {
   children: React.ReactNode;
   onClick?: () => void;
+  /** Selected cards take the ink border treatment used by pickers. */
   selected?: boolean;
-  className?: string;
+  padding?: React.CSSProperties['padding'];
   style?: React.CSSProperties;
 }
 
 const AppCard: React.FC<AppCardProps> = ({
-  children,
-  onClick,
-  selected = false,
-  className = '',
-  style = {},
+  children, onClick, selected = false, padding = 16, style,
 }) => (
   <div
     onClick={onClick}
-    className={className}
     style={{
       background: 'var(--cl-surface)',
-      borderRadius: 16,
-      padding: 16,
-      border: `2px solid ${selected ? 'var(--cl-primary)' : 'var(--cl-border)'}`,
-      boxShadow: selected
-        ? '0 0 0 3px rgba(111,207,151,0.2)'
-        : '0 1px 4px rgba(0,0,0,0.06)',
+      border: selected ? '1.6px solid var(--cl-ink)' : '1px solid var(--cl-border)',
+      borderRadius: 'var(--cl-radius-card)',
+      padding,
       cursor: onClick ? 'pointer' : 'default',
-      transition: 'border-color 0.2s, box-shadow 0.2s',
       ...style,
     }}
   >

@@ -49,7 +49,7 @@ const ToastItem: React.FC<{ toast: Toast }> = ({ toast }) => {
         fontFamily: 'var(--cl-font-body)', fontWeight: 600, fontSize: 13.5, lineHeight: 1.35,
         maxWidth: 340, cursor: 'pointer', pointerEvents: 'auto',
         opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(-14px)',
+        transform: visible ? 'translateY(0)' : 'translateY(14px)',
         transition: `opacity ${EXIT_MS}ms ease, transform ${EXIT_MS}ms ease`,
       }}
     >
@@ -65,7 +65,7 @@ const ToastContainer: React.FC = () => {
 
   return (
     <div style={{
-      position: 'fixed', top: 'max(env(safe-area-inset-top), 14px)', left: 0, right: 0,
+      position: 'fixed', bottom: 'calc(76px + env(safe-area-inset-bottom, 0px))', left: 0, right: 0,
       display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
       zIndex: 99999, pointerEvents: 'none', padding: '0 20px',
     }}>
