@@ -10,6 +10,9 @@ export function sanitizeUser(user: PrismaUser) {
     role: user.role,
     profileImage: user.profileImage,
     isVerified: user.isVerified,
+    address: user.address,
+    state: user.state,
+    lga: user.lga,
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
   };

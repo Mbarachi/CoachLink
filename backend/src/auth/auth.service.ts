@@ -69,6 +69,9 @@ export class AuthService {
         passwordHash,
         role: 'ATHLETE',
         isVerified: false,
+        address: dto.address,
+        state: dto.state,
+        lga: dto.lga,
       },
     });
 

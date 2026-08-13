@@ -11,17 +11,31 @@ locally.
 cp .env.example .env        # defaults already work for local dev
 docker compose up -d        # starts Postgres
 npx prisma migrate dev      # creates the schema
+npm run seed                # inserts the two MVP sports
 npm run start:dev           # starts the API on :3000
 ```
 
 ## Phase status
 
-Only `auth` and `users` are implemented so far (signup/signin/OTP verification/
-password reset, `GET|PATCH /users/me`). Coaches, Sports, Booking Requests,
-Bookings, Payments, Reviews, and Notifications are later phases — see
-`../docs/api-spec.md` and `../docs/data-model.md` for the full intended shape,
-and `mobile/src/services/*.ts` / `mobile/src/types/*.ts` for the exact
-contract the frontend expects each module to satisfy.
+Implemented: `auth` (signup/signin/OTP verification/password reset),
+`users` (`GET|PATCH /users/me`), `sports` (`GET /sports`) and `coaches`
+(list/detail/create/update). Booking Requests, Bookings, Payments, Reviews
+and Notifications are later phases — see `../docs/api-spec.md` and
+`../docs/data-model.md` for the full intended shape, and
+`mobile/src/services/*.ts` / `mobile/src/types/*.ts` for the exact contract
+the frontend expects each module to satisfy.
+
+## Coach verification
+
+`GET /coaches` only returns profiles with `verificationStatus: APPROVED`, so a
+newly created profile is invisible to athletes until it is approved. There is
+no approval UI yet — flip it manually while developing:
+
+```sql
+UPDATE "CoachProfile" SET "verificationStatus" = 'APPROVED' WHERE id = '<id>';
+```
+
+The admin approval workflow and ID-document storage are still to be built.
 
 ## Dev notes
 

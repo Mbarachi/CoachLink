@@ -19,6 +19,12 @@ enum OtpPurpose {
   PASSWORD_RESET
 }
 
+enum VerificationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model User {
   id           String   @id @default(uuid())
   firstName    String
@@ -29,10 +35,55 @@ model User {
   role         UserRole
   profileImage String?
   isVerified   Boolean  @default(false)
+  address      String?
+  state        String?
+  lga          String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  otps Otp[]
+  otps         Otp[]
+  coachProfile CoachProfile?
+}
+
+model Sport {
+  id       String  @id @default(uuid())
+  name     String  @unique
+  icon     String
+  isActive Boolean @default(true)
+
+  coaches CoachSport[]
+}
+
+model CoachProfile {
+  id                 String             @id @default(uuid())
+  userId             String             @unique
+  user               User               @relation(fields: [userId], references: [id])
+  bio                String
+  yearsOfExperience  Int
+  sessionRate        Int
+  /// Venue-based discovery per the MVP scope — a single named location
+  /// (e.g. "Festival Hotel Pool"), not a structured address.
+  venue              String
+  area               String             @default("Amuwo Odofin")
+  verificationStatus VerificationStatus @default(PENDING)
+  rating             Float              @default(0)
+  totalReviews       Int                @default(0)
+  isActive           Boolean            @default(true)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  sports CoachSport[]
+
+  @@index([verificationStatus, isActive])
+}
+
+model CoachSport {
+  coachId String
+  coach   CoachProfile @relation(fields: [coachId], references: [id], onDelete: Cascade)
+  sportId String
+  sport   Sport        @relation(fields: [sportId], references: [id])
+
+  @@id([coachId, sportId])
 }
 
 model Otp {

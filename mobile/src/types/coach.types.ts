@@ -5,8 +5,10 @@ export interface CoachProfile {
   userId: string;
   bio: string;
   yearsOfExperience: number;
-  hourlyRate: number;
-  state: string;
+  /** Whole naira, per session. */
+  sessionRate: number;
+  /** Venue-based discovery per the MVP scope, e.g. "Festival Hotel Pool". */
+  venue: string;
   area: string;
   verificationStatus: VerificationStatus;
   rating: number;
@@ -38,9 +40,9 @@ export interface Coach {
 export interface CreateCoachProfileDto {
   bio: string;
   yearsOfExperience: number;
-  hourlyRate: number;
-  state: string;
-  area: string;
+  sessionRate: number;
+  venue: string;
+  area?: string;
   sportIds: string[];
 }
 
@@ -48,8 +50,8 @@ export type UpdateCoachProfileDto = Partial<CreateCoachProfileDto>;
 
 export interface CoachQueryParams {
   sport?: string;
-  state?: string;
-  area?: string;
+  venue?: string;
+  search?: string;
   page?: number;
   limit?: number;
 }
