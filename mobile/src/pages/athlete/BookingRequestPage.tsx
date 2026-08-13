@@ -1,7 +1,11 @@
-import { IonContent, IonPage } from '@ionic/react';
 import React, { useMemo, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 
+import {
+  AppButton, AppCard, AppPage, ChoiceChip, InitialsAvatar,
+  PageBody, PageHeader, SectionHeading, StatusBar, StatusPill, StickyFooter,
+} from '@/components/ui';
+import { fieldStyle } from '@/components/ui';
 import { useAuthStore } from '@/store/auth.store';
 
 const COACHES = [
@@ -45,13 +49,7 @@ const BookingRequestPage: React.FC = () => {
 
   const sessionCount = weeks * pkgDays.length;
   const totalPrice = useMemo(() => priceToNumber(coach.price) * sessionCount, [coach.price, sessionCount]);
-
-  const inputStyle: React.CSSProperties = {
-    height: 50, borderRadius: 13, border: '1px solid var(--cl-border)',
-    background: 'var(--cl-surface)', padding: '0 14px',
-    fontFamily: 'var(--cl-font-body)', fontSize: 14, color: 'var(--cl-ink)', outline: 'none',
-    boxSizing: 'border-box',
-  };
+  const submitDisabled = mode === 'package' && pkgDays.length === 0;
 
   const handleSubmit = () => {
     const state = mode === 'package'
@@ -69,160 +67,155 @@ const BookingRequestPage: React.FC = () => {
   };
 
   return (
-    <IonPage>
-      <IonContent scrollY={false} style={{ '--background': 'var(--cl-canvas)' } as React.CSSProperties}>
-        <div style={{ height: '100%', display: 'flex', flexDirection: 'column', fontFamily: 'var(--cl-font-body)' }}>
+    <AppPage padding="screen">
+      <div style={{ flexShrink: 0 }}>
+        <StatusBar />
+        <PageHeader title="Request a session" />
+      </div>
 
-          <div style={{ flexShrink: 0, padding: '0 var(--cl-px)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 46 }}>
-              <span style={{ fontWeight: 700, fontSize: 14, color: 'var(--cl-ink)' }}>9:41</span>
-              <span style={{ width: 18, height: 11, border: '1.6px solid var(--cl-ink)', borderRadius: 3, display: 'block' }} />
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 13, padding: '4px 0 14px' }}>
-              <button onClick={() => history.goBack()} style={{ width: 38, height: 38, borderRadius: '50%', border: '1px solid var(--cl-border)', background: 'var(--cl-surface)', fontSize: 18, cursor: 'pointer' }}>‹</button>
-              <span style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 700, fontSize: 19, color: 'var(--cl-ink)' }}>Request a session</span>
-            </div>
+      <PageBody>
+        {/* coach summary */}
+        <AppCard padding={13} style={{ display: 'flex', alignItems: 'center', gap: 13, borderRadius: 16 }}>
+          <InitialsAvatar initials={coach.initials} size={46} radius={13} fontSize={15} />
+          <div style={{ flex: 1 }}>
+            <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--cl-ink)' }}>{coach.name}</div>
+            <div style={{ fontSize: 12.5, color: 'var(--cl-muted-1)' }}>{coach.sport} · {coach.price}/session</div>
           </div>
+        </AppCard>
 
-          <div style={{ flex: 1, overflowY: 'auto', padding: '0 var(--cl-px) 12px' }}>
-            {/* coach summary */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 13, background: 'var(--cl-surface)', border: '1px solid var(--cl-border)', borderRadius: 16, padding: 13 }}>
-              <div style={{ width: 46, height: 46, borderRadius: 13, background: 'var(--cl-ink)', color: 'var(--cl-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--cl-font-display)', fontWeight: 700, fontSize: 15, flexShrink: 0 }}>{coach.initials}</div>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--cl-ink)' }}>{coach.name}</div>
-                <div style={{ fontSize: 12.5, color: 'var(--cl-muted-1)' }}>{coach.sport} · {coach.price}/session</div>
-              </div>
+        {/* single / package toggle */}
+        <div style={{ display: 'flex', gap: 5, background: 'var(--cl-subtle)', borderRadius: 14, padding: 4, marginTop: 18 }}>
+          {(['single', 'package'] as const).map(m => (
+            <div
+              key={m}
+              onClick={() => setMode(m)}
+              style={{
+                flex: 1, textAlign: 'center', padding: '11px 0', borderRadius: 11, cursor: 'pointer',
+                fontWeight: 700, fontSize: 13.5,
+                background: mode === m ? 'var(--cl-ink)' : 'transparent',
+                color: mode === m ? 'var(--cl-accent)' : 'var(--cl-muted-3)',
+              }}
+            >{m === 'single' ? 'Single session' : 'Weekly package'}</div>
+          ))}
+        </div>
+
+        {/* child fields (parent only) */}
+        {isParent && (
+          <>
+            <SectionHeading>Child details</SectionHeading>
+            <div style={{ display: 'flex', gap: 10 }}>
+              <input value={childName} onChange={e => setChildName(e.target.value)} placeholder="Child's name" style={{ ...fieldStyle, flex: 2 }} />
+              <input value={childAge} onChange={e => setChildAge(e.target.value)} placeholder="Age" style={{ ...fieldStyle, flex: 1 }} />
             </div>
+          </>
+        )}
 
-            {/* single / package toggle */}
-            <div style={{ display: 'flex', gap: 5, background: 'var(--cl-subtle)', borderRadius: 14, padding: 4, marginTop: 18 }}>
-              <div onClick={() => setMode('single')} style={{ flex: 1, textAlign: 'center', padding: '11px 0', borderRadius: 11, cursor: 'pointer', fontWeight: 700, fontSize: 13.5, background: mode === 'single' ? 'var(--cl-ink)' : 'transparent', color: mode === 'single' ? 'var(--cl-accent)' : 'var(--cl-muted-3)' }}>Single session</div>
-              <div onClick={() => setMode('package')} style={{ flex: 1, textAlign: 'center', padding: '11px 0', borderRadius: 11, cursor: 'pointer', fontWeight: 700, fontSize: 13.5, background: mode === 'package' ? 'var(--cl-ink)' : 'transparent', color: mode === 'package' ? 'var(--cl-accent)' : 'var(--cl-muted-3)' }}>Weekly package</div>
+        {mode === 'single' ? (
+          <>
+            {/* date picker */}
+            <SectionHeading>Select date · May 2024</SectionHeading>
+            <div style={{ display: 'flex', gap: 7, justifyContent: 'space-between' }}>
+              {DATES.map((d, i) => (
+                <div key={i} onClick={() => setSelectedDate(i)} style={{
+                  flex: 1, textAlign: 'center', padding: '11px 0', borderRadius: 13,
+                  background: selectedDate === i ? 'var(--cl-accent)' : 'var(--cl-surface)',
+                  border: `1px solid ${selectedDate === i ? 'var(--cl-accent)' : 'var(--cl-border)'}`,
+                  cursor: 'pointer',
+                }}>
+                  <div style={{ fontSize: 10, color: selectedDate === i ? 'var(--cl-surface)' : 'var(--cl-muted-2)' }}>{d.day}</div>
+                  <div style={{ fontWeight: 700, fontSize: 15, color: selectedDate === i ? 'var(--cl-surface)' : 'var(--cl-ink)', marginTop: 3 }}>{d.date}</div>
+                </div>
+              ))}
             </div>
-
-            {/* child fields (parent only) */}
-            {isParent && (
-              <>
-                <h4 style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 700, fontSize: 14, color: 'var(--cl-ink)', margin: '20px 0 11px' }}>Child details</h4>
-                <div style={{ display: 'flex', gap: 10 }}>
-                  <input value={childName} onChange={e => setChildName(e.target.value)} placeholder="Child's name" style={{ ...inputStyle, flex: 2 }} />
-                  <input value={childAge} onChange={e => setChildAge(e.target.value)} placeholder="Age" style={{ ...inputStyle, flex: 1 }} />
-                </div>
-              </>
-            )}
-
-            {mode === 'single' ? (
-              <>
-                {/* date picker */}
-                <h4 style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 700, fontSize: 14, color: 'var(--cl-ink)', margin: '20px 0 11px' }}>Select date · May 2024</h4>
-                <div style={{ display: 'flex', gap: 7, justifyContent: 'space-between' }}>
-                  {DATES.map((d, i) => (
-                    <div key={i} onClick={() => setSelectedDate(i)} style={{
-                      flex: 1, textAlign: 'center', padding: '11px 0', borderRadius: 13,
-                      background: selectedDate === i ? 'var(--cl-accent)' : 'var(--cl-surface)',
-                      border: `1px solid ${selectedDate === i ? 'var(--cl-accent)' : 'var(--cl-border)'}`,
-                      cursor: 'pointer',
-                    }}>
-                      <div style={{ fontSize: 10, color: selectedDate === i ? 'var(--cl-surface)' : 'var(--cl-muted-2)' }}>{d.day}</div>
-                      <div style={{ fontWeight: 700, fontSize: 15, color: selectedDate === i ? 'var(--cl-surface)' : 'var(--cl-ink)', marginTop: 3 }}>{d.date}</div>
-                    </div>
-                  ))}
-                </div>
-              </>
-            ) : (
-              <>
-                {/* package length */}
-                <h4 style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 700, fontSize: 14, color: 'var(--cl-ink)', margin: '20px 0 11px' }}>Package length</h4>
-                <div style={{ display: 'flex', gap: 8 }}>
-                  {WEEK_OPTIONS.map(w => (
-                    <span key={w} onClick={() => setWeeks(w)} style={{
-                      flex: 1, textAlign: 'center', fontSize: 13, fontWeight: 700, padding: '10px 0', borderRadius: 11, cursor: 'pointer',
-                      background: weeks === w ? 'var(--cl-ink)' : 'var(--cl-surface)',
-                      color: weeks === w ? 'var(--cl-accent)' : 'var(--cl-muted-3)',
-                      border: '1px solid var(--cl-border)',
-                    }}>{w} wks</span>
-                  ))}
-                </div>
-
-                {/* package days */}
-                <h4 style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 700, fontSize: 14, color: 'var(--cl-ink)', margin: '20px 0 11px' }}>Which days each week?</h4>
-                <div style={{ display: 'flex', gap: 8 }}>
-                  {DAY_OPTIONS.map(d => (
-                    <span key={d} onClick={() => togglePkgDay(d)} style={{
-                      flex: 1, textAlign: 'center', fontSize: 13, fontWeight: 700, padding: '10px 0', borderRadius: 11, cursor: 'pointer',
-                      background: pkgDays.includes(d) ? 'var(--cl-ink)' : 'var(--cl-surface)',
-                      color: pkgDays.includes(d) ? 'var(--cl-accent)' : 'var(--cl-muted-3)',
-                      border: '1px solid var(--cl-border)',
-                    }}>{d[0]}</span>
-                  ))}
-                </div>
-
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--cl-ink)', borderRadius: 16, padding: 16, marginTop: 16 }}>
-                  <div>
-                    <div style={{ fontSize: 12, color: 'var(--cl-bfae97)' }}>{sessionCount} sessions total</div>
-                    <div style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 800, fontSize: 22, color: 'var(--cl-surface)', marginTop: 3 }}>{formatNaira(totalPrice)}</div>
-                  </div>
-                  <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--cl-ink)', background: 'var(--cl-accent)', padding: '6px 11px', borderRadius: 'var(--cl-radius-chip)' }}>Package rate</span>
-                </div>
-              </>
-            )}
-
-            {/* time picker */}
-            <h4 style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 700, fontSize: 14, color: 'var(--cl-ink)', margin: '20px 0 11px' }}>Select time</h4>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-              {TIMES.map((t, i) => (
-                <span key={t} onClick={() => setSelectedTime(i)} style={{
-                  fontSize: 13, fontWeight: 600, padding: '9px 15px', borderRadius: 11, cursor: 'pointer',
-                  background: selectedTime === i ? 'var(--cl-ink)' : 'var(--cl-surface)',
-                  color: selectedTime === i ? 'var(--cl-accent)' : 'var(--cl-muted-3)',
-                  border: selectedTime === i ? 'none' : '1px solid var(--cl-border)',
-                }}>{t}</span>
+          </>
+        ) : (
+          <>
+            {/* package length */}
+            <SectionHeading>Package length</SectionHeading>
+            <div style={{ display: 'flex', gap: 8 }}>
+              {WEEK_OPTIONS.map(w => (
+                <ChoiceChip
+                  key={w}
+                  active={weeks === w}
+                  onClick={() => setWeeks(w)}
+                  style={{ flex: 1, textAlign: 'center', fontWeight: 700, padding: '10px 0', border: '1px solid var(--cl-border)' }}
+                >{w} wks</ChoiceChip>
               ))}
             </div>
 
-            {/* note */}
-            <h4 style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 700, fontSize: 14, color: 'var(--cl-ink)', margin: '20px 0 11px' }}>
-              Note for the coach <span style={{ color: 'var(--cl-muted-2)', fontWeight: 400 }}>(optional)</span>
-            </h4>
-            <textarea
-              value={note}
-              onChange={e => setNote(e.target.value)}
-              placeholder="Any goals or requirements?"
-              style={{ width: '100%', height: 74, borderRadius: 14, border: '1px solid var(--cl-border)', background: 'var(--cl-surface)', padding: 13, fontFamily: 'var(--cl-font-body)', fontSize: 14, color: 'var(--cl-ink)', resize: 'none', outline: 'none', boxSizing: 'border-box' }}
-            />
-
-            {/* info note */}
-            <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start', background: 'var(--cl-subtle)', borderRadius: 13, padding: 13, marginTop: 14 }}>
-              <div style={{ width: 18, height: 18, borderRadius: '50%', background: 'var(--cl-ink)', color: 'var(--cl-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, flexShrink: 0 }}>i</div>
-              <span style={{ fontSize: 12.5, lineHeight: 1.45, color: 'var(--cl-muted-3)' }}>You'll only pay after {coach.name} accepts. Payment is handled securely via Paystack.</span>
+            {/* package days */}
+            <SectionHeading>Which days each week?</SectionHeading>
+            <div style={{ display: 'flex', gap: 8 }}>
+              {DAY_OPTIONS.map(d => (
+                <ChoiceChip
+                  key={d}
+                  active={pkgDays.includes(d)}
+                  onClick={() => togglePkgDay(d)}
+                  style={{ flex: 1, textAlign: 'center', fontWeight: 700, padding: '10px 0', border: '1px solid var(--cl-border)' }}
+                >{d[0]}</ChoiceChip>
+              ))}
             </div>
 
-            <div style={{ height: 90 }} />
-          </div>
-
-          {/* sticky footer */}
-          <div style={{ flexShrink: 0, padding: '14px var(--cl-px) 22px', background: 'var(--cl-canvas)', borderTop: '1px solid var(--cl-border)' }}>
-            {mode === 'package' && (
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-                <span style={{ fontSize: 12.5, color: 'var(--cl-muted-1)' }}>{sessionCount} sessions</span>
-                <span style={{ fontWeight: 700, fontSize: 15, color: 'var(--cl-ink)' }}>{formatNaira(totalPrice)}</span>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--cl-ink)', borderRadius: 16, padding: 16, marginTop: 16 }}>
+              <div>
+                <div style={{ fontSize: 12, color: 'var(--cl-bfae97)' }}>{sessionCount} sessions total</div>
+                <div style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 800, fontSize: 22, color: 'var(--cl-surface)', marginTop: 3 }}>{formatNaira(totalPrice)}</div>
               </div>
-            )}
-            <button
-              onClick={handleSubmit}
-              disabled={mode === 'package' && pkgDays.length === 0}
-              style={{
-                width: '100%', height: 54, border: 'none', borderRadius: 15,
-                background: mode === 'package' && pkgDays.length === 0 ? 'var(--cl-subtle)' : 'var(--cl-accent)',
-                color: mode === 'package' && pkgDays.length === 0 ? 'var(--cl-muted-2)' : 'var(--cl-on-accent)',
-                fontFamily: 'var(--cl-font-body)', fontWeight: 700, fontSize: 15.5,
-                cursor: mode === 'package' && pkgDays.length === 0 ? 'default' : 'pointer',
-              }}
-            >Send request</button>
-          </div>
+              <StatusPill tone="accent" style={{ color: 'var(--cl-ink)', padding: '6px 11px' }}>Package rate</StatusPill>
+            </div>
+          </>
+        )}
+
+        {/* time picker */}
+        <SectionHeading>Select time</SectionHeading>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+          {TIMES.map((t, i) => (
+            <ChoiceChip
+              key={t}
+              active={selectedTime === i}
+              onClick={() => setSelectedTime(i)}
+              style={selectedTime === i ? { border: 'none' } : undefined}
+            >{t}</ChoiceChip>
+          ))}
         </div>
-      </IonContent>
-    </IonPage>
+
+        {/* note */}
+        <SectionHeading>
+          Note for the coach <span style={{ color: 'var(--cl-muted-2)', fontWeight: 400 }}>(optional)</span>
+        </SectionHeading>
+        <textarea
+          value={note}
+          onChange={e => setNote(e.target.value)}
+          placeholder="Any goals or requirements?"
+          style={{ width: '100%', height: 74, borderRadius: 'var(--cl-radius-input)', border: '1px solid var(--cl-border)', background: 'var(--cl-surface)', padding: 13, fontFamily: 'var(--cl-font-body)', fontSize: 16, color: 'var(--cl-ink)', resize: 'none', outline: 'none', boxSizing: 'border-box' }}
+        />
+
+        {/* info note */}
+        <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start', background: 'var(--cl-subtle)', borderRadius: 13, padding: 13, marginTop: 14 }}>
+          <div style={{ width: 18, height: 18, borderRadius: '50%', background: 'var(--cl-ink)', color: 'var(--cl-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, flexShrink: 0 }}>i</div>
+          <span style={{ fontSize: 12.5, lineHeight: 1.45, color: 'var(--cl-muted-3)' }}>You'll only pay after {coach.name} accepts. Payment is handled securely via Paystack.</span>
+        </div>
+
+        <div style={{ height: 90 }} />
+      </PageBody>
+
+      <StickyFooter style={{ paddingLeft: 0, paddingRight: 0 }}>
+        {mode === 'package' && (
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+            <span style={{ fontSize: 12.5, color: 'var(--cl-muted-1)' }}>{sessionCount} sessions</span>
+            <span style={{ fontWeight: 700, fontSize: 15, color: 'var(--cl-ink)' }}>{formatNaira(totalPrice)}</span>
+          </div>
+        )}
+        <AppButton
+          size="md"
+          onClick={handleSubmit}
+          disabled={submitDisabled}
+          style={submitDisabled ? { background: 'var(--cl-subtle)', color: 'var(--cl-muted-2)', opacity: 1 } : undefined}
+        >
+          Send request
+        </AppButton>
+      </StickyFooter>
+    </AppPage>
   );
 };
 
