@@ -1,11 +1,13 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import {
-  AppButton, AppPage, BackButton,
-  isPasswordValid, PasswordInput, PasswordRequirements, StatusBar,
-} from '@/components/ui';
+import { ControlledPasswordInput } from '@/components/form';
+import { AppButton, AppPage, BackButton, PasswordRequirements, StatusBar } from '@/components/ui';
 import { getErrorMessage, isBackendUnreachable } from '@/lib/apiError';
+import type { ResetPasswordValues } from '@/lib/schemas/auth';
+import { resetPasswordSchema } from '@/lib/schemas/auth';
 import { authService } from '@/services/auth.service';
 import { useAuthStore } from '@/store/auth.store';
 import { useUiStore } from '@/store/ui.store';
@@ -22,9 +24,15 @@ const OtpVerificationPage: React.FC<{ mode?: 'signup' | 'reset' }> = ({ mode = '
 
   const [otp, setOtp] = useState<string[]>(Array(DIGITS).fill(''));
   const refs = useRef<(HTMLInputElement | null)[]>([]);
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const { control, handleSubmit, watch } = useForm<ResetPasswordValues>({
+    resolver: zodResolver(resetPasswordSchema),
+    defaultValues: { newPassword: '', confirmPassword: '' },
+    mode: 'onTouched',
+  });
+
+  const newPassword = watch('newPassword');
 
   const handleChange = (i: number, val: string) => {
     const d = val.replace(/\D/g, '').slice(-1);
@@ -40,54 +48,63 @@ const OtpVerificationPage: React.FC<{ mode?: 'signup' | 'reset' }> = ({ mode = '
 
   const filled = otp.filter(Boolean).length;
   const code = otp.join('');
-  const canSubmit = filled === DIGITS
-    && (mode === 'signup' || (isPasswordValid(newPassword) && newPassword === confirmPassword));
+  const codeComplete = filled === DIGITS;
 
-  const handleVerify = async () => {
-    if (!canSubmit) return;
-    if (mode === 'reset' && newPassword !== confirmPassword) {
-      showToast('Passwords do not match.', 'warning');
-      return;
-    }
+  const requireEmail = () => {
     if (!email) {
       showToast('Missing email — please restart this flow.', 'danger');
-      return;
+      return false;
     }
+    return true;
+  };
 
+  const verifySignup = async () => {
+    if (!codeComplete || !requireEmail()) return;
     setLoading(true);
-
-    if (mode === 'signup') {
-      try {
-        await authService.verifyOtp({ email, otp: code });
-        updateUser({ isVerified: true });
-        showToast('Email verified.', 'success');
-        history.push('/auth/role');
-      } catch (err) {
-        if (isBackendUnreachable(err)) {
-          updateUser({ isVerified: true });
-          history.push('/auth/role');
-        } else {
-          showToast(getErrorMessage(err, 'Invalid or expired code.'), 'danger');
-        }
-      } finally {
-        setLoading(false);
-      }
-    } else {
-      try {
-        await authService.resetPassword({ email, otp: code, newPassword });
-        showToast('Password reset successfully.', 'success');
-        history.push('/auth/reset-success');
-      } catch (err) {
-        if (isBackendUnreachable(err)) {
-          history.push('/auth/reset-success');
-        } else {
-          showToast(getErrorMessage(err, 'Invalid or expired code.'), 'danger');
-        }
-      } finally {
-        setLoading(false);
-      }
+    try {
+      await authService.verifyOtp({ email: email!, otp: code });
+      updateUser({ isVerified: true });
+      showToast('Email verified.', 'success');
+      history.push('/auth/role');
+    } catch (err) {
+      showToast(
+        isBackendUnreachable(err)
+          ? "Can't reach the server. Check that the backend is running."
+          : getErrorMessage(err, 'Invalid or expired code.'),
+        'danger',
+      );
+    } finally {
+      setLoading(false);
     }
   };
+
+  const submitReset = async (values: ResetPasswordValues) => {
+    if (!codeComplete) {
+      showToast('Enter the 6-digit code from your email.', 'warning');
+      return;
+    }
+    if (!requireEmail()) return;
+
+    setLoading(true);
+    try {
+      await authService.resetPassword({ email: email!, otp: code, newPassword: values.newPassword });
+      showToast('Password reset successfully.', 'success');
+      history.push('/auth/reset-success');
+    } catch (err) {
+      // Never fake success here — claiming the password changed when it didn't
+      // would leave the user locked out with a password they think is set.
+      showToast(
+        isBackendUnreachable(err)
+          ? "Can't reach the server. Check that the backend is running."
+          : getErrorMessage(err, 'Invalid or expired code.'),
+        'danger',
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onInvalid = () => showToast('Please fix the highlighted fields.', 'warning');
 
   return (
     <AppPage scrollable padding="auth">
@@ -135,25 +152,30 @@ const OtpVerificationPage: React.FC<{ mode?: 'signup' | 'reset' }> = ({ mode = '
 
       {mode === 'reset' && (
         <>
-          <PasswordInput
+          <ControlledPasswordInput
+            control={control}
+            name="newPassword"
             label="New password"
-            value={newPassword}
-            onChange={setNewPassword}
             placeholder="Create a new password"
+            hideError
             labelStyle={{ margin: '22px 0 7px' }}
             style={{ marginBottom: newPassword ? 0 : 15 }}
           />
           <PasswordRequirements password={newPassword} />
-          <PasswordInput
+          <ControlledPasswordInput
+            control={control}
+            name="confirmPassword"
             label="Confirm new password"
-            value={confirmPassword}
-            onChange={setConfirmPassword}
             placeholder="Re-enter your new password"
           />
         </>
       )}
 
-      <AppButton onClick={handleVerify} disabled={!canSubmit || loading} style={{ marginTop: 22, marginBottom: 22 }}>
+      <AppButton
+        onClick={mode === 'reset' ? handleSubmit(submitReset, onInvalid) : verifySignup}
+        disabled={!codeComplete || loading}
+        style={{ marginTop: 22, marginBottom: 22 }}
+      >
         {loading ? 'Verifying…' : 'Verify'}
       </AppButton>
     </AppPage>

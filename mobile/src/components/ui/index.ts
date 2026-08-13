@@ -7,7 +7,7 @@ export { default as BackButton } from './BackButton';
 export { default as FormLabel } from './FormLabel';
 export { default as PageHeader } from './PageHeader';
 export { default as PasswordInput } from './PasswordInput';
-export { default as PasswordRequirements, isPasswordValid, PASSWORD_RULES } from './PasswordRequirements';
+export { default as PasswordRequirements } from './PasswordRequirements';
 export { default as SectionHeading } from './SectionHeading';
 export { default as StatusBar } from './StatusBar';
 export { default as ToastContainer } from './ToastContainer';

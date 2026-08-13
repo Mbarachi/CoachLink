@@ -15,22 +15,6 @@ const SignInPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const mockSignIn = (role: 'ATHLETE' | 'COACH') => {
-    setAuth({
-      id: 'dev-user',
-      firstName: email.split('@')[0] || 'Ada',
-      lastName: 'Obi',
-      email: email || 'ada@example.com',
-      phoneNumber: '',
-      role,
-      profileImage: null,
-      isVerified: true,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    }, 'dev-token');
-    history.replace(role === 'COACH' ? '/coach/dashboard' : '/athlete/home');
-  };
-
   const handleSignIn = async () => {
     if (!email || !password) { showToast('Please enter your email and password.', 'warning'); return; }
     setLoading(true);
@@ -40,8 +24,7 @@ const SignInPage: React.FC = () => {
       history.replace(user.role === 'COACH' ? '/coach/dashboard' : '/athlete/home');
     } catch (err) {
       if (isBackendUnreachable(err)) {
-        // Backend unreachable in dev — fall back to mock session
-        // mockSignIn('ATHLETE');
+        showToast("Can't reach the server. Check that the backend is running.", 'danger');
       } else {
         showToast(getErrorMessage(err, 'Invalid email or password.'), 'danger');
       }

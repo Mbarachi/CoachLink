@@ -1,12 +1,14 @@
 import { useIonViewWillEnter } from '@ionic/react';
+import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router-dom';
 
-import {
-  AppButton, AppInput, AppPage, AppSelect, BackButton,
-  isPasswordValid, PasswordInput, PasswordRequirements, StatusBar,
-} from '@/components/ui';
+import { ControlledInput, ControlledPasswordInput, ControlledSelect } from '@/components/form';
+import { AppButton, AppPage, BackButton, PasswordRequirements, StatusBar } from '@/components/ui';
 import { getErrorMessage, isBackendUnreachable } from '@/lib/apiError';
+import type { SignUpValues } from '@/lib/schemas/auth';
+import { signUpSchema } from '@/lib/schemas/auth';
 import { authService } from '@/services/auth.service';
 import { useAuthStore } from '@/store/auth.store';
 import { useUiStore } from '@/store/ui.store';
@@ -14,90 +16,62 @@ import { useUiStore } from '@/store/ui.store';
 const STATES = ['Lagos', 'Ogun', 'Oyo', 'Rivers', 'FCT Abuja'];
 const LGAS = ['Amuwo Odofin', 'Apapa', 'Ajeromi-Ifelodun', 'Ojo', 'Surulere'];
 
+const DEFAULTS: SignUpValues = {
+  name: '', email: '', phoneNumber: '', address: '',
+  state: STATES[0], lga: LGAS[0], password: '', confirmPassword: '',
+};
+
 const SignUpPage: React.FC = () => {
   const history = useHistory();
   const setAuth = useAuthStore(s => s.setAuth);
   const showToast = useUiStore(s => s.showToast);
-
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [address, setAddress] = useState('');
-  const [state, setState] = useState(STATES[0]);
-  const [lga, setLga] = useState(LGAS[0]);
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Ionic keeps this page mounted in the nav stack rather than unmounting it, so
-  // plain useState alone would leave stale values behind on the next visit.
-  useIonViewWillEnter(() => {
-    setName('');
-    setEmail('');
-    setPhoneNumber('');
-    setAddress('');
-    setState(STATES[0]);
-    setLga(LGAS[0]);
-    setPassword('');
-    setConfirmPassword('');
+  const { control, handleSubmit, reset, watch } = useForm<SignUpValues>({
+    resolver: zodResolver(signUpSchema),
+    defaultValues: DEFAULTS,
+    mode: 'onTouched',
   });
 
-  const handleSignUp = async () => {
-    if (!name.trim() || !email.trim() || !phoneNumber.trim() || !address.trim() || !password || !confirmPassword) {
-      showToast('Please fill in all fields.', 'warning');
-      return;
-    }
-    if (password !== confirmPassword) {
-      showToast('Passwords do not match.', 'warning');
-      return;
-    }
-    if (!isPasswordValid(password)) {
-      showToast('Password does not meet all the requirements below.', 'warning');
-      return;
-    }
+  const password = watch('password');
 
+  // Ionic keeps this page mounted in the nav stack rather than unmounting it, so
+  // the form would otherwise still hold the previous signup's values.
+  useIonViewWillEnter(() => reset(DEFAULTS));
+
+  const onSubmit = async (values: SignUpValues) => {
     setLoading(true);
 
-    const [firstName, ...rest] = name.trim().split(' ');
+    const [firstName, ...rest] = values.name.trim().split(' ');
     const lastName = rest.join(' ') || '-';
 
     try {
       const { user, accessToken } = await authService.signUp({
         firstName,
         lastName,
-        email: email.trim(),
-        phoneNumber: phoneNumber.trim(),
-        password,
+        email: values.email.trim(),
+        phoneNumber: values.phoneNumber.trim(),
+        password: values.password,
+        address: values.address.trim(),
+        state: values.state,
+        lga: values.lga,
       });
       setAuth(user, accessToken);
       showToast('Account created — check your email for a verification code.', 'success');
       history.push('/auth/otp');
     } catch (err) {
-      if (isBackendUnreachable(err)) {
-        // Backend unreachable in dev — fall back to a mock session.
-        setAuth(
-          {
-            id: `mock-${Date.now()}`,
-            firstName,
-            lastName,
-            email: email.trim(),
-            phoneNumber: phoneNumber.trim(),
-            role: 'ATHLETE',
-            profileImage: null,
-            isVerified: false,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-          },
-          'mock-token',
-        );
-        history.push('/auth/otp');
-      } else {
-        showToast(getErrorMessage(err, 'Could not create your account. Please try again.'), 'danger');
-      }
+      showToast(
+        isBackendUnreachable(err)
+          ? "Can't reach the server. Check that the backend is running."
+          : getErrorMessage(err, 'Could not create your account. Please try again.'),
+        'danger',
+      );
     } finally {
       setLoading(false);
     }
   };
+
+  const onInvalid = () => showToast('Please fix the highlighted fields.', 'warning');
 
   return (
     <AppPage scrollable padding="auth">
@@ -107,26 +81,40 @@ const SignUpPage: React.FC = () => {
       <h1 style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 800, fontSize: 32, letterSpacing: '-0.03em', color: 'var(--cl-ink)', margin: '22px 0 6px' }}>Create account</h1>
       <p style={{ fontSize: 14.5, color: 'var(--cl-muted-1)', margin: '0 0 22px' }}>Join CoachLink in under a minute.</p>
 
-      <AppInput label="Full name" value={name} onChange={setName} placeholder="Ada Obi" style={{ marginBottom: 15 }} />
-      <AppInput label="Email" type="email" value={email} onChange={setEmail} placeholder="you@example.com" style={{ marginBottom: 15 }} />
-      <AppInput label="Phone number" type="tel" value={phoneNumber} onChange={setPhoneNumber} placeholder="0803 123 4567" style={{ marginBottom: 15 }} />
-      <AppInput label="Address" value={address} onChange={setAddress} placeholder="Street address" style={{ marginBottom: 15 }} />
+      <ControlledInput control={control} name="name" label="Full name" placeholder="Ada Obi" style={{ marginBottom: 15 }} />
+      <ControlledInput control={control} name="email" label="Email" type="email" placeholder="you@example.com" style={{ marginBottom: 15 }} />
+      <ControlledInput control={control} name="phoneNumber" label="Phone number" type="tel" placeholder="0803 123 4567" style={{ marginBottom: 15 }} />
+      <ControlledInput control={control} name="address" label="Address" placeholder="Street address" style={{ marginBottom: 15 }} />
 
       <div style={{ display: 'flex', gap: 10, marginBottom: 15 }}>
         <div style={{ flex: 1 }}>
-          <AppSelect label="State" value={state} onChange={setState} options={STATES} />
+          <ControlledSelect control={control} name="state" label="State" options={STATES} />
         </div>
         <div style={{ flex: 1 }}>
-          <AppSelect label="LGA" value={lga} onChange={setLga} options={LGAS} />
+          <ControlledSelect control={control} name="lga" label="LGA" options={LGAS} />
         </div>
       </div>
 
-      <PasswordInput label="Password" value={password} onChange={setPassword} placeholder="Create a password" style={{ marginBottom: password ? 0 : 15 }} />
+      {/* The checklist below already names what's outstanding, so the field
+          suppresses its own duplicate error message. */}
+      <ControlledPasswordInput
+        control={control}
+        name="password"
+        label="Password"
+        placeholder="Create a password"
+        hideError
+        style={{ marginBottom: password ? 0 : 15 }}
+      />
       <PasswordRequirements password={password} />
 
-      <PasswordInput label="Confirm password" value={confirmPassword} onChange={setConfirmPassword} placeholder="Re-enter your password" />
+      <ControlledPasswordInput
+        control={control}
+        name="confirmPassword"
+        label="Confirm password"
+        placeholder="Re-enter your password"
+      />
 
-      <AppButton onClick={handleSignUp} disabled={loading} style={{ marginTop: 22 }}>
+      <AppButton onClick={handleSubmit(onSubmit, onInvalid)} disabled={loading} style={{ marginTop: 22 }}>
         {loading ? 'Creating…' : 'Continue'}
       </AppButton>
 

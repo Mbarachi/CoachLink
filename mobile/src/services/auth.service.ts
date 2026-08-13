@@ -7,6 +7,9 @@ export interface SignUpDto {
   email: string;
   phoneNumber: string;
   password: string;
+  address?: string;
+  state?: string;
+  lga?: string;
 }
 
 export interface SignInDto {

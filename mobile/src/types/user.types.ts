@@ -9,6 +9,9 @@ export interface User {
   role: UserRole;
   profileImage: string | null;
   isVerified: boolean;
+  address: string | null;
+  state: string | null;
+  lga: string | null;
   createdAt: string;
   updatedAt: string;
 }
