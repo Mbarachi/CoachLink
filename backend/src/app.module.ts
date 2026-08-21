@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { BookingRequestsModule } from './booking-requests/booking-requests.module';
 import { CoachesModule } from './coaches/coaches.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { SportsModule } from './sports/sports.module';
@@ -17,6 +18,7 @@ import { UsersModule } from './users/users.module';
     UsersModule,
     SportsModule,
     CoachesModule,
+    BookingRequestsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

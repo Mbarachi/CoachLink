@@ -77,13 +77,21 @@ Fields:
 Fields:
 
 * id
-* athleteId
+* athleteId — the account that booked (an ATHLETE for themselves, a PARENT for a child)
 * coachId
 * sportId
-* proposedDate
-* proposedTime
+* mode — SINGLE or PACKAGE
+* weeks — package only, how many weeks the recurrence runs
+* daysOfWeek — package only, 0 = Sunday
+* startTime — coach-local "HH:mm"
+* sessionRate — snapshotted at request time
+* sessionCount
+* totalAmount — sessionRate x sessionCount
 * notes
+* childName — parent bookings only
+* childAge — parent bookings only
 * status
+* respondedAt
 
 Status:
 
@@ -91,6 +99,37 @@ Status:
 * ACCEPTED
 * DECLINED
 * EXPIRED
+* CANCELLED
+
+Rules:
+
+A package is one request the coach accepts or declines as a whole. The
+recurrence is expanded into concrete BookingRequestSession rows at request
+time, so the coach sees the exact dates before committing and conflicts are
+detectable. A request is capped at 24 sessions.
+
+sessionRate is copied from the coach at request time. A coach who later
+raises their rate must not change what an already-submitted request costs.
+
+EXPIRED is derived, never stored: a PENDING request whose first session has
+passed reads as expired and can no longer be accepted. This avoids a
+scheduler for the MVP.
+
+CANCELLED is set by the athlete withdrawing a pending request. A coach
+declines rather than cancels.
+
+---
+
+## BookingRequestSession
+
+Fields:
+
+* id
+* requestId
+* scheduledAt — full UTC datetime
+
+One concrete session belonging to a request. Times are stored in UTC;
+coach-local means Africa/Lagos, which is UTC+1 year-round with no DST.
 
 ---
 

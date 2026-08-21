@@ -25,6 +25,19 @@ enum VerificationStatus {
   REJECTED
 }
 
+enum BookingMode {
+  SINGLE
+  PACKAGE
+}
+
+enum BookingRequestStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  EXPIRED
+  CANCELLED
+}
+
 model User {
   id           String   @id @default(uuid())
   firstName    String
@@ -41,8 +54,9 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  otps         Otp[]
-  coachProfile CoachProfile?
+  otps            Otp[]
+  coachProfile    CoachProfile?
+  bookingRequests BookingRequest[]
 }
 
 model Sport {
@@ -51,7 +65,8 @@ model Sport {
   icon     String
   isActive Boolean @default(true)
 
-  coaches CoachSport[]
+  coaches         CoachSport[]
+  bookingRequests BookingRequest[]
 }
 
 model CoachProfile {
@@ -72,7 +87,8 @@ model CoachProfile {
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
 
-  sports CoachSport[]
+  sports          CoachSport[]
+  bookingRequests BookingRequest[]
 
   @@index([verificationStatus, isActive])
 }
@@ -98,4 +114,57 @@ model Otp {
   createdAt DateTime   @default(now())
 
   @@index([email, purpose])
+}
+
+model BookingRequest {
+  id        String       @id @default(uuid())
+  /// The account that booked — an ATHLETE for themselves, or a PARENT for a child.
+  athleteId String
+  athlete   User         @relation(fields: [athleteId], references: [id])
+  coachId   String
+  coach     CoachProfile @relation(fields: [coachId], references: [id])
+  sportId   String
+  sport     Sport        @relation(fields: [sportId], references: [id])
+
+  mode       BookingMode
+  /// Package only — how many weeks the recurrence runs for.
+  weeks      Int?
+  /// Package only — 0 = Sunday. Display metadata; `sessions` is authoritative.
+  daysOfWeek Int[]
+  /// Coach-local start time as "HH:mm" on a 24-hour clock.
+  startTime  String
+
+  /// Snapshotted at request time: a coach raising their rate later must not
+  /// change what an already-submitted request costs.
+  sessionRate  Int
+  sessionCount Int
+  totalAmount  Int
+
+  notes     String?
+  /// Set when a PARENT books on behalf of a child; null for athlete bookings.
+  childName String?
+  childAge  Int?
+
+  status      BookingRequestStatus @default(PENDING)
+  respondedAt DateTime?
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+
+  sessions BookingRequestSession[]
+
+  @@index([coachId, status])
+  @@index([athleteId, status])
+}
+
+/// One concrete session. The recurrence is expanded at request time rather than
+/// on acceptance, so the coach sees the exact dates they are committing to and
+/// conflicts can be detected before they accept.
+model BookingRequestSession {
+  id          String         @id @default(uuid())
+  requestId   String
+  request     BookingRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  scheduledAt DateTime
+
+  @@index([requestId])
+  @@index([scheduledAt])
 }

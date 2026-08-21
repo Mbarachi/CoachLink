@@ -18,9 +18,9 @@ npm run start:dev           # starts the API on :3000
 ## Phase status
 
 Implemented: `auth` (signup/signin/OTP verification/password reset),
-`users` (`GET|PATCH /users/me`), `sports` (`GET /sports`) and `coaches`
-(list/detail/create/update). Booking Requests, Bookings, Payments, Reviews
-and Notifications are later phases — see `../docs/api-spec.md` and
+`users` (`GET|PATCH /users/me`), `sports` (`GET /sports`), `coaches`
+(list/detail/create/update) and `booking-requests` (create/list/detail/
+respond). Bookings, Payments, Reviews and Notifications are later phases — see `../docs/api-spec.md` and
 `../docs/data-model.md` for the full intended shape, and
 `mobile/src/services/*.ts` / `mobile/src/types/*.ts` for the exact contract
 the frontend expects each module to satisfy.
@@ -47,3 +47,16 @@ The admin approval workflow and ID-document storage are still to be built.
 - SMS OTP delivery isn't wired up — email only for now.
 - `JWT_SECRET` in `.env` is a dev-only placeholder — replace it before any
   real deployment.
+
+## Booking requests
+
+A request is one unit the coach accepts or declines as a whole, whether it is
+a single session or a package. Packages are expanded into concrete session
+rows when the request is created, capped at 24 sessions.
+
+Accepting only flips the status — it does not yet create Bookings, since the
+Bookings module does not exist. `EXPIRED` is derived on read rather than
+stored, so no scheduler is needed: a pending request whose first session has
+passed reads as expired and can no longer be accepted.
+
+Times are stored in UTC. Coach-local means Africa/Lagos (UTC+1, no DST).
