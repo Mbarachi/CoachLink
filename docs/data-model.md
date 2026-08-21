@@ -35,6 +35,9 @@ Fields:
 * sessionRate
 * venue
 * verificationStatus
+* verificationNote — why an admin approved or rejected; shown to the coach
+* reviewedAt
+* reviewedById
 * rating
 * totalReviews
 * isActive

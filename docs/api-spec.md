@@ -101,3 +101,23 @@ GET /reviews/coach/:coachId
 GET /notifications
 
 PATCH /notifications/:id/read
+
+---
+
+# Admin
+
+Requires an ADMIN account. The role is re-read from the database on every
+request, so revoking it takes effect immediately rather than at token expiry.
+
+GET /admin
+  The back-office page itself, served outside the /api/v1 prefix.
+
+GET /admin/coaches?status=
+  Coach profiles awaiting review. Defaults to PENDING, oldest first.
+
+GET /admin/coaches/counts
+  Profile counts by verification status.
+
+PATCH /admin/coaches/:id/verification
+  { status, note } — APPROVED or REJECTED. A rejection requires a note.
+  Records who decided and when.

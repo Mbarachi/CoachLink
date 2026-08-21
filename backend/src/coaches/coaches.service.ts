@@ -90,7 +90,9 @@ export class CoachesService {
       where: { id },
       include: COACH_INCLUDE,
     });
-    if (!coach) {
+    // Same visibility rule as list(): an unapproved profile must not be
+    // reachable by guessing or sharing its id either.
+    if (!coach || !coach.isActive || coach.verificationStatus !== 'APPROVED') {
       throw new NotFoundException('Coach not found.');
     }
     return toCoachResponse(coach);

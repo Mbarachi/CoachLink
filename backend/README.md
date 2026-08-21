@@ -19,23 +19,30 @@ npm run start:dev           # starts the API on :3000
 
 Implemented: `auth` (signup/signin/OTP verification/password reset),
 `users` (`GET|PATCH /users/me`), `sports` (`GET /sports`), `coaches`
-(list/detail/create/update) and `booking-requests` (create/list/detail/
-respond). Bookings, Payments, Reviews and Notifications are later phases — see `../docs/api-spec.md` and
+(list/detail/create/update), `booking-requests` (create/list/detail/respond)
+and `admin` (coach verification). Bookings, Payments, Reviews and
+Notifications are later phases — see `../docs/api-spec.md` and
 `../docs/data-model.md` for the full intended shape, and
 `mobile/src/services/*.ts` / `mobile/src/types/*.ts` for the exact contract
 the frontend expects each module to satisfy.
 
 ## Coach verification
 
-`GET /coaches` only returns profiles with `verificationStatus: APPROVED`, so a
-newly created profile is invisible to athletes until it is approved. There is
-no approval UI yet — flip it manually while developing:
+A new coach profile starts `PENDING` and stays invisible to athletes — both
+`GET /coaches` and `GET /coaches/:id` return only approved, active profiles.
 
-```sql
-UPDATE "CoachProfile" SET "verificationStatus" = 'APPROVED' WHERE id = '<id>';
-```
+Approve one through the back office at **http://localhost:3000/admin**. It is
+a single page served by the API itself: no separate app, no build step. Sign
+in with an admin account, review the pending queue, approve or reject. A
+rejection requires a note, which is stored on the profile along with who
+decided and when.
 
-The admin approval workflow and ID-document storage are still to be built.
+Create that admin account by setting `ADMIN_EMAIL` and `ADMIN_PASSWORD` in
+`.env` and running `npm run seed` — it creates the user or promotes an
+existing one. There is deliberately no way to sign up as an admin.
+
+ID-document upload and storage are still to be built; verification today is
+whatever the reviewer can tell from the profile itself.
 
 ## Dev notes
 
