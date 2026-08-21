@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
+import { queryClient } from '@/lib/queryClient';
+import { isTokenExpired } from '@/lib/token';
 import type { User } from '@/types';
 
 interface AuthState {
@@ -20,16 +22,22 @@ export const useAuthStore = create<AuthState>()(
       accessToken: null,
       isAuthenticated: false,
 
-      setAuth: (user, accessToken) =>
-        set({ user, accessToken, isAuthenticated: true }),
+      setAuth: (user, accessToken) => {
+        // Drop anything cached for whoever was signed in before, so a new
+        // account never renders the previous one's bookings or profile.
+        queryClient.clear();
+        set({ user, accessToken, isAuthenticated: true });
+      },
 
       updateUser: (partial) =>
         set((state) => ({
           user: state.user ? { ...state.user, ...partial } : state.user,
         })),
 
-      clearAuth: () =>
-        set({ user: null, accessToken: null, isAuthenticated: false }),
+      clearAuth: () => {
+        queryClient.clear();
+        set({ user: null, accessToken: null, isAuthenticated: false });
+      },
     }),
     {
       name: 'coachlink-auth',
@@ -40,6 +48,18 @@ export const useAuthStore = create<AuthState>()(
         accessToken: state.accessToken,
         isAuthenticated: state.isAuthenticated,
       }),
+      /**
+       * On iOS this state comes back from WKWebView storage that survives the
+       * app being killed, so a week-old token would otherwise restore as a
+       * signed-in session — the app would render the home screen, fire a
+       * request, take a 401 and only then eject the user. Checking here means
+       * an expired session never reaches the UI at all.
+       */
+      onRehydrateStorage: () => (state) => {
+        if (state?.isAuthenticated && isTokenExpired(state.accessToken)) {
+          state.clearAuth();
+        }
+      },
     },
   ),
 );
