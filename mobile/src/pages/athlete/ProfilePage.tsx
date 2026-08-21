@@ -1,22 +1,26 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { AppCard, AppPage, InitialsAvatar, PageBody, PageTitle, StatusBar, StatusPill } from '@/components/ui';
+import { useBookingRequests } from '@/hooks';
+import { fullName, initialsOf } from '@/lib/format';
 import { useAuthStore } from '@/store/auth.store';
-
-const STATS = [
-  { val: '8', label: 'Sessions' },
-  { val: '3', label: 'Coaches' },
-  { val: '5', label: 'Reviews' },
-];
 
 const ProfilePage: React.FC = () => {
   const history = useHistory();
   const user = useAuthStore((s) => s.user);
-  const name = user ? `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim() || 'Ada Obi' : 'Ada Obi';
-  const email = user?.email ?? 'ada@example.com';
-  const initials = name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'AO';
+  const name = fullName(user?.firstName, user?.lastName);
+  const email = user?.email ?? '';
+  const initials = initialsOf(user?.firstName, user?.lastName);
   const roleLabel = user?.role === 'PARENT' ? 'Parent' : 'Athlete';
+
+  const requests = useBookingRequests().data ?? [];
+  const stats = useMemo(() => [
+    { val: String(requests.filter(r => r.status === 'ACCEPTED').length), label: 'Sessions' },
+    { val: String(new Set(requests.map(r => r.coachId)).size), label: 'Coaches' },
+    // Reviews need their own module before this can be anything but zero.
+    { val: '0', label: 'Reviews' },
+  ], [requests]);
 
   const menuItems = [
     { label: 'My bookings',     action: () => history.push('/athlete/bookings') },
@@ -47,7 +51,7 @@ const ProfilePage: React.FC = () => {
 
         {/* stat tiles */}
         <div style={{ display: 'flex', gap: 9, marginTop: 18 }}>
-          {STATS.map(s => (
+          {stats.map(s => (
             <AppCard key={s.label} padding={14} style={{ flex: 1, borderRadius: 15, textAlign: 'center' }}>
               <div style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 700, fontSize: 20, color: 'var(--cl-ink)' }}>{s.val}</div>
               <div style={{ fontSize: 11, color: 'var(--cl-muted-1)', marginTop: 2 }}>{s.label}</div>

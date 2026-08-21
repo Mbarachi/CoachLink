@@ -1,25 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { AppCard, AppPage, InitialsAvatar, PageBody, StatusBar, StatusPill } from '@/components/ui';
+import { AppCard, AppPage, EmptyState, InitialsAvatar, PageBody, StatusBar, StatusPill } from '@/components/ui';
+import { useBookingRequests } from '@/hooks';
+import { formatSessionDate, formatSessionTime, fullName, initialsOf } from '@/lib/format';
 import { useAuthStore } from '@/store/auth.store';
-
-// Mirrors MyBookingsPage's mock bookings — top 2 non-completed sessions
-const UPCOMING_SESSIONS = [
-  { initials: 'CO', name: 'Chidinma Okafor', sport: 'Tennis',   date: 'Fri, 17 May', time: '5:00 PM', status: 'Confirmed' as const },
-  { initials: 'TA', name: 'Tobi Adebayo',    sport: 'Swimming', date: 'Wed, 15 May', time: '8:00 AM', status: 'Accepted' as const },
-];
-
-const STATS = [
-  [
-    { val: '2', label: 'Upcoming', dark: true, action: true },
-    { val: '1', label: 'Pending', dark: false, action: true },
-  ],
-  [
-    { val: '8', label: 'Completed', dark: false, action: false },
-    { val: '3', label: 'Coaches', dark: false, action: false },
-  ],
-];
 
 function timeOfDayGreeting() {
   const hour = new Date().getHours();
@@ -54,10 +39,38 @@ const HomePage: React.FC = () => {
     startHeroAutoSlide();
   };
 
-  const firstName = user?.firstName ?? 'Ada';
-  const lastName = user?.lastName ?? 'Obi';
-  const initials = `${firstName[0]}${lastName[0]}`;
+  const firstName = user?.firstName ?? '';
+  const lastName = user?.lastName ?? '';
+  const initials = initialsOf(firstName, lastName);
   const roleLabel = user?.role === 'PARENT' ? 'Parent' : 'Athlete';
+
+  const requestsQuery = useBookingRequests();
+  const requests = useMemo(() => requestsQuery.data ?? [], [requestsQuery.data]);
+
+  const accepted = useMemo(() => requests.filter(r => r.status === 'ACCEPTED'), [requests]);
+  const pendingCount = requests.filter(r => r.status === 'PENDING').length;
+  const coachCount = new Set(requests.map(r => r.coachId)).size;
+
+  // Soonest first, and only the next couple — this is a summary, not the list.
+  const upcoming = useMemo(
+    () => [...accepted]
+      .filter(r => r.sessions.length > 0)
+      .sort((a, b) => a.sessions[0].scheduledAt.localeCompare(b.sessions[0].scheduledAt))
+      .slice(0, 2),
+    [accepted],
+  );
+
+  const stats = [
+    [
+      { val: String(accepted.length), label: 'Upcoming', dark: true, action: true },
+      { val: String(pendingCount), label: 'Pending', dark: false, action: true },
+    ],
+    [
+      // Completed sessions need the Bookings module, which isn't built yet.
+      { val: '0', label: 'Completed', dark: false, action: false },
+      { val: String(coachCount), label: 'Coaches', dark: false, action: false },
+    ],
+  ];
 
   return (
     <AppPage>
@@ -91,7 +104,7 @@ const HomePage: React.FC = () => {
 
         {/* stat tiles */}
         <div style={{ padding: '0 var(--cl-px)' }}>
-          {STATS.map((row, r) => (
+          {stats.map((row, r) => (
             <div key={r} style={{ display: 'flex', gap: 10, marginTop: r === 0 ? 0 : 10 }}>
               {row.map(s => (
                 <div
@@ -188,23 +201,36 @@ const HomePage: React.FC = () => {
             <span style={{ fontWeight: 700, fontSize: 15, color: 'var(--cl-ink)' }}>Upcoming sessions</span>
             <span onClick={() => history.push('/athlete/bookings')} style={{ fontSize: 12.5, color: 'var(--cl-muted-1)', fontWeight: 600, cursor: 'pointer' }}>All bookings</span>
           </div>
-          {UPCOMING_SESSIONS.map((s, i) => (
-            <AppCard
-              key={s.initials}
-              onClick={() => history.push('/athlete/bookings')}
-              padding={13}
-              style={{ display: 'flex', alignItems: 'center', gap: 12, borderRadius: 16, marginBottom: i === UPCOMING_SESSIONS.length - 1 ? 0 : 10 }}
-            >
-              <InitialsAvatar initials={s.initials} size={46} radius={13} fontSize={15} />
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontWeight: 700, fontSize: 14.5, color: 'var(--cl-ink)' }}>{s.name}</div>
-                <div style={{ fontSize: 12, color: 'var(--cl-muted-1)', marginTop: 2 }}>{s.sport} · {s.date} · {s.time}</div>
-              </div>
-              {s.status === 'Confirmed'
-                ? <StatusPill status="Confirmed" style={{ flexShrink: 0 }} />
-                : <StatusPill tone="accent" style={{ flexShrink: 0 }}>Pay now</StatusPill>}
+          {upcoming.length === 0 ? (
+            <AppCard padding={4} style={{ borderRadius: 16 }}>
+              <EmptyState
+                compact
+                illustration="calendar"
+                title="No sessions booked"
+                message="Find a coach and send a request — accepted sessions show up here."
+              />
             </AppCard>
-          ))}
+          ) : (
+            upcoming.map((rq, i) => (
+              <AppCard
+                key={rq.id}
+                onClick={() => history.push(`/athlete/bookings/${rq.id}`)}
+                padding={13}
+                style={{ display: 'flex', alignItems: 'center', gap: 12, borderRadius: 16, marginBottom: i === upcoming.length - 1 ? 0 : 10 }}
+              >
+                <InitialsAvatar initials={initialsOf(rq.coach.firstName, rq.coach.lastName)} size={46} radius={13} fontSize={15} />
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontWeight: 700, fontSize: 14.5, color: 'var(--cl-ink)' }}>
+                    {fullName(rq.coach.firstName, rq.coach.lastName)}
+                  </div>
+                  <div style={{ fontSize: 12, color: 'var(--cl-muted-1)', marginTop: 2 }}>
+                    {rq.sport.name} · {formatSessionDate(rq.sessions[0].scheduledAt)} · {formatSessionTime(rq.sessions[0].scheduledAt)}
+                  </div>
+                </div>
+                <StatusPill status={rq.status} style={{ flexShrink: 0 }} />
+              </AppCard>
+            ))
+          )}
         </div>
       </PageBody>
     </AppPage>

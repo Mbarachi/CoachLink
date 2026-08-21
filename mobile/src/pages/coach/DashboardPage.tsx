@@ -1,14 +1,10 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { AppCard, AppPage, InitialsAvatar, PageBody, StatusBar, StatusPill } from '@/components/ui';
+import { AppCard, AppPage, EmptyState, InitialsAvatar, PageBody, QueryState, StatusBar, StatusPill } from '@/components/ui';
+import { useBookingRequests, useCoaches } from '@/hooks';
+import { formatSessionDate, formatSessionTime, fullName, initialsOf } from '@/lib/format';
 import { useAuthStore } from '@/store/auth.store';
-
-const REQUESTS = [
-  { id: '0', name: 'John Doe',   initials: 'JD', date: 'Wed, 15 May', time: '8:00 AM' },
-  { id: '1', name: 'Amara Eze',  initials: 'AE', date: 'Thu, 16 May', time: '4:00 PM' },
-  { id: '2', name: 'Bola Smith', initials: 'BS', date: 'Sat, 18 May', time: '7:00 AM' },
-];
 
 const StatCard: React.FC<{ val: string; label: string; dark?: boolean }> = ({ val, label, dark }) => (
   <div style={{ flex: 1, background: dark ? 'var(--cl-ink)' : 'var(--cl-surface)', border: dark ? 'none' : '1px solid var(--cl-border)', borderRadius: 18, padding: 16 }}>
@@ -20,8 +16,26 @@ const StatCard: React.FC<{ val: string; label: string; dark?: boolean }> = ({ va
 const DashboardPage: React.FC = () => {
   const history = useHistory();
   const user = useAuthStore((s) => s.user);
-  const firstName = user?.firstName ?? 'Tobi';
-  const initials = ((user?.firstName?.[0] ?? 'T') + (user?.lastName?.[0] ?? 'A')).toUpperCase();
+  const firstName = user?.firstName ?? '';
+  const initials = initialsOf(user?.firstName, user?.lastName);
+
+  const requestsQuery = useBookingRequests();
+  const requests = useMemo(() => requestsQuery.data ?? [], [requestsQuery.data]);
+  const pending = useMemo(() => requests.filter(r => r.status === 'PENDING'), [requests]);
+  const accepted = useMemo(() => requests.filter(r => r.status === 'ACCEPTED'), [requests]);
+
+  // Sessions the coach has committed to that are still ahead of them.
+  const upcomingSessions = useMemo(() => {
+    const now = Date.now();
+    return accepted.reduce(
+      (total, r) => total + r.sessions.filter(s => new Date(s.scheduledAt).getTime() > now).length,
+      0,
+    );
+  }, [accepted]);
+
+  // Rating lives on the coach's own profile; find it by the signed-in user id.
+  const coaches = useCoaches();
+  const myProfile = coaches.data?.find(c => c.profile.userId === user?.id)?.profile;
 
   return (
     <AppPage padding="screen">
@@ -39,12 +53,20 @@ const DashboardPage: React.FC = () => {
 
         {/* stat cards */}
         <div style={{ display: 'flex', gap: 10, marginTop: 18 }}>
-          <StatCard val="3" label="New requests" dark />
-          <StatCard val="7" label="Sessions this week" />
+          <StatCard val={String(pending.length)} label="New requests" dark />
+          <StatCard val={String(upcomingSessions)} label="Upcoming sessions" />
         </div>
         <div style={{ display: 'flex', gap: 10, marginTop: 10 }}>
-          <StatCard val="₦248k" label="Earned this month" />
-          <StatCard val="4.8 ★" label="Rating · 32 reviews" />
+          {/* Earnings need the Payments module, which isn't built yet. */}
+          <StatCard val="₦0" label="Earned this month" />
+          <StatCard
+            val={myProfile && myProfile.totalReviews > 0 ? `${myProfile.rating.toFixed(1)} ★` : '—'}
+            label={
+              myProfile && myProfile.totalReviews > 0
+                ? `Rating · ${myProfile.totalReviews} reviews`
+                : 'No reviews yet'
+            }
+          />
         </div>
 
         {/* pending requests */}
@@ -53,21 +75,44 @@ const DashboardPage: React.FC = () => {
           <span onClick={() => history.push('/coach/requests')} style={{ fontSize: 12.5, color: 'var(--cl-ink)', fontWeight: 600, cursor: 'pointer' }}>View all</span>
         </div>
 
-        {REQUESTS.map(rq => (
-          <AppCard
-            key={rq.id}
-            onClick={() => history.push(`/coach/requests/${rq.id}`)}
-            padding={13}
-            style={{ display: 'flex', alignItems: 'center', gap: 12, borderRadius: 16, marginBottom: 10 }}
-          >
-            <InitialsAvatar initials={rq.initials} size={44} tone="subtle" radius={12} fontSize={14} />
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--cl-ink)' }}>{rq.name}</div>
-              <div style={{ fontSize: 12, color: 'var(--cl-muted-1)' }}>{rq.date} · {rq.time}</div>
-            </div>
-            <StatusPill status="New" />
-          </AppCard>
-        ))}
+        <QueryState isLoading={requestsQuery.isPending} error={requestsQuery.error} onRetry={() => void requestsQuery.refetch()}>
+          {pending.length === 0 ? (
+            <AppCard padding={4} style={{ borderRadius: 16 }}>
+              <EmptyState
+                compact
+                illustration="requests"
+                title="No pending requests"
+                message="New session requests from athletes land here."
+              />
+            </AppCard>
+          ) : (
+            pending.slice(0, 3).map(rq => {
+              const first = rq.sessions[0];
+              return (
+                <AppCard
+                  key={rq.id}
+                  onClick={() => history.push(`/coach/requests/${rq.id}`)}
+                  padding={13}
+                  style={{ display: 'flex', alignItems: 'center', gap: 12, borderRadius: 16, marginBottom: 10 }}
+                >
+                  <InitialsAvatar
+                    initials={initialsOf(rq.athlete.firstName, rq.athlete.lastName)}
+                    size={44} tone="subtle" radius={12} fontSize={14}
+                  />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--cl-ink)' }}>
+                      {fullName(rq.athlete.firstName, rq.athlete.lastName)}
+                    </div>
+                    <div style={{ fontSize: 12, color: 'var(--cl-muted-1)' }}>
+                      {first ? `${formatSessionDate(first.scheduledAt)} · ${formatSessionTime(first.scheduledAt)}` : rq.startTime}
+                    </div>
+                  </div>
+                  <StatusPill status="New" />
+                </AppCard>
+              );
+            })
+          )}
+        </QueryState>
       </PageBody>
     </AppPage>
   );

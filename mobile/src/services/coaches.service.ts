@@ -10,6 +10,10 @@ export const coachesService = {
   list: (params?: CoachQueryParams) =>
     api.get<Coach[]>('/coaches', { params }).then((r) => r.data),
 
+  /** The signed-in coach's own profile, whatever its verification status. */
+  getMine: () =>
+    api.get<Coach>('/coaches/me').then((r) => r.data),
+
   getById: (id: string) =>
     api.get<Coach>(`/coaches/${id}`).then((r) => r.data),
 

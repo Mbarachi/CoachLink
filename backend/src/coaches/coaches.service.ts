@@ -85,6 +85,21 @@ export class CoachesService {
     return coaches.map(toCoachResponse);
   }
 
+  /**
+   * A coach's own profile, whatever its verification status — otherwise a
+   * pending coach could not see or edit the profile they just submitted.
+   */
+  async getMine(userId: string) {
+    const coach = await this.prisma.coachProfile.findUnique({
+      where: { userId },
+      include: COACH_INCLUDE,
+    });
+    if (!coach) {
+      throw new NotFoundException('You do not have a coach profile yet.');
+    }
+    return toCoachResponse(coach);
+  }
+
   async getById(id: string) {
     const coach = await this.prisma.coachProfile.findUnique({
       where: { id },

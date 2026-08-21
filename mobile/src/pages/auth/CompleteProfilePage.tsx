@@ -2,15 +2,14 @@ import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { AppButton, AppPage, FormLabel, StatusBar } from '@/components/ui';
+import { useSports } from '@/hooks';
 
-const SPORTS = [
-  { key: 'Swimming', emoji: '🏊' },
-  { key: 'Tennis', emoji: '🎾' },
-] as const;
 
 const CompleteProfilePage: React.FC = () => {
   const history = useHistory();
-  const [sport, setSport] = useState<'Swimming' | 'Tennis'>('Swimming');
+  const sports = useSports().data ?? [];
+  const [sport, setSport] = useState<string | null>(null);
+  const chosen = sport ?? sports[0]?.name ?? null;
 
   const finish = () => history.replace('/athlete/home');
 
@@ -26,12 +25,12 @@ const CompleteProfilePage: React.FC = () => {
       </p>
 
       <div style={{ display: 'flex', gap: 10 }}>
-        {SPORTS.map((s) => {
-          const active = sport === s.key;
+        {sports.map((s) => {
+          const active = chosen === s.name;
           return (
             <div
-              key={s.key}
-              onClick={() => setSport(s.key)}
+              key={s.id}
+              onClick={() => setSport(s.name)}
               style={{
                 flex: 1,
                 background: active ? 'var(--cl-ink)' : 'var(--cl-surface)',
@@ -42,8 +41,8 @@ const CompleteProfilePage: React.FC = () => {
                 textAlign: 'center',
               }}
             >
-              <div style={{ fontSize: 26 }}>{s.emoji}</div>
-              <div style={{ fontWeight: 700, fontSize: 14, color: active ? 'var(--cl-surface)' : 'var(--cl-ink)', marginTop: 8 }}>{s.key}</div>
+              <div style={{ fontSize: 26 }}>{s.icon}</div>
+              <div style={{ fontWeight: 700, fontSize: 14, color: active ? 'var(--cl-surface)' : 'var(--cl-ink)', marginTop: 8 }}>{s.name}</div>
             </div>
           );
         })}

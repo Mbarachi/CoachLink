@@ -2,14 +2,13 @@ import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { AppButton, AppCard, AppInput, AppPage, BackButton, FormLabel, StatusBar } from '@/components/ui';
+import { useCreateCoachProfile, useSports } from '@/hooks';
+import { getErrorMessage } from '@/lib/apiError';
+import { useAuthStore } from '@/store/auth.store';
+import { useUiStore } from '@/store/ui.store';
 
 const STEP_LABELS = ['Sport & experience', 'Venue & pricing', 'Availability', 'Verification & review'];
 const TOTAL_STEPS = STEP_LABELS.length;
-
-const SPORTS = [
-  { key: 'Swimming', emoji: '🏊' },
-  { key: 'Tennis', emoji: '🎾' },
-] as const;
 
 const Toggle: React.FC<{ on: boolean; onChange: () => void }> = ({ on, onChange }) => (
   <div onClick={onChange} style={{ width: 42, height: 24, borderRadius: 'var(--cl-radius-chip)', background: on ? 'var(--cl-accent)' : 'var(--cl-border)', position: 'relative', cursor: 'pointer', flexShrink: 0 }}>
@@ -26,10 +25,19 @@ const ReviewRow: React.FC<{ label: string; value: string; bold?: boolean; last?:
 
 const CoachOnboardingPage: React.FC = () => {
   const history = useHistory();
+  const showToast = useUiStore((s) => s.showToast);
+  const updateUser = useAuthStore((s) => s.updateUser);
   const [step, setStep] = useState(0);
 
-  const [sport, setSport] = useState<'Swimming' | 'Tennis'>('Swimming');
-  const [experience, setExperience] = useState('5 years');
+  const sportsQuery = useSports();
+  const sports = sportsQuery.data ?? [];
+  const createProfile = useCreateCoachProfile();
+
+  const [sportId, setSportId] = useState<string | null>(null);
+  const chosenSport = sportId ?? sports[0]?.id ?? null;
+  const sportName = sports.find((s) => s.id === chosenSport)?.name ?? '—';
+
+  const [experience, setExperience] = useState('5');
   const [about, setAbout] = useState('');
 
   const [venue, setVenue] = useState('');
@@ -52,7 +60,33 @@ const CoachOnboardingPage: React.FC = () => {
     else setStep(s => s - 1);
   };
   const next = () => setStep(s => Math.min(s + 1, TOTAL_STEPS - 1));
-  const finish = () => history.replace('/coach/dashboard');
+
+  const finish = async () => {
+    if (!chosenSport) {
+      showToast('Pick the sport you coach.', 'warning');
+      return;
+    }
+    if (!venue.trim() || !about.trim() || !price.trim()) {
+      showToast('Fill in your sport, venue, price and bio first.', 'warning');
+      return;
+    }
+
+    try {
+      await createProfile.mutateAsync({
+        bio: about.trim(),
+        yearsOfExperience: Number(experience.replace(/[^\d]/g, '')) || 0,
+        sessionRate: Number(price.replace(/[^\d]/g, '')),
+        venue: venue.trim(),
+        sportIds: [chosenSport],
+      });
+      // Creating a profile promotes the account to COACH server-side.
+      updateUser({ role: 'COACH' });
+      showToast('Submitted — an admin will review your profile.', 'success');
+      history.replace('/coach/dashboard');
+    } catch (err) {
+      showToast(getErrorMessage(err, 'Could not submit your profile.'), 'danger');
+    }
+  };
 
   return (
     <AppPage scrollable padding="auth">
@@ -79,16 +113,16 @@ const CoachOnboardingPage: React.FC = () => {
           <>
             <FormLabel>Which sport do you coach?</FormLabel>
             <div style={{ display: 'flex', gap: 9 }}>
-              {SPORTS.map((s) => {
-                const active = sport === s.key;
+              {sports.map((s) => {
+                const active = chosenSport === s.id;
                 return (
                   <div
-                    key={s.key}
-                    onClick={() => setSport(s.key)}
+                    key={s.id}
+                    onClick={() => setSportId(s.id)}
                     style={{ flex: 1, background: active ? 'var(--cl-ink)' : 'var(--cl-surface)', border: active ? 'none' : '1px solid var(--cl-border)', borderRadius: 15, padding: 14, textAlign: 'center', cursor: 'pointer' }}
                   >
-                    <div style={{ fontSize: 22 }}>{s.emoji}</div>
-                    <div style={{ fontWeight: 700, fontSize: 13.5, color: active ? 'var(--cl-surface)' : 'var(--cl-ink)', marginTop: 6 }}>{s.key}</div>
+                    <div style={{ fontSize: 22 }}>{s.icon}</div>
+                    <div style={{ fontWeight: 700, fontSize: 13.5, color: active ? 'var(--cl-surface)' : 'var(--cl-ink)', marginTop: 6 }}>{s.name}</div>
                   </div>
                 );
               })}
@@ -121,7 +155,7 @@ const CoachOnboardingPage: React.FC = () => {
 
             <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start', background: 'var(--cl-subtle)', borderRadius: 13, padding: 12, marginTop: 11 }}>
               <div style={{ width: 16, height: 16, borderRadius: '50%', background: 'var(--cl-ink)', color: 'var(--cl-canvas)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 700, flexShrink: 0 }}>i</div>
-              <span style={{ fontSize: 12, lineHeight: 1.45, color: 'var(--cl-muted-3)' }}>Recommended for {sport.toLowerCase()}: ₦5,000 – ₦15,000 per session.</span>
+              <span style={{ fontSize: 12, lineHeight: 1.45, color: 'var(--cl-muted-3)' }}>Recommended for {sportName.toLowerCase()}: ₦5,000 – ₦15,000 per session.</span>
             </div>
           </>
         )}
@@ -177,7 +211,7 @@ const CoachOnboardingPage: React.FC = () => {
 
             <FormLabel style={{ margin: '22px 0 9px' }}>Review</FormLabel>
             <AppCard padding="4px 16px" style={{ borderRadius: 16 }}>
-              <ReviewRow label="Sport" value={sport} />
+              <ReviewRow label="Sport" value={sportName} />
               <ReviewRow label="Venue" value={venue || '—'} />
               <ReviewRow label="Price / session" value={price || '—'} bold last />
             </AppCard>
@@ -187,7 +221,9 @@ const CoachOnboardingPage: React.FC = () => {
 
       <div style={{ flexShrink: 0, padding: '14px 0 22px', background: 'var(--cl-canvas)', borderTop: '1px solid var(--cl-border)' }}>
         {step === TOTAL_STEPS - 1 ? (
-          <AppButton size="md" onClick={finish}>Submit for verification</AppButton>
+          <AppButton size="md" disabled={createProfile.isPending} onClick={() => void finish()}>
+            {createProfile.isPending ? 'Submitting…' : 'Submit for verification'}
+          </AppButton>
         ) : (
           <AppButton size="md" variant="ink" onClick={next}>Continue</AppButton>
         )}

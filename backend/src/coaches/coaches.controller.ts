@@ -28,6 +28,13 @@ export class CoachesController {
     return this.coachesService.list(query);
   }
 
+  /** Declared before :id so the literal path wins the match. */
+  @UseGuards(JwtAuthGuard)
+  @Get('me')
+  getMine(@CurrentUser() user: RequestUser) {
+    return this.coachesService.getMine(user.id);
+  }
+
   @Get(':id')
   getById(@Param('id') id: string) {
     return this.coachesService.getById(id);
