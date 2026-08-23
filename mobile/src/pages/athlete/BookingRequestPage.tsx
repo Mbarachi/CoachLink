@@ -2,8 +2,17 @@ import React, { useMemo, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 
 import {
-  AppButton, AppCard, AppPage, ChoiceChip, InitialsAvatar,
-  PageBody, PageHeader, QueryState, SectionHeading, StatusBar, StatusPill, StickyFooter,
+  AppButton,
+  AppCard,
+  AppPage,
+  ChoiceChip,
+  InitialsAvatar,
+  PageBody,
+  PageHeader,
+  QueryState,
+  SectionHeading,
+  StatusPill,
+  StickyFooter,
 } from '@/components/ui';
 import { fieldStyle } from '@/components/ui';
 import { useCoach, useCreateBookingRequest } from '@/hooks';
@@ -108,7 +117,6 @@ const BookingRequestPage: React.FC = () => {
   return (
     <AppPage padding="screen">
       <div style={{ flexShrink: 0 }}>
-        <StatusBar />
         <PageHeader title="Request a session" />
       </div>
 

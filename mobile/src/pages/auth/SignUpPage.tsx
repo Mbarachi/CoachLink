@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router-dom';
 
 import { ControlledInput, ControlledPasswordInput, ControlledSelect } from '@/components/form';
-import { AppButton, AppPage, BackButton, PasswordRequirements, StatusBar } from '@/components/ui';
+import { AppButton, AppPage, BackButton, PasswordRequirements } from '@/components/ui';
 import { getErrorMessage, isBackendUnreachable } from '@/lib/apiError';
 import type { SignUpValues } from '@/lib/schemas/auth';
 import { signUpSchema } from '@/lib/schemas/auth';
@@ -75,7 +75,6 @@ const SignUpPage: React.FC = () => {
 
   return (
     <AppPage scrollable padding="auth">
-      <StatusBar />
       <BackButton size={40} style={{ marginTop: 6 }} />
 
       <h1 style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 800, fontSize: 32, letterSpacing: '-0.03em', color: 'var(--cl-ink)', margin: '22px 0 6px' }}>Create account</h1>

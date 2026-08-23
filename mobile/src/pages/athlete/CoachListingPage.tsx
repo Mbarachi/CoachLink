@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { AppCard, AppPage, EmptyState, PageBody, PageHeader, PhotoTile, QueryState, StatusBar } from '@/components/ui';
+import { AppCard, AppPage, EmptyState, PageBody, PageHeader, PhotoTile, QueryState } from '@/components/ui';
 import { useCoaches } from '@/hooks';
 import { coachInitials, coachName, primarySport } from '@/lib/coach';
 import { formatNaira } from '@/lib/format';
@@ -31,7 +31,6 @@ const CoachListingPage: React.FC = () => {
   return (
     <AppPage padding="screen">
       <div style={{ flexShrink: 0 }}>
-        <StatusBar />
         <PageHeader title="Coaches near you" style={{ padding: '4px 0 12px' }} />
 
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative' }}>

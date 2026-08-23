@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { AppPage, EmptyState, PageBody, PageTitle, StatusBar } from '@/components/ui';
+import { AppPage, EmptyState, PageBody, PageTitle } from '@/components/ui';
 
 /**
  * EarningsSummaryPage has no backend module yet. Rather than showing invented data it
@@ -9,7 +9,6 @@ import { AppPage, EmptyState, PageBody, PageTitle, StatusBar } from '@/component
 const EarningsSummaryPage: React.FC = () => (
   <AppPage padding="screen">
     <div style={{ flexShrink: 0 }}>
-      <StatusBar />
       <PageTitle>Earnings</PageTitle>
     </div>
 

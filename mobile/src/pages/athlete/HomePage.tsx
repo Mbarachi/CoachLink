@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { AppCard, AppPage, EmptyState, InitialsAvatar, PageBody, StatusBar, StatusPill } from '@/components/ui';
+import { AppCard, AppPage, EmptyState, InitialsAvatar, PageBody, StatusPill } from '@/components/ui';
 import { useBookingRequests } from '@/hooks';
 import { formatSessionDate, formatSessionTime, fullName, initialsOf } from '@/lib/format';
 import { useAuthStore } from '@/store/auth.store';
@@ -76,8 +76,6 @@ const HomePage: React.FC = () => {
     <AppPage>
       {/* ── fixed header ─────────────────────────────────── */}
       <div style={{ padding: '0 var(--cl-px)', flexShrink: 0 }}>
-        <StatusBar />
-
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 6 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <InitialsAvatar initials={initials} size={46} radius={14} fontSize={16} style={{ fontWeight: 800 }} />

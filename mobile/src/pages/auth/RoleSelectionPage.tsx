@@ -1,7 +1,7 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { AppCard, AppPage, StatusBar } from '@/components/ui';
+import { AppCard, AppPage } from '@/components/ui';
 import type { UserRole } from '@/types';
 import { useAuthStore } from '@/store/auth.store';
 
@@ -52,8 +52,6 @@ const RoleSelectionPage: React.FC = () => {
 
   return (
     <AppPage padding="auth">
-      <StatusBar />
-
       <h1 style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 800, fontSize: 32, letterSpacing: '-0.03em', color: 'var(--cl-ink)', margin: '30px 0 6px' }}>
         How will you<br />use CoachLink?
       </h1>

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { AppPage, EmptyState, PageBody, PageHeader, StatusBar } from '@/components/ui';
+import { AppPage, EmptyState, PageBody, PageHeader } from '@/components/ui';
 
 /**
  * AvailabilityPage has no backend module yet. Rather than showing invented data it
@@ -9,7 +9,6 @@ import { AppPage, EmptyState, PageBody, PageHeader, StatusBar } from '@/componen
 const AvailabilityPage: React.FC = () => (
   <AppPage padding="screen">
     <div style={{ flexShrink: 0 }}>
-      <StatusBar />
       <PageHeader title="Availability" />
     </div>
 

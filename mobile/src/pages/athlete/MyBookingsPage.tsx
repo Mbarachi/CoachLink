@@ -2,8 +2,15 @@ import React, { useMemo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import {
-  AppCard, AppPage, EmptyState, InitialsAvatar,
-  PageBody, PageTitle, QueryState, StatusBar, StatusPill, TabChips,
+  AppCard,
+  AppPage,
+  EmptyState,
+  InitialsAvatar,
+  PageBody,
+  PageTitle,
+  QueryState,
+  StatusPill,
+  TabChips,
 } from '@/components/ui';
 import { useBookingRequests } from '@/hooks';
 import { formatNaira, formatSessionDate, formatSessionTime, fullName, initialsOf } from '@/lib/format';
@@ -53,7 +60,6 @@ const MyBookingsPage: React.FC = () => {
   return (
     <AppPage padding="screen">
       <div style={{ flexShrink: 0 }}>
-        <StatusBar />
         <PageTitle>My bookings</PageTitle>
         <TabChips tabs={TABS} active={tab} onChange={setTab} />
       </div>

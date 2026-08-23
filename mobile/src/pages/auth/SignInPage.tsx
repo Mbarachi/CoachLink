@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { AppButton, AppInput, AppPage, BackButton, PasswordInput, StatusBar } from '@/components/ui';
+import { AppButton, AppInput, AppPage, BackButton, PasswordInput } from '@/components/ui';
 import { getErrorMessage, isBackendUnreachable } from '@/lib/apiError';
 import { authService } from '@/services/auth.service';
 import { useAuthStore } from '@/store/auth.store';
@@ -35,7 +35,6 @@ const SignInPage: React.FC = () => {
 
   return (
     <AppPage padding="auth">
-      <StatusBar />
       <BackButton size={40} style={{ marginTop: 6 }} />
 
       <h1 style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 800, fontSize: 32, letterSpacing: '-0.03em', color: 'var(--cl-ink)', margin: '26px 0 6px' }}>Welcome back</h1>

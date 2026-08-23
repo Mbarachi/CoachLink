@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { AppCard, AppPage, InitialsAvatar, PageBody, PageTitle, StatusBar, StatusPill } from '@/components/ui';
+import { AppCard, AppPage, InitialsAvatar, PageBody, PageTitle, StatusPill } from '@/components/ui';
 import { useBookingRequests } from '@/hooks';
 import { fullName, initialsOf } from '@/lib/format';
 import { useAuthStore } from '@/store/auth.store';
@@ -32,8 +32,6 @@ const ProfilePage: React.FC = () => {
   return (
     <AppPage padding="screen">
       <PageBody pb={96}>
-        <StatusBar />
-
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '8px 0 18px' }}>
           <PageTitle style={{ margin: 0 }}>Profile</PageTitle>
           <button onClick={() => history.push('/athlete/settings')} style={{ width: 38, height: 38, borderRadius: '50%', border: '1px solid var(--cl-border)', background: 'var(--cl-surface)', fontSize: 16, cursor: 'pointer' }}>⚙</button>

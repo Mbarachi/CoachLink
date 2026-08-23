@@ -1,15 +1,13 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { AppButton, AppPage, StatusBar } from '@/components/ui';
+import { AppButton, AppPage } from '@/components/ui';
 
 const WelcomePage: React.FC = () => {
   const history = useHistory();
 
   return (
     <AppPage padding="auth">
-      <StatusBar />
-
       <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginTop: 8, flexShrink: 0 }}>
         <div style={{ width: 28, height: 28, borderRadius: 9, background: 'var(--cl-ink)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{ width: 12, height: 12, borderRadius: '50%', background: 'var(--cl-accent)' }} />

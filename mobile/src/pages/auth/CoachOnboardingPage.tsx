@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { AppButton, AppCard, AppInput, AppPage, BackButton, FormLabel, StatusBar } from '@/components/ui';
+import { AppButton, AppCard, AppInput, AppPage, BackButton, FormLabel } from '@/components/ui';
 import { useCreateCoachProfile, useSports } from '@/hooks';
 import { getErrorMessage } from '@/lib/apiError';
 import { useAuthStore } from '@/store/auth.store';
@@ -90,8 +90,6 @@ const CoachOnboardingPage: React.FC = () => {
 
   return (
     <AppPage scrollable padding="auth">
-      <StatusBar />
-
       <div style={{ display: 'flex', alignItems: 'center', gap: 13, padding: '6px 0 4px' }}>
         <BackButton onClick={back} />
         <div style={{ flex: 1 }}>

@@ -2,8 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import {
-  AppButton, AppInput, AppPage, ChoiceChip, EmptyState, FormLabel,
-  PageBody, PageHeader, QueryState, StatusBar, StatusPill, StickyFooter,
+  AppButton,
+  AppInput,
+  AppPage,
+  ChoiceChip,
+  EmptyState,
+  FormLabel,
+  PageBody,
+  PageHeader,
+  QueryState,
+  StatusPill,
+  StickyFooter,
 } from '@/components/ui';
 import { useMyCoachProfile, useSports, useUpdateCoachProfile } from '@/hooks';
 import { getErrorMessage } from '@/lib/apiError';
@@ -69,7 +78,6 @@ const ProfileManagementPage: React.FC = () => {
   return (
     <AppPage padding="screen">
       <div style={{ flexShrink: 0 }}>
-        <StatusBar />
         <PageHeader title="My profile" />
       </div>
 

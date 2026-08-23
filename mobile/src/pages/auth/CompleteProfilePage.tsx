@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { AppButton, AppPage, FormLabel, StatusBar } from '@/components/ui';
+import { AppButton, AppPage, FormLabel } from '@/components/ui';
 import { useSports } from '@/hooks';
 
 
@@ -15,8 +15,6 @@ const CompleteProfilePage: React.FC = () => {
 
   return (
     <AppPage scrollable padding="auth">
-      <StatusBar />
-
       <h1 style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 800, fontSize: 30, letterSpacing: '-0.03em', color: 'var(--cl-ink)', margin: '26px 0 6px' }}>
         What are you<br />training for?
       </h1>

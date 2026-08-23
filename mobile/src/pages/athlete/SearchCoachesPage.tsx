@@ -2,8 +2,13 @@ import React, { useMemo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import {
-  AppCard, AppPage, EmptyState, InitialsAvatar,
-  PageBody, PageTitle, QueryState, StatusBar,
+  AppCard,
+  AppPage,
+  EmptyState,
+  InitialsAvatar,
+  PageBody,
+  PageTitle,
+  QueryState,
 } from '@/components/ui';
 import { useCoaches, useDebounced, useSports } from '@/hooks';
 import { coachInitials, coachName, primarySport, venuesOf } from '@/lib/coach';
@@ -49,7 +54,6 @@ const SearchCoachesPage: React.FC = () => {
   return (
     <AppPage padding="screen">
       <div style={{ flexShrink: 0 }}>
-        <StatusBar />
         <PageTitle style={{ margin: '8px 0 12px' }}>Search</PageTitle>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, height: 50, borderRadius: 15, background: 'var(--cl-surface)', border: '1.6px solid var(--cl-ink)', padding: '0 15px' }}>

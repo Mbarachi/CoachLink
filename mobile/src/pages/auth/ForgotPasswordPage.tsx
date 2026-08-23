@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { AppButton, AppInput, AppPage, BackButton, StatusBar } from '@/components/ui';
+import { AppButton, AppInput, AppPage, BackButton } from '@/components/ui';
 import { authService } from '@/services/auth.service';
 import { useUiStore } from '@/store/ui.store';
 
@@ -34,7 +34,6 @@ const ForgotPasswordPage: React.FC = () => {
 
   return (
     <AppPage padding="auth">
-      <StatusBar />
       <BackButton size={40} style={{ marginTop: 6 }} />
 
       <h1 style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 800, fontSize: 32, letterSpacing: '-0.03em', color: 'var(--cl-ink)', margin: '26px 0 6px' }}>Reset password</h1>

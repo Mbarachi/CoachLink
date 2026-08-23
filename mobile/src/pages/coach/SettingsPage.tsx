@@ -2,8 +2,14 @@ import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import {
-  AppButton, AppCard, AppPage, ListRow, PageBody,
-  PageTitle, SectionLabel, StatusBar, Toggle,
+  AppButton,
+  AppCard,
+  AppPage,
+  ListRow,
+  PageBody,
+  PageTitle,
+  SectionLabel,
+  Toggle,
 } from '@/components/ui';
 import { useAuthStore } from '@/store/auth.store';
 
@@ -24,7 +30,6 @@ const CoachSettingsPage: React.FC = () => {
   return (
     <AppPage padding="screen">
       <div style={{ flexShrink: 0 }}>
-        <StatusBar />
         <PageTitle>Settings</PageTitle>
       </div>
 

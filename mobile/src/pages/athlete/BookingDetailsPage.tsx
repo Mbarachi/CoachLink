@@ -2,8 +2,16 @@ import React from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 
 import {
-  AppButton, AppCard, AppPage, DetailRow, InitialsAvatar,
-  PageBody, PageHeader, QueryState, SectionHeading, StatusBar, StatusPill,
+  AppButton,
+  AppCard,
+  AppPage,
+  DetailRow,
+  InitialsAvatar,
+  PageBody,
+  PageHeader,
+  QueryState,
+  SectionHeading,
+  StatusPill,
 } from '@/components/ui';
 import { useBookingRequest, useRespondToBookingRequest } from '@/hooks';
 import { getErrorMessage } from '@/lib/apiError';
@@ -44,7 +52,6 @@ const BookingDetailsPage: React.FC = () => {
   return (
     <AppPage padding="screen">
       <div style={{ flexShrink: 0 }}>
-        <StatusBar />
         <PageHeader title="Booking details" onBack={() => history.push('/athlete/bookings')} />
       </div>
 
