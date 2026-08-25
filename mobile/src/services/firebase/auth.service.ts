@@ -68,5 +68,24 @@ export const authService = {
     throw new Error('Password resets are completed through the link Firebase emails you.');
   },
 
+  /** Re-sends the verification link Firebase mailed at sign-up. */
+  async sendVerificationEmail(): Promise<void> {
+    const current = firebaseAuth().currentUser;
+    if (!current) throw new Error('Sign in again to resend the verification email.');
+    await sendEmailVerification(current);
+  },
+
+  /**
+   * Verification happens out of band — the user opens a link in their mail
+   * client, and this session never hears about it. Reloading is the only way
+   * to find out, so the UI asks rather than waits.
+   */
+  async refreshVerification(): Promise<boolean> {
+    const current = firebaseAuth().currentUser;
+    if (!current) return false;
+    await current.reload();
+    return current.emailVerified;
+  },
+
   signOut: () => signOut(firebaseAuth()),
 };
