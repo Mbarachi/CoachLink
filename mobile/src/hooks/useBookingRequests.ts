@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { bookingRequestsService } from '@/services/bookingRequests.service';
+import { bookingRequestsService } from '@/services';
 import type {
   BookingRequestQuery,
   CreateBookingRequestDto,

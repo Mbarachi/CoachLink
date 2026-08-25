@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { usersService } from '@/services/users.service';
+import { usersService } from '@/services';
 import { useAuthStore } from '@/store/auth.store';
 import type { UpdateUserDto } from '@/types';
 

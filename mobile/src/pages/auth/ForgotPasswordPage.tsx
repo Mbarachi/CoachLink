@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { AppButton, AppInput, AppPage, BackButton } from '@/components/ui';
-import { authService } from '@/services/auth.service';
+import { authService } from '@/services';
 import { useUiStore } from '@/store/ui.store';
 
 const ForgotPasswordPage: React.FC = () => {

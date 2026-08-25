@@ -9,7 +9,7 @@ import { AppButton, AppPage, BackButton, PasswordRequirements } from '@/componen
 import { getErrorMessage, isBackendUnreachable } from '@/lib/apiError';
 import type { SignUpValues } from '@/lib/schemas/auth';
 import { signUpSchema } from '@/lib/schemas/auth';
-import { authService } from '@/services/auth.service';
+import { authService } from '@/services';
 import { useAuthStore } from '@/store/auth.store';
 import { useUiStore } from '@/store/ui.store';
 

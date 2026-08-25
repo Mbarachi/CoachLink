@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 
 import { AppButton, AppInput, AppPage, BackButton, PasswordInput } from '@/components/ui';
 import { getErrorMessage, isBackendUnreachable } from '@/lib/apiError';
-import { authService } from '@/services/auth.service';
+import { authService } from '@/services';
 import { useAuthStore } from '@/store/auth.store';
 import { useUiStore } from '@/store/ui.store';
 

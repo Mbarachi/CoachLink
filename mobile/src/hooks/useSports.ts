@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { sportsService } from '@/services/sports.service';
+import { sportsService } from '@/services';
 
 export const sportKeys = {
   all: ['sports'] as const,

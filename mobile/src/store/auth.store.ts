@@ -3,6 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 
 import { queryClient } from '@/lib/queryClient';
 import { isTokenExpired } from '@/lib/token';
+import { isFirebaseBackend } from '@/services/backend';
 import type { User } from '@/types';
 
 interface AuthState {
@@ -56,7 +57,15 @@ export const useAuthStore = create<AuthState>()(
        * an expired session never reaches the UI at all.
        */
       onRehydrateStorage: () => (state) => {
-        if (state?.isAuthenticated && isTokenExpired(state.accessToken)) {
+        if (!state?.isAuthenticated) return;
+
+        // Firebase mints one-hour ID tokens and silently refreshes them, so
+        // the stored copy is stale by design and expiring on it would sign the
+        // user out every hour. The SDK owns session validity there; this check
+        // is only meaningful for the Nest backend's seven-day tokens.
+        if (isFirebaseBackend) return;
+
+        if (isTokenExpired(state.accessToken)) {
           state.clearAuth();
         }
       },

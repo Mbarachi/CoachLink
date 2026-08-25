@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { coachesService } from '@/services/coaches.service';
+import { coachesService } from '@/services';
 import type { CoachQueryParams, CreateCoachProfileDto, UpdateCoachProfileDto } from '@/types';
 
 export const coachKeys = {
