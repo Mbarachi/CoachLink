@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom';
 
 import { AppButton, AppCard, AppInput, AppPage, BackButton, FormLabel } from '@/components/ui';
 import { useCreateCoachProfile, useSports } from '@/hooks';
+import { uploadCoachFiles } from '@/services/firebase/uploads';
 import { getErrorMessage } from '@/lib/apiError';
 import { useAuthStore } from '@/store/auth.store';
 import { useUiStore } from '@/store/ui.store';
@@ -52,8 +53,12 @@ const CoachOnboardingPage: React.FC = () => {
   ]);
   const toggleDay = (i: number) => setDays(d => d.map((x, j) => (j === i ? { ...x, active: !x.active } : x)));
 
+  // The files themselves, not just a preview and a boolean — the previous
+  // version read the photo into a data URL and discarded the ID entirely.
   const [photo, setPhoto] = useState<string | null>(null);
-  const [idUploaded, setIdUploaded] = useState(false);
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [idFile, setIdFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   const back = () => {
     // Step 0 returns to role selection, which replaced itself in the history
@@ -72,9 +77,21 @@ const CoachOnboardingPage: React.FC = () => {
       showToast('Fill in your sport, venue, price and bio first.', 'warning');
       return;
     }
+    if (!photoFile) {
+      showToast('Add a profile photo — athletes see it on your listing.', 'warning');
+      return;
+    }
+    if (!idFile) {
+      showToast('Upload a government ID. Your profile cannot be verified without it.', 'warning');
+      return;
+    }
 
     try {
+      setUploading(true);
+      const uploads = await uploadCoachFiles(photoFile, idFile);
+
       await createProfile.mutateAsync({
+        ...uploads,
         bio: about.trim(),
         yearsOfExperience: Number(experience.replace(/[^\d]/g, '')) || 0,
         sessionRate: Number(price.replace(/[^\d]/g, '')),
@@ -87,6 +104,8 @@ const CoachOnboardingPage: React.FC = () => {
       history.replace('/coach/dashboard');
     } catch (err) {
       showToast(getErrorMessage(err, 'Could not submit your profile.'), 'danger');
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -179,7 +198,7 @@ const CoachOnboardingPage: React.FC = () => {
         {/* Step 3: Verification & review */}
         {step === 3 && (
           <>
-            <FormLabel>Profile photo</FormLabel>
+            <FormLabel>Profile photo <span style={{ color: 'var(--cl-accent)' }}>*</span></FormLabel>
             <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
               <div style={{ width: 64, height: 64, borderRadius: 18, background: photo ? undefined : 'var(--cl-subtle)', backgroundImage: photo ? `url(${photo})` : undefined, backgroundSize: 'cover', backgroundPosition: 'center', border: '1.5px dashed var(--cl-muted-line)', flexShrink: 0 }} />
               <label style={{ border: '1.6px solid var(--cl-ink)', background: 'var(--cl-surface)', borderRadius: 12, padding: '10px 16px', fontFamily: 'var(--cl-font-body)', fontWeight: 700, fontSize: 13, color: 'var(--cl-ink)', cursor: 'pointer' }}>
@@ -192,6 +211,7 @@ const CoachOnboardingPage: React.FC = () => {
                     const file = e.target.files?.[0];
                     if (!file) return;
                     const reader = new FileReader();
+                    setPhotoFile(file);
                     reader.onload = (ev) => setPhoto(ev.target?.result as string);
                     reader.readAsDataURL(file);
                   }}
@@ -199,14 +219,14 @@ const CoachOnboardingPage: React.FC = () => {
               </label>
             </div>
 
-            <FormLabel style={{ margin: '20px 0 8px' }}>Government-issued ID</FormLabel>
+            <FormLabel style={{ margin: '20px 0 8px' }}>Government-issued ID <span style={{ color: 'var(--cl-accent)' }}>*</span></FormLabel>
             <label style={{ display: 'flex', alignItems: 'center', gap: 12, border: '1.5px dashed var(--cl-muted-line)', borderRadius: 14, padding: 16, background: 'var(--cl-surface)', cursor: 'pointer' }}>
-              <div style={{ width: 34, height: 34, borderRadius: 10, background: idUploaded ? 'var(--cl-success-bg)' : 'var(--cl-subtle)', flexShrink: 0 }} />
+              <div style={{ width: 34, height: 34, borderRadius: 10, background: idFile ? 'var(--cl-success-bg)' : 'var(--cl-subtle)', flexShrink: 0 }} />
               <div style={{ flex: 1 }}>
-                <div style={{ fontWeight: 600, fontSize: 13.5, color: 'var(--cl-ink)' }}>{idUploaded ? 'ID uploaded' : 'Upload ID for verification'}</div>
+                <div style={{ fontWeight: 600, fontSize: 13.5, color: 'var(--cl-ink)' }}>{idFile ? idFile.name : 'Upload ID for verification'}</div>
                 <div style={{ fontSize: 11.5, color: 'var(--cl-muted-1)', marginTop: 1 }}>Reviewed manually, usually within 24 hours.</div>
               </div>
-              <input type="file" accept="image/*,application/pdf" style={{ display: 'none' }} onChange={(e) => setIdUploaded(!!e.target.files?.[0])} />
+              <input type="file" accept="image/*,application/pdf" style={{ display: 'none' }} onChange={(e) => setIdFile(e.target.files?.[0] ?? null)} />
             </label>
 
             <FormLabel style={{ margin: '22px 0 9px' }}>Review</FormLabel>
@@ -221,8 +241,8 @@ const CoachOnboardingPage: React.FC = () => {
 
       <div style={{ flexShrink: 0, padding: '14px 0 22px', background: 'var(--cl-canvas)', borderTop: '1px solid var(--cl-border)' }}>
         {step === TOTAL_STEPS - 1 ? (
-          <AppButton size="md" disabled={createProfile.isPending} onClick={() => void finish()}>
-            {createProfile.isPending ? 'Submitting…' : 'Submit for verification'}
+          <AppButton size="md" disabled={uploading || createProfile.isPending} onClick={() => void finish()}>
+            {uploading ? 'Uploading…' : createProfile.isPending ? 'Submitting…' : 'Submit for verification'}
           </AppButton>
         ) : (
           <AppButton size="md" variant="ink" onClick={next}>Continue</AppButton>

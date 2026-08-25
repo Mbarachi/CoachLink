@@ -2,6 +2,7 @@ import { initializeApp, type FirebaseApp } from 'firebase/app';
 import { getAuth, type Auth } from 'firebase/auth';
 import { getFirestore, type Firestore } from 'firebase/firestore';
 import { getFunctions, type Functions } from 'firebase/functions';
+import { getStorage, type FirebaseStorage } from 'firebase/storage';
 
 /**
  * Only initialised when VITE_BACKEND=firebase, so the Nest build never pays
@@ -37,3 +38,4 @@ function ensureApp(): FirebaseApp {
 export const firebaseAuth = (): Auth => getAuth(ensureApp());
 export const firebaseDb = (): Firestore => getFirestore(ensureApp());
 export const firebaseFunctions = (): Functions => getFunctions(ensureApp(), REGION);
+export const firebaseStorage = (): FirebaseStorage => getStorage(ensureApp());
