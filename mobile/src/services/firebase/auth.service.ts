@@ -7,8 +7,9 @@ import {
   updateProfile,
 } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
+import { httpsCallable } from 'firebase/functions';
 
-import { firebaseAuth, firebaseDb } from '@/lib/firebase';
+import { firebaseAuth, firebaseDb, firebaseFunctions } from '@/lib/firebase';
 import type { User } from '@/types';
 
 import { toUser } from './mappers';
@@ -36,7 +37,23 @@ export const authService = {
     // Firebase sends a verification link; there is no 6-digit code to enter.
     await sendEmailVerification(credential.user);
 
-    const user = await awaitProfile(credential.user.uid);
+    // Wait for the trigger to create the document, then write the profile
+    // fields authoritatively. The trigger cannot be trusted with them: it
+    // fires the moment the account exists, which is before updateProfile has
+    // landed, and it never sees the address or phone number at all — those
+    // reach the client only, as part of the sign-up form.
+    await awaitProfile(credential.user.uid);
+    const updated = await httpsCallable(firebaseFunctions(), 'updateMe')({
+      firstName: dto.firstName,
+      lastName: dto.lastName,
+      phoneNumber: dto.phoneNumber,
+      ...(dto.address ? { address: dto.address } : {}),
+      ...(dto.state ? { state: dto.state } : {}),
+      ...(dto.lga ? { lga: dto.lga } : {}),
+    });
+
+    const data = updated.data as Record<string, unknown> & { id?: string };
+    const user = toUser(data.id ?? credential.user.uid, data);
     return { user, accessToken: await credential.user.getIdToken() };
   },
 

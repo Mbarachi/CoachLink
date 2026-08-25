@@ -12,6 +12,21 @@ export const toIso = (value: unknown): string => {
   if (value instanceof Timestamp) return value.toDate().toISOString();
   if (value instanceof Date) return value.toISOString();
   if (typeof value === 'string') return value;
+  if (typeof value === 'number') return new Date(value).toISOString();
+
+  // Callable functions return JSON, so a Timestamp arrives as a plain object
+  // rather than the class — and the key is _seconds over the wire but seconds
+  // when it comes straight from the SDK. Missing this renders every date from
+  // a mutation response as 1970.
+  if (value && typeof value === 'object') {
+    const t = value as { seconds?: number; _seconds?: number; nanoseconds?: number; _nanoseconds?: number };
+    const seconds = t.seconds ?? t._seconds;
+    if (typeof seconds === 'number') {
+      const nanos = t.nanoseconds ?? t._nanoseconds ?? 0;
+      return new Date(seconds * 1000 + Math.floor(nanos / 1e6)).toISOString();
+    }
+  }
+
   return new Date(0).toISOString();
 };
 
