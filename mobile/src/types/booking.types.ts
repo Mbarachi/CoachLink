@@ -9,7 +9,12 @@ export type BookingRequestStatus =
 
 export type BookingMode = 'SINGLE' | 'PACKAGE';
 
-export type BookingStatus = 'UPCOMING' | 'COMPLETED' | 'CANCELLED';
+/**
+ * A booking exists from the moment a coach accepts, but a session is not
+ * confirmed until it is paid for — acceptance produces PENDING_PAYMENT and
+ * only a successful payment promotes it to UPCOMING.
+ */
+export type BookingStatus = 'PENDING_PAYMENT' | 'UPCOMING' | 'COMPLETED' | 'CANCELLED';
 
 export interface BookingRequestSession {
   id: string;
@@ -99,10 +104,40 @@ export interface Booking {
   athleteId: string;
   coachId: string;
   sportId: string;
-  sessionDate: string; // ISO datetime string
+  /** ISO datetime, UTC. One booking is one session. */
+  scheduledAt: string;
+  /** Snapshotted from the request, not read live off the coach. */
+  sessionRate: number;
   status: BookingStatus;
+  paidAt: string | null;
+  cancelledAt: string | null;
+  cancelledBy: 'ATHLETE' | 'COACH' | null;
+  completedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+
+  sport: Sport;
+  athlete: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    profileImage: string | null;
+    bookedForChild: boolean;
+  };
+  coach: {
+    id: string;
+    userId: string;
+    firstName: string;
+    lastName: string;
+    profileImage: string | null;
+    venue: string;
+  };
 }
 
 export interface UpdateBookingDto {
-  status: BookingStatus;
+  status: 'CANCELLED' | 'COMPLETED';
+}
+
+export interface BookingQuery {
+  status?: BookingStatus;
 }

@@ -2,45 +2,33 @@ import React, { useMemo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import {
-  AppCard,
-  AppPage,
-  EmptyState,
-  InitialsAvatar,
-  PageBody,
-  PageTitle,
-  QueryState,
-  StatusPill,
-  TabChips,
+  AppCard, AppPage, EmptyState, InitialsAvatar,
+  PageBody, PageTitle, QueryState, StatusPill, TabChips,
 } from '@/components/ui';
-import { useBookingRequests } from '@/hooks';
+import { useBookings } from '@/hooks';
 import { formatNaira, formatSessionDate, formatSessionTime, fullName, initialsOf } from '@/lib/format';
-import type { BookingRequest, BookingRequestStatus } from '@/types';
+import type { Booking, BookingStatus } from '@/types';
 
-const TABS = ['Upcoming', 'Pending', 'Closed'] as const;
+const TABS = ['Upcoming', 'Awaiting payment', 'Past'] as const;
 
-/**
- * There is no Bookings module yet, so an athlete's requests are the closest
- * truthful stand-in: accepted ones are what's coming up, and declined,
- * cancelled or expired ones are closed.
- */
-const TAB_STATUSES: Record<(typeof TABS)[number], BookingRequestStatus[]> = {
-  Upcoming: ['ACCEPTED'],
-  Pending: ['PENDING'],
-  Closed: ['DECLINED', 'CANCELLED', 'EXPIRED'],
+const TAB_STATUSES: Record<(typeof TABS)[number], BookingStatus[]> = {
+  Upcoming: ['UPCOMING'],
+  'Awaiting payment': ['PENDING_PAYMENT'],
+  Past: ['COMPLETED', 'CANCELLED'],
 };
 
 const EMPTY_COPY: Record<(typeof TABS)[number], { title: string; message: string }> = {
   Upcoming: {
     title: 'Nothing coming up',
-    message: 'Once a coach accepts one of your requests, the session shows up here.',
+    message: 'Sessions appear here once they are paid for and confirmed.',
   },
-  Pending: {
-    title: 'No pending requests',
-    message: 'Find a coach and request a session to get started.',
+  'Awaiting payment': {
+    title: 'Nothing awaiting payment',
+    message: 'When a coach accepts your request, the sessions land here to be paid for.',
   },
-  Closed: {
-    title: 'Nothing closed yet',
-    message: 'Declined, cancelled and expired requests are kept here.',
+  Past: {
+    title: 'Nothing past yet',
+    message: 'Completed and cancelled sessions are kept here.',
   },
 };
 
@@ -49,19 +37,24 @@ const MyBookingsPage: React.FC = () => {
   const [tab, setTab] = useState(0);
 
   // One unfiltered read backs all three tabs, so switching costs no request.
-  const query = useBookingRequests();
-  const requests = query.data ?? [];
+  const query = useBookings();
+  const bookings = query.data ?? [];
 
-  const visible = useMemo<BookingRequest[]>(
-    () => requests.filter(r => TAB_STATUSES[TABS[tab]].includes(r.status)),
-    [requests, tab],
+  const visible = useMemo<Booking[]>(
+    () => bookings.filter((b) => TAB_STATUSES[TABS[tab]].includes(b.status)),
+    [bookings, tab],
+  );
+
+  const awaiting = bookings.filter((b) => b.status === 'PENDING_PAYMENT').length;
+  const tabs = TABS.map((t, i) =>
+    i === 1 && awaiting > 0 ? `${t} · ${awaiting}` : t,
   );
 
   return (
     <AppPage padding="screen">
       <div style={{ flexShrink: 0 }}>
         <PageTitle>My bookings</PageTitle>
-        <TabChips tabs={TABS} active={tab} onChange={setTab} />
+        <TabChips tabs={tabs} active={tab} onChange={setTab} />
       </div>
 
       <PageBody style={{ paddingTop: 16 }}>
@@ -69,45 +62,37 @@ const MyBookingsPage: React.FC = () => {
           {visible.length === 0 ? (
             <EmptyState illustration="bookings" {...EMPTY_COPY[TABS[tab]]} />
           ) : (
-            visible.map(rq => {
-              const first = rq.sessions[0];
-              return (
-                <AppCard
-                  key={rq.id}
-                  onClick={() => history.push(`/athlete/bookings/${rq.id}`)}
-                  padding={15}
-                  style={{ marginBottom: 13 }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <InitialsAvatar
-                      initials={initialsOf(rq.coach.firstName, rq.coach.lastName)}
-                      size={46} radius={13} fontSize={15}
-                    />
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--cl-ink)' }}>
-                        {fullName(rq.coach.firstName, rq.coach.lastName)}
-                      </div>
-                      <div style={{ fontSize: 12.5, color: 'var(--cl-muted-1)' }}>
-                        {rq.sport.name} · {rq.coach.venue}
-                      </div>
+            visible.map((b) => (
+              <AppCard
+                key={b.id}
+                onClick={() => history.push(`/athlete/bookings/${b.id}`)}
+                padding={15}
+                style={{ marginBottom: 13 }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <InitialsAvatar
+                    initials={initialsOf(b.coach.firstName, b.coach.lastName)}
+                    size={46} radius={13} fontSize={15}
+                  />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--cl-ink)' }}>
+                      {fullName(b.coach.firstName, b.coach.lastName)}
                     </div>
-                    <StatusPill status={rq.status} />
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: 13, fontSize: 12.5, color: 'var(--cl-muted-3)' }}>
-                    {first && <span>📅 {formatSessionDate(first.scheduledAt)}</span>}
-                    {first && <span>🕗 {formatSessionTime(first.scheduledAt)}</span>}
-                    <span style={{ marginLeft: 'auto', fontWeight: 700, color: 'var(--cl-ink)' }}>
-                      {formatNaira(rq.totalAmount)}
-                    </span>
-                  </div>
-                  {rq.sessionCount > 1 && (
-                    <div style={{ fontSize: 12, color: 'var(--cl-muted-2)', marginTop: 6 }}>
-                      {rq.sessionCount}-session package
+                    <div style={{ fontSize: 12.5, color: 'var(--cl-muted-1)' }}>
+                      {b.sport.name} · {b.coach.venue}
                     </div>
-                  )}
-                </AppCard>
-              );
-            })
+                  </div>
+                  <StatusPill status={b.status} />
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: 13, fontSize: 12.5, color: 'var(--cl-muted-3)' }}>
+                  <span>📅 {formatSessionDate(b.scheduledAt)}</span>
+                  <span>🕗 {formatSessionTime(b.scheduledAt)}</span>
+                  <span style={{ marginLeft: 'auto', fontWeight: 700, color: 'var(--cl-ink)' }}>
+                    {formatNaira(b.sessionRate)}
+                  </span>
+                </div>
+              </AppCard>
+            ))
           )}
         </QueryState>
       </PageBody>

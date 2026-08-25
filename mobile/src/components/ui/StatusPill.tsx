@@ -16,6 +16,7 @@ const TONES: Record<PillTone, React.CSSProperties> = {
  */
 export const STATUS_TONES: Record<string, PillTone> = {
   PENDING: 'pending',
+  PENDING_PAYMENT: 'pending',
   NEW: 'accent',
   ACCEPTED: 'accent',
   CONFIRMED: 'success',
@@ -27,10 +28,15 @@ export const STATUS_TONES: Record<string, PillTone> = {
 };
 
 /** "PENDING" -> "Pending"; anything already prettified is left alone. */
+const LABELS: Record<string, string> = {
+  PENDING_PAYMENT: 'Awaiting payment',
+};
+
 export const statusLabel = (status: string) =>
-  status === status.toUpperCase()
+  LABELS[status]
+  ?? (status === status.toUpperCase()
     ? status.charAt(0) + status.slice(1).toLowerCase()
-    : status;
+    : status);
 
 interface StatusPillProps {
   /** A known status colours itself; pass `tone` for anything else. */
