@@ -1,4 +1,4 @@
-import { collection, doc, getDoc, getDocs, orderBy, query, where } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
 import type { QueryConstraint } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
 
@@ -30,16 +30,26 @@ export const bookingRequestsService = {
     const asCoach = await getDocs(query(
       collection(firebaseDb(), 'coachProfiles'), where('userId', '==', uid),
     ));
+
+    // Both scopes filter on exactly the field the security rule authorises on.
+    // Filtering by coachId instead looks equivalent but is not: rules validate
+    // a query against its constraints, not its results, and Firestore cannot
+    // prove that coachId implies coach.userId — so it denies the query outright
+    // even when it would have returned nothing.
     const scope: QueryConstraint = asCoach.empty
       ? where('athleteId', '==', uid)
-      : where('coachId', '==', asCoach.docs[0].id);
+      : where('coach.userId', '==', uid);
 
     const constraints: QueryConstraint[] = [scope];
     if (params?.status) constraints.push(where('status', '==', params.status));
-    constraints.push(orderBy('createdAt', 'desc'));
 
+    // Sorted client-side: ordering by createdAt alongside these filters would
+    // need a composite index per combination, and a missing one is a runtime
+    // failure. A single person's requests are few enough that this is free.
     const snap = await getDocs(query(requests(), ...constraints));
-    return snap.docs.map((d) => toBookingRequest(d.id, d.data()));
+    return snap.docs
+      .map((d) => toBookingRequest(d.id, d.data()))
+      .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   },
 
   async getById(id: string): Promise<BookingRequest> {
