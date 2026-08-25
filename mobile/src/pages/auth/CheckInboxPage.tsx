@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { App } from '@capacitor/app';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { AppButton, AppPage, BackButton, EmptyIllustration } from '@/components/ui';
@@ -19,7 +20,7 @@ const COPY = {
   verify: {
     title: 'Check your inbox',
     body: 'We sent a verification link to',
-    hint: 'Open it, then come back and continue.',
+    hint: "Open it and come straight back — we'll notice automatically.",
     cta: "I've verified — continue",
   },
   reset: {
@@ -43,6 +44,48 @@ const CheckInboxPage: React.FC<CheckInboxPageProps> = ({ mode }) => {
   const [checking, setChecking] = useState(false);
   const [cooldown, setCooldown] = useState(RESEND_SECONDS);
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
+  const done = useRef(false);
+
+  /** Advances the moment Firebase reports the address confirmed. */
+  const advanceIfVerified = useCallback(async () => {
+    if (mode !== 'verify' || done.current) return false;
+    try {
+      if (!(await firebaseAuth.refreshVerification())) return false;
+    } catch {
+      return false;   // offline or signed out — the button still works
+    }
+    done.current = true;
+    updateUser({ isVerified: true });
+    showToast('Email verified.', 'success');
+    history.push('/auth/role');
+    return true;
+  }, [mode, updateUser, showToast, history]);
+
+  /**
+   * Verifying means leaving for a mail app, so the return trip is the moment
+   * to check — and polling covers the case where the link is opened on another
+   * device entirely. Between them the user never has to press anything; the
+   * button below is the fallback, not the mechanism.
+   */
+  useEffect(() => {
+    if (mode !== 'verify') return;
+
+    const poll = setInterval(() => void advanceIfVerified(), 5000);
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') void advanceIfVerified();
+    };
+    document.addEventListener('visibilitychange', onVisible);
+
+    const nativeResume = App.addListener('appStateChange', ({ isActive }) => {
+      if (isActive) void advanceIfVerified();
+    });
+
+    return () => {
+      clearInterval(poll);
+      document.removeEventListener('visibilitychange', onVisible);
+      void nativeResume.then((l) => l.remove());
+    };
+  }, [mode, advanceIfVerified]);
 
   // A real countdown, unlike the static "Resend in 0:42" the OTP screen shows.
   useEffect(() => {
@@ -72,14 +115,9 @@ const CheckInboxPage: React.FC<CheckInboxPageProps> = ({ mode }) => {
 
     setChecking(true);
     try {
-      const verified = await firebaseAuth.refreshVerification();
-      if (!verified) {
+      if (!(await advanceIfVerified())) {
         showToast('Not verified yet — open the link in your email first.', 'warning');
-        return;
       }
-      updateUser({ isVerified: true });
-      showToast('Email verified.', 'success');
-      history.push('/auth/role');
     } catch (err) {
       showToast(getErrorMessage(err, 'Could not check your verification status.'), 'danger');
     } finally {
