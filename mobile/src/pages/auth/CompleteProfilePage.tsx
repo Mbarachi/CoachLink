@@ -16,7 +16,9 @@ const CompleteProfilePage: React.FC = () => {
 
   return (
     <AppPage scrollable padding="auth">
-      <BackButton size={40} style={{ marginTop: 6 }} />
+      {/* Explicit destination: role selection navigates with history.replace,
+          so it is not on the stack and goBack() would jump to verification. */}
+      <BackButton size={40} onClick={() => history.replace('/auth/role')} style={{ marginTop: 6 }} />
 
       <h1 style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 800, fontSize: 30, letterSpacing: '-0.03em', color: 'var(--cl-ink)', margin: '22px 0 6px' }}>
         What are you<br />training for?

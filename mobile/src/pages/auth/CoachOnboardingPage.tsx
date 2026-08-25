@@ -56,7 +56,9 @@ const CoachOnboardingPage: React.FC = () => {
   const [idUploaded, setIdUploaded] = useState(false);
 
   const back = () => {
-    if (step === 0) history.goBack();
+    // Step 0 returns to role selection, which replaced itself in the history
+    // stack on the way here — goBack() would skip past it to verification.
+    if (step === 0) history.replace('/auth/role');
     else setStep(s => s - 1);
   };
   const next = () => setStep(s => Math.min(s + 1, TOTAL_STEPS - 1));
