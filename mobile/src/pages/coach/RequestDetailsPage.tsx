@@ -124,11 +124,13 @@ const RequestDetailsPage: React.FC = () => {
 
       {canRespond && (
         <StickyFooter style={{ display: 'flex', gap: 10, paddingLeft: 0, paddingRight: 0 }}>
+          {/* Destructive, matching the athlete's cancel action — turning someone
+              down is the same weight of decision and should read the same. */}
           <AppButton
-            variant="outline" size="md" fullWidth={false}
+            variant="destructive" size="md" fullWidth={false}
             disabled={respond.isPending}
             onClick={() => void decide('DECLINED')}
-            style={{ flex: 1, fontSize: 15 }}
+            style={{ flex: 1, fontSize: 15, border: '1.6px solid #f0c9bb' }}
           >
             Decline
           </AppButton>
