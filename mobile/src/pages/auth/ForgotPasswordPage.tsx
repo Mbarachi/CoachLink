@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { AppButton, AppInput, AppPage, BackButton } from '@/components/ui';
-import { authService, isFirebaseBackend } from '@/services';
+import { authService } from '@/services';
 import { useUiStore } from '@/store/ui.store';
 
 const ForgotPasswordPage: React.FC = () => {
@@ -28,7 +28,7 @@ const ForgotPasswordPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-    showToast(isFirebaseBackend ? 'Reset link sent — check your email.' : 'Code sent — check your email.', 'success');
+    showToast('Reset link sent — check your email.', 'success');
     history.push('/auth/forgot-password/otp', { email: email.trim() });
   };
 
@@ -38,15 +38,13 @@ const ForgotPasswordPage: React.FC = () => {
 
       <h1 style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 800, fontSize: 32, letterSpacing: '-0.03em', color: 'var(--cl-ink)', margin: '26px 0 6px' }}>Reset password</h1>
       <p style={{ fontSize: 14.5, lineHeight: 1.5, color: 'var(--cl-muted-1)', margin: '0 0 26px' }}>
-        {isFirebaseBackend
-          ? "Enter your email and we'll send you a link to reset your password."
-          : "Enter your email and we'll send a 6-digit code to reset your password."}
+Enter your email and we&apos;ll send you a link to reset your password.
       </p>
 
       <AppInput label="Email" type="email" value={email} onChange={setEmail} placeholder="you@example.com" />
 
       <AppButton onClick={handleSendCode} disabled={loading} style={{ marginTop: 22 }}>
-        {loading ? 'Sending…' : isFirebaseBackend ? 'Send reset link' : 'Send code'}
+        {loading ? 'Sending…' : 'Send reset link'}
       </AppButton>
     </AppPage>
   );

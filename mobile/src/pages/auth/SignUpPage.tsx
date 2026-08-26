@@ -9,7 +9,7 @@ import { AppButton, AppPage, BackButton, PasswordRequirements } from '@/componen
 import { getErrorMessage, isBackendUnreachable } from '@/lib/apiError';
 import type { SignUpValues } from '@/lib/schemas/auth';
 import { signUpSchema } from '@/lib/schemas/auth';
-import { authService, isFirebaseBackend } from '@/services';
+import { authService } from '@/services';
 import { useAuthStore } from '@/store/auth.store';
 import { useUiStore } from '@/store/ui.store';
 
@@ -57,12 +57,7 @@ const SignUpPage: React.FC = () => {
         lga: values.lga,
       });
       setAuth(user, accessToken);
-      showToast(
-        isFirebaseBackend
-          ? 'Account created — check your email for a verification link.'
-          : 'Account created — check your email for a verification code.',
-        'success',
-      );
+      showToast('Account created — check your email for a verification link.', 'success');
       history.push('/auth/otp', { email: values.email.trim() });
     } catch (err) {
       showToast(

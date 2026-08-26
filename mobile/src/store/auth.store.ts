@@ -2,8 +2,6 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
 import { queryClient } from '@/lib/queryClient';
-import { isTokenExpired } from '@/lib/token';
-import { isFirebaseBackend } from '@/services/backend';
 import type { User } from '@/types';
 
 interface AuthState {
@@ -49,26 +47,9 @@ export const useAuthStore = create<AuthState>()(
         accessToken: state.accessToken,
         isAuthenticated: state.isAuthenticated,
       }),
-      /**
-       * On iOS this state comes back from WKWebView storage that survives the
-       * app being killed, so a week-old token would otherwise restore as a
-       * signed-in session — the app would render the home screen, fire a
-       * request, take a 401 and only then eject the user. Checking here means
-       * an expired session never reaches the UI at all.
-       */
-      onRehydrateStorage: () => (state) => {
-        if (!state?.isAuthenticated) return;
-
-        // Firebase mints one-hour ID tokens and silently refreshes them, so
-        // the stored copy is stale by design and expiring on it would sign the
-        // user out every hour. The SDK owns session validity there; this check
-        // is only meaningful for the Nest backend's seven-day tokens.
-        if (isFirebaseBackend) return;
-
-        if (isTokenExpired(state.accessToken)) {
-          state.clearAuth();
-        }
-      },
+      // No expiry check here: Firebase mints one-hour ID tokens and refreshes
+      // them silently, so the persisted copy is stale by design. onAuthStateChanged
+      // is what actually decides whether a session is live.
     },
   ),
 );

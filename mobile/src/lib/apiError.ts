@@ -1,5 +1,3 @@
-import axios from 'axios';
-
 /** Firebase surfaces failures as { code, message } rather than an HTTP shape. */
 interface FirebaseLikeError {
   code?: string;
@@ -13,19 +11,12 @@ const firebaseCode = (error: unknown): string | undefined => {
 
 /** True only when the request never reached the server (backend down/unreachable). */
 export function isBackendUnreachable(error: unknown): boolean {
-  if (axios.isAxiosError(error)) return !error.response;
   const code = firebaseCode(error);
   return code === 'unavailable' || code === 'auth/network-request-failed';
 }
 
 /** Extracts a user-facing message from a NestJS error response. */
 export function getErrorMessage(error: unknown, fallback = 'Something went wrong. Please try again.'): string {
-  if (axios.isAxiosError(error)) {
-    const message = (error.response?.data as { message?: string | string[] } | undefined)?.message;
-    if (Array.isArray(message)) return message.join(' ');
-    if (typeof message === 'string') return message;
-  }
-
   const code = firebaseCode(error);
   if (code) {
     // Firebase's raw strings leak internals ("Firebase: Error (auth/...)"),

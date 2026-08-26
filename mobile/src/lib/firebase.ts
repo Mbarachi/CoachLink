@@ -5,10 +5,10 @@ import { getFunctions, type Functions } from 'firebase/functions';
 import { getStorage, type FirebaseStorage } from 'firebase/storage';
 
 /**
- * Only initialised when VITE_BACKEND=firebase, so the Nest build never pays
- * for the SDK at runtime. These config values are public identifiers by
- * design — security rules and the role checks inside callable functions are
- * the actual access control.
+ * Initialised lazily so a missing config fails with something readable rather
+ * than at import time. These values are public identifiers by design —
+ * security rules and the role checks inside callable functions are the actual
+ * access control.
  */
 const config = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -27,7 +27,7 @@ function ensureApp(): FirebaseApp {
   if (!app) {
     if (!config.projectId) {
       throw new Error(
-        'Firebase is not configured. Set VITE_FIREBASE_* in mobile/.env, or run with VITE_BACKEND=nest.',
+        'Firebase is not configured. Copy mobile/.env.example to mobile/.env and restart the dev server.',
       );
     }
     app = initializeApp(config);

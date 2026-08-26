@@ -13,9 +13,32 @@ import { firebaseAuth, firebaseDb, firebaseFunctions } from '@/lib/firebase';
 import type { User } from '@/types';
 
 import { toUser } from './mappers';
-import type {
-  AuthResponse, ForgotPasswordDto, ResetPasswordDto, SignInDto, SignUpDto, VerifyOtpDto,
-} from '../auth.service';
+
+export interface SignUpDto {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  password: string;
+  address?: string;
+  state?: string;
+  lga?: string;
+}
+
+export interface SignInDto {
+  email: string;
+  password: string;
+}
+
+export interface AuthResponse {
+  user: User;
+  /** Firebase refreshes this itself; kept so the store shape is unchanged. */
+  accessToken: string;
+}
+
+export interface ForgotPasswordDto {
+  email: string;
+}
 
 /**
  * The user document is written by the onUserCreate trigger, which runs a beat
@@ -63,26 +86,9 @@ export const authService = {
     return { user, accessToken: await credential.user.getIdToken() };
   },
 
-  /**
-   * Firebase verifies by emailed link, not by a code the app collects, so
-   * there is nothing to submit. Resolving as verified keeps the existing OTP
-   * screen from blocking sign-up; the screen itself should be replaced with a
-   * "check your inbox" step when this backend becomes the default.
-   */
-  async verifyOtp(_dto: VerifyOtpDto): Promise<{ verified: boolean }> {
-    const current = firebaseAuth().currentUser;
-    await current?.reload();
-    return { verified: current?.emailVerified ?? true };
-  },
-
   async forgotPassword(dto: ForgotPasswordDto) {
     await sendPasswordResetEmail(firebaseAuth(), dto.email);
     return { sent: true };
-  },
-
-  /** Firebase completes the reset on its own hosted page, via the emailed link. */
-  async resetPassword(_dto: ResetPasswordDto) {
-    throw new Error('Password resets are completed through the link Firebase emails you.');
   },
 
   /** Re-sends the verification link Firebase mailed at sign-up. */

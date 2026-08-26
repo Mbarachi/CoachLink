@@ -10,14 +10,12 @@ import CheckInboxPage from '@/pages/auth/CheckInboxPage';
 import CoachOnboardingPage from '@/pages/auth/CoachOnboardingPage';
 import CompleteProfilePage from '@/pages/auth/CompleteProfilePage';
 import ForgotPasswordPage from '@/pages/auth/ForgotPasswordPage';
-import OtpVerificationPage from '@/pages/auth/OtpVerificationPage';
 import ResetPasswordSuccessPage from '@/pages/auth/ResetPasswordSuccessPage';
 import RoleSelectionPage from '@/pages/auth/RoleSelectionPage';
 import SignInPage from '@/pages/auth/SignInPage';
 import SignUpPage from '@/pages/auth/SignUpPage';
 import SplashPage from '@/pages/auth/SplashPage';
 import WelcomePage from '@/pages/auth/WelcomePage';
-import { isFirebaseBackend } from '@/services';
 import { useAuthStore } from '@/store/auth.store';
 
 import AthleteRoutes from './AthleteRoutes';
@@ -37,22 +35,10 @@ const AppRoutes: React.FC = () => {
       <Route path="/auth/signin" component={SignInPage} exact />
       <Route path="/auth/signup" component={SignUpPage} exact />
       <Route path="/auth/forgot-password" component={ForgotPasswordPage} exact />
-      {/* Firebase verifies by emailed link, so the code-entry screen is
-          replaced rather than adapted. Same paths either way. */}
-      <Route
-        path="/auth/otp"
-        render={() => (isFirebaseBackend
-          ? <CheckInboxPage mode="verify" />
-          : <OtpVerificationPage mode="signup" />)}
-        exact
-      />
-      <Route
-        path="/auth/forgot-password/otp"
-        render={() => (isFirebaseBackend
-          ? <CheckInboxPage mode="reset" />
-          : <OtpVerificationPage mode="reset" />)}
-        exact
-      />
+      {/* Firebase verifies by emailed link, so these are inbox screens rather
+          than code entry. The paths are unchanged so existing links still work. */}
+      <Route path="/auth/otp" render={() => <CheckInboxPage mode="verify" />} exact />
+      <Route path="/auth/forgot-password/otp" render={() => <CheckInboxPage mode="reset" />} exact />
       <Route path="/auth/reset-success" component={ResetPasswordSuccessPage} exact />
       <Route path="/auth/role" component={RoleSelectionPage} exact />
       <Route path="/auth/complete-profile" component={CompleteProfilePage} exact />
