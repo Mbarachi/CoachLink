@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { AppCard, AppPage, EmptyState, InitialsAvatar, PageBody, StatusPill } from '@/components/ui';
-import { useBookingRequests } from '@/hooks';
+import { useBookingRequests, useBookings } from '@/hooks';
 import { formatSessionDate, formatSessionTime, fullName, initialsOf } from '@/lib/format';
 import { useAuthStore } from '@/store/auth.store';
 
@@ -44,30 +44,38 @@ const HomePage: React.FC = () => {
   const initials = initialsOf(firstName, lastName);
   const roleLabel = user?.role === 'PARENT' ? 'Parent' : 'Athlete';
 
-  const requestsQuery = useBookingRequests();
-  const requests = useMemo(() => requestsQuery.data ?? [], [requestsQuery.data]);
+  // Sessions come from bookings; requests only still matter for the count of
+  // what a coach has yet to answer.
+  const bookingsQuery = useBookings();
+  const bookings = useMemo(() => bookingsQuery.data ?? [], [bookingsQuery.data]);
+  const requests = useBookingRequests().data ?? [];
 
-  const accepted = useMemo(() => requests.filter(r => r.status === 'ACCEPTED'), [requests]);
-  const pendingCount = requests.filter(r => r.status === 'PENDING').length;
-  const coachCount = new Set(requests.map(r => r.coachId)).size;
+  const confirmed = bookings.filter(b => b.status === 'UPCOMING').length;
+  const completed = bookings.filter(b => b.status === 'COMPLETED').length;
+  const awaitingResponse = requests.filter(r => r.status === 'PENDING').length;
+  const coachCount = new Set(bookings.map(b => b.coachId)).size;
 
-  // Soonest first, and only the next couple — this is a summary, not the list.
+  /**
+   * Both confirmed and unpaid sessions are "coming up" — showing only the
+   * confirmed ones would leave this empty while several sit awaiting payment,
+   * which is the moment the athlete most needs to see them. The pill on each
+   * card says which is which.
+   */
   const upcoming = useMemo(
-    () => [...accepted]
-      .filter(r => r.sessions.length > 0)
-      .sort((a, b) => a.sessions[0].scheduledAt.localeCompare(b.sessions[0].scheduledAt))
+    () => bookings
+      .filter(b => b.status === 'UPCOMING' || b.status === 'PENDING_PAYMENT')
+      .sort((a, b) => a.scheduledAt.localeCompare(b.scheduledAt))
       .slice(0, 2),
-    [accepted],
+    [bookings],
   );
 
   const stats = [
     [
-      { val: String(accepted.length), label: 'Upcoming', dark: true, action: true },
-      { val: String(pendingCount), label: 'Pending', dark: false, action: true },
+      { val: String(confirmed), label: 'Upcoming', dark: true, action: true },
+      { val: String(awaitingResponse), label: 'Pending', dark: false, action: true },
     ],
     [
-      // Completed sessions need the Bookings module, which isn't built yet.
-      { val: '0', label: 'Completed', dark: false, action: false },
+      { val: String(completed), label: 'Completed', dark: false, action: false },
       { val: String(coachCount), label: 'Coaches', dark: false, action: false },
     ],
   ];
@@ -209,23 +217,23 @@ const HomePage: React.FC = () => {
               />
             </AppCard>
           ) : (
-            upcoming.map((rq, i) => (
+            upcoming.map((b, i) => (
               <AppCard
-                key={rq.id}
-                onClick={() => history.push(`/athlete/bookings/${rq.id}`)}
+                key={b.id}
+                onClick={() => history.push(`/athlete/bookings/${b.id}`)}
                 padding={13}
                 style={{ display: 'flex', alignItems: 'center', gap: 12, borderRadius: 16, marginBottom: i === upcoming.length - 1 ? 0 : 10 }}
               >
-                <InitialsAvatar initials={initialsOf(rq.coach.firstName, rq.coach.lastName)} size={46} radius={13} fontSize={15} />
+                <InitialsAvatar initials={initialsOf(b.coach.firstName, b.coach.lastName)} size={46} radius={13} fontSize={15} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontWeight: 700, fontSize: 14.5, color: 'var(--cl-ink)' }}>
-                    {fullName(rq.coach.firstName, rq.coach.lastName)}
+                    {fullName(b.coach.firstName, b.coach.lastName)}
                   </div>
                   <div style={{ fontSize: 12, color: 'var(--cl-muted-1)', marginTop: 2 }}>
-                    {rq.sport.name} · {formatSessionDate(rq.sessions[0].scheduledAt)} · {formatSessionTime(rq.sessions[0].scheduledAt)}
+                    {b.sport.name} · {formatSessionDate(b.scheduledAt)} · {formatSessionTime(b.scheduledAt)}
                   </div>
                 </div>
-                <StatusPill status={rq.status} style={{ flexShrink: 0 }} />
+                <StatusPill status={b.status} style={{ flexShrink: 0 }} />
               </AppCard>
             ))
           )}
