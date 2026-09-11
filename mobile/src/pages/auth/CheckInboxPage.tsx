@@ -164,7 +164,7 @@ const CheckInboxPage: React.FC<CheckInboxPageProps> = ({ mode }) => {
       </div>
 
       {mode === 'verify' && (
-        <AppButton variant="text" onClick={() => history.push('/auth/role')} style={{ marginTop: 14 }}>
+        <AppButton variant="text" onClick={() => history.replace('/auth/role')} style={{ marginTop: 14 }}>
           Skip for now
         </AppButton>
       )}

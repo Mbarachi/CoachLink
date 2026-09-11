@@ -17,10 +17,10 @@ const BookingSuccessPage: React.FC = () => {
         ? `Payment received. Your session with ${coachName} is confirmed. See you on the court.`
         : `Your request has been sent to ${coachName}. We'll notify you the moment they respond — then you can pay to confirm.`}
     >
-      <AppButton variant="ink" size="md" onClick={() => history.push('/athlete/bookings')} style={{ marginTop: 30 }}>
+      <AppButton variant="ink" size="md" onClick={() => history.replace('/athlete/bookings')} style={{ marginTop: 30 }}>
         View my bookings
       </AppButton>
-      <AppButton variant="text" onClick={() => history.push('/athlete/home')} style={{ marginTop: 11 }}>
+      <AppButton variant="text" onClick={() => history.replace('/athlete/home')} style={{ marginTop: 11 }}>
         Back to home
       </AppButton>
     </SuccessScreen>

@@ -11,7 +11,7 @@ const ReviewSentPage: React.FC = () => {
       title="Thanks for the review"
       message="Your feedback helps other athletes find the right coach."
     >
-      <AppButton variant="ink" size="md" onClick={() => history.push('/athlete/bookings')} style={{ marginTop: 30 }}>
+      <AppButton variant="ink" size="md" onClick={() => history.replace('/athlete/bookings')} style={{ marginTop: 30 }}>
         Back to my bookings
       </AppButton>
     </SuccessScreen>
