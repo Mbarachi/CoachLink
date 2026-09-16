@@ -67,13 +67,6 @@ const ProfilePage: React.FC = () => {
             </div>
           ))}
         </AppCard>
-
-        {/* switch to coach view */}
-        <div onClick={() => history.push('/coach/dashboard')} style={{ marginTop: 14, display: 'flex', alignItems: 'center', gap: 11, background: 'var(--cl-ink)', borderRadius: 16, padding: 15, cursor: 'pointer' }}>
-          <div style={{ width: 20, height: 20, borderRadius: 6, background: 'var(--cl-accent)', flexShrink: 0 }} />
-          <span style={{ flex: 1, fontSize: 14, fontWeight: 700, color: 'var(--cl-surface)' }}>Switch to coach view</span>
-          <span style={{ color: 'var(--cl-accent)' }}>›</span>
-        </div>
       </PageBody>
     </AppPage>
   );
