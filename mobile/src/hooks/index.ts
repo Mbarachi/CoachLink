@@ -5,3 +5,4 @@ export * from './useBookings';
 export * from './useMe';
 export * from './useDebounced';
 export * from './useAndroidBackButton';
+export * from './useEmailVerified';

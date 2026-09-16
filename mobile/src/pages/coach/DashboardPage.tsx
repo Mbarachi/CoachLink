@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { AppCard, AppPage, EmptyState, InitialsAvatar, PageBody, QueryState, StatusPill } from '@/components/ui';
+import { AppCard, AppPage, EmptyState, InitialsAvatar, PageBody, QueryState, StatusPill, VerifyEmailBanner } from '@/components/ui';
 import { useBookingRequests, useCoaches } from '@/hooks';
 import { formatSessionDate, formatSessionTime, fullName, initialsOf } from '@/lib/format';
 import { useAuthStore } from '@/store/auth.store';
@@ -40,6 +40,7 @@ const DashboardPage: React.FC = () => {
   return (
     <AppPage padding="screen">
       <PageBody pb={96}>
+        <VerifyEmailBanner />
         {/* greeting */}
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginTop: 4 }}>
           <div>

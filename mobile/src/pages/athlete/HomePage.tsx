@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { AppCard, AppPage, EmptyState, InitialsAvatar, PageBody, StatusPill } from '@/components/ui';
+import { AppCard, AppPage, EmptyState, InitialsAvatar, PageBody, StatusPill, VerifyEmailBanner } from '@/components/ui';
 import { useBookingRequests, useBookings } from '@/hooks';
 import { formatSessionDate, formatSessionTime, fullName, initialsOf } from '@/lib/format';
 import { useAuthStore } from '@/store/auth.store';
@@ -107,6 +107,7 @@ const HomePage: React.FC = () => {
 
       {/* ── scrollable body ───────────────────────────────── */}
       <PageBody style={{ paddingTop: 18 }}>
+        <div style={{ padding: '0 var(--cl-px)' }}><VerifyEmailBanner /></div>
 
         {/* stat tiles */}
         <div style={{ padding: '0 var(--cl-px)' }}>
