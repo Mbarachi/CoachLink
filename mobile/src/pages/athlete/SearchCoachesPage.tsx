@@ -117,7 +117,7 @@ const SearchCoachesPage: React.FC = () => {
                   padding={13}
                   style={{ display: 'flex', alignItems: 'center', gap: 13, marginBottom: 10 }}
                 >
-                  <InitialsAvatar initials={coachInitials(co)} size={50} radius={14} fontSize={16} />
+                  <InitialsAvatar initials={coachInitials(co)} src={co.profileImage} size={50} radius={14} fontSize={16} />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--cl-ink)' }}>{coachName(co)}</div>
                     <div style={{ fontSize: 12.5, color: 'var(--cl-muted-1)', marginTop: 2 }}>

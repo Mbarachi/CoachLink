@@ -20,20 +20,28 @@ const CoachDetailsPage: React.FC = () => {
   return (
     <AppPage>
       <div style={{ flex: 1, overflowY: 'auto' }}>
+        {/* The coach's own photo when they have uploaded one; the stripes are
+            the placeholder, not the design. */}
         <div style={{
           height: 236,
-          backgroundImage: 'repeating-linear-gradient(125deg, var(--cl-photo-dark) 0 13px, var(--cl-photo-dark-2) 13px 26px)',
+          backgroundImage: coach?.profileImage
+            ? `url("${coach.profileImage}")`
+            : 'repeating-linear-gradient(125deg, var(--cl-photo-dark) 0 13px, var(--cl-photo-dark-2) 13px 26px)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
           position: 'relative', display: 'flex', alignItems: 'flex-end', padding: 16,
         }}>
           <button onClick={() => history.goBack()} style={{ position: 'absolute', top: 50, left: 18, width: 38, height: 38, borderRadius: '50%', border: 'none', background: 'rgba(255,253,248,.92)', fontSize: 18, cursor: 'pointer' }}>‹</button>
-          <span style={{ fontFamily: 'monospace', fontSize: 11, color: '#d8c6ab', background: 'rgba(0,0,0,.35)', padding: '4px 9px', borderRadius: 7 }}>coach · action photo</span>
+          {!coach?.profileImage && (
+            <span style={{ fontFamily: 'monospace', fontSize: 11, color: '#d8c6ab', background: 'rgba(0,0,0,.35)', padding: '4px 9px', borderRadius: 7 }}>coach · action photo</span>
+          )}
         </div>
 
         <div style={{ padding: '0 var(--cl-px)', marginTop: -36, position: 'relative' }}>
           <QueryState isLoading={query.isPending} error={query.error} onRetry={() => void query.refetch()}>
             {!coach ? null : (
               <>
-                <InitialsAvatar initials={coachInitials(coach)} size={72} radius={20} fontSize={24} style={{ border: '3px solid var(--cl-canvas)' }} />
+                <InitialsAvatar initials={coachInitials(coach)} src={coach.profileImage} size={72} radius={20} fontSize={24} style={{ border: '3px solid var(--cl-canvas)' }} />
 
                 <h2 style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 800, fontSize: 25, letterSpacing: '-0.02em', color: 'var(--cl-ink)', margin: '14px 0 3px' }}>
                   {coachName(coach)}{' '}

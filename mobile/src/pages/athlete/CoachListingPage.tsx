@@ -78,7 +78,7 @@ const CoachListingPage: React.FC = () => {
                 padding={14}
                 style={{ display: 'flex', gap: 13, marginBottom: 11 }}
               >
-                <PhotoTile initials={coachInitials(co)} size={62} radius={16} fontSize={15} />
+                <PhotoTile initials={coachInitials(co)} src={co.profileImage} size={62} radius={16} fontSize={15} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <span style={{ fontWeight: 700, fontSize: 15, color: 'var(--cl-ink)' }}>{coachName(co)}</span>
