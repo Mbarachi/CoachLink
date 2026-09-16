@@ -5,7 +5,7 @@ import { useHistory, useParams } from 'react-router-dom';
 
 import {
   AppButton, AppCard, AppPage, DetailRow, EmptyIllustration,
-  PageBody, PageHeader, QueryState,
+  LoadingOverlay, PageBody, PageHeader, QueryState,
 } from '@/components/ui';
 import { useBooking } from '@/hooks';
 import { getErrorMessage } from '@/lib/apiError';
@@ -77,6 +77,11 @@ const PaymentPage: React.FC = () => {
 
   return (
     <AppPage padding="screen">
+      <LoadingOverlay
+        show={working}
+        label="Opening Paystack…"
+        hint="You'll come back here automatically once the payment is done."
+      />
       <div style={{ flexShrink: 0 }}>
         <PageHeader title="Payment" />
       </div>

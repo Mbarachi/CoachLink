@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { AppButton, AppCard, AppInput, AppPage, BackButton, FilePicker, FormLabel } from '@/components/ui';
+import { AppButton, AppCard, AppInput, AppPage, BackButton, FilePicker, FormLabel, LoadingOverlay } from '@/components/ui';
 import { useCreateCoachProfile, useSports } from '@/hooks';
 import { uploadCoachFiles } from '@/services/firebase/uploads';
 import { getErrorMessage } from '@/lib/apiError';
@@ -110,6 +110,11 @@ const CoachOnboardingPage: React.FC = () => {
 
   return (
     <AppPage scrollable padding="auth">
+      <LoadingOverlay
+        show={uploading || createProfile.isPending}
+        label={uploading ? 'Uploading your documents…' : 'Submitting for review…'}
+        hint={uploading ? 'Keep the app open — this can take a moment on a slow connection.' : undefined}
+      />
       <div style={{ display: 'flex', alignItems: 'center', gap: 13, padding: '6px 0 4px' }}>
         <BackButton onClick={back} />
         <div style={{ flex: 1 }}>
