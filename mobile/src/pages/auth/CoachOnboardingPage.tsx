@@ -230,8 +230,13 @@ const CoachOnboardingPage: React.FC = () => {
 
       <div style={{ flexShrink: 0, padding: '14px 0 22px', background: 'var(--cl-canvas)', borderTop: '1px solid var(--cl-border)' }}>
         {step === TOTAL_STEPS - 1 ? (
-          <AppButton size="md" disabled={uploading || createProfile.isPending} onClick={() => void finish()}>
-            {uploading ? 'Uploading…' : createProfile.isPending ? 'Submitting…' : 'Submit for verification'}
+          <AppButton
+            size="md"
+            loading={uploading || createProfile.isPending}
+            loadingLabel={uploading ? 'Uploading…' : 'Submitting…'}
+            onClick={() => void finish()}
+          >
+            Submit for verification
           </AppButton>
         ) : (
           <AppButton size="md" variant="ink" onClick={next}>Continue</AppButton>

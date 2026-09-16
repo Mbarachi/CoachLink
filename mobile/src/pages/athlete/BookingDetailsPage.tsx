@@ -97,11 +97,12 @@ const BookingDetailsPage: React.FC = () => {
                 <AppButton
                   variant="destructive"
                   size="md"
-                  disabled={update.isPending}
+                  loading={update.isPending}
+            loadingLabel="Cancelling…"
                   onClick={() => void cancel()}
                   style={{ height: 52, fontSize: 15, marginTop: 12, border: '1.6px solid #f0c9bb' }}
                 >
-                  {update.isPending ? 'Cancelling…' : 'Cancel session'}
+                  Cancel session
                 </AppButton>
               )}
 

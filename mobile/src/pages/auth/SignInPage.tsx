@@ -47,8 +47,9 @@ const SignInPage: React.FC = () => {
         Forgot password?
       </AppButton>
 
-      <AppButton onClick={handleSignIn} disabled={loading} style={{ marginTop: 20 }}>
-        {loading ? 'Signing in…' : 'Sign in'}
+      <AppButton onClick={handleSignIn} loading={loading}
+            loadingLabel="Signing in…" style={{ marginTop: 20 }}>
+        Sign in
       </AppButton>
 
       <div style={{ flex: 1 }} />

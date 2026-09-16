@@ -105,8 +105,9 @@ const PaymentPage: React.FC = () => {
                 </span>
               </div>
 
-              <AppButton onClick={() => void pay()} disabled={working} style={{ marginTop: 22 }}>
-                {working ? 'Opening Paystack…' : 'Pay with Paystack'}
+              <AppButton onClick={() => void pay()} loading={working}
+            loadingLabel="Opening Paystack…" style={{ marginTop: 22 }}>
+                Pay with Paystack
               </AppButton>
 
               <div style={{ height: 40 }} />

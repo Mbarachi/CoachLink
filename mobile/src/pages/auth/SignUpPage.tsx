@@ -115,8 +115,9 @@ const SignUpPage: React.FC = () => {
         placeholder="Re-enter your password"
       />
 
-      <AppButton onClick={handleSubmit(onSubmit, onInvalid)} disabled={loading} style={{ marginTop: 22 }}>
-        {loading ? 'Creating…' : 'Continue'}
+      <AppButton onClick={handleSubmit(onSubmit, onInvalid)} loading={loading}
+            loadingLabel="Creating…" style={{ marginTop: 22 }}>
+        Continue
       </AppButton>
 
       <div style={{ flex: 1, minHeight: 32 }} />

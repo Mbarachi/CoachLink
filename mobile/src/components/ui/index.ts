@@ -22,6 +22,7 @@ export { default as QueryState, LoadingState, ErrorState } from './QueryState';
 export { default as PasswordRequirements } from './PasswordRequirements';
 export { default as SectionHeading } from './SectionHeading';
 export { default as SectionLabel } from './SectionLabel';
+export { default as Spinner } from './Spinner';
 export { default as StatusPill, STATUS_TONES, statusLabel } from './StatusPill';
 export type { PillTone } from './StatusPill';
 export { default as StickyFooter } from './StickyFooter';

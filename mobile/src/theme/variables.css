@@ -136,3 +136,10 @@ ion-input, ion-textarea {
   --placeholder-color:  var(--cl-muted-2);
   font-family:          var(--cl-font-body) !important;
 }
+
+/* ── Animation ─────────────────────────────────────────── */
+/* Used by the Spinner component; defined here so it is not re-injected
+   by every component instance that needs it. */
+@keyframes cl-spin {
+  to { transform: rotate(360deg); }
+}

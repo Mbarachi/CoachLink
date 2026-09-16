@@ -146,8 +146,8 @@ const CheckInboxPage: React.FC<CheckInboxPageProps> = ({ mode }) => {
         {copy.hint}
       </p>
 
-      <AppButton onClick={() => void primary()} disabled={checking}>
-        {checking ? 'Checking…' : copy.cta}
+      <AppButton onClick={() => void primary()} loading={checking} loadingLabel="Checking…">
+        {copy.cta}
       </AppButton>
 
       <div style={{ textAlign: 'center', marginTop: 18, fontSize: 13, color: 'var(--cl-muted-1)' }}>

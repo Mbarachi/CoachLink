@@ -136,11 +136,12 @@ const RequestDetailsPage: React.FC = () => {
           </AppButton>
           <AppButton
             size="md" fullWidth={false}
-            disabled={respond.isPending}
+            loading={respond.isPending}
+            loadingLabel="Saving…"
             onClick={() => void decide('ACCEPTED')}
             style={{ flex: 2, fontSize: 15 }}
           >
-            {respond.isPending ? 'Saving…' : 'Accept request'}
+            Accept request
           </AppButton>
         </StickyFooter>
       )}

@@ -4,6 +4,7 @@ import { getErrorMessage, isBackendUnreachable } from '@/lib/apiError';
 
 import AppButton from './AppButton';
 import EmptyIllustration from './EmptyIllustration';
+import Spinner from './Spinner';
 
 const Centered: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '52px 24px' }}>
@@ -13,15 +14,7 @@ const Centered: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 
 export const LoadingState: React.FC<{ label?: string }> = ({ label = 'Loading…' }) => (
   <Centered>
-    <div
-      style={{
-        width: 26, height: 26, borderRadius: '50%',
-        border: '2.5px solid var(--cl-border-alt)',
-        borderTopColor: 'var(--cl-accent)',
-        animation: 'cl-spin 0.7s linear infinite',
-      }}
-    />
-    <style>{'@keyframes cl-spin { to { transform: rotate(360deg) } }'}</style>
+    <Spinner size={26} />
     <p style={{ fontSize: 13.5, color: 'var(--cl-muted-1)', margin: '14px 0 0' }}>{label}</p>
   </Centered>
 );

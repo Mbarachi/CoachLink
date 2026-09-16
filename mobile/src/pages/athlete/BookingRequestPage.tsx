@@ -271,8 +271,13 @@ const BookingRequestPage: React.FC = () => {
 
       {coach && (
         <StickyFooter>
-          <AppButton onClick={handleSubmit} disabled={submitDisabled}>
-            {createRequest.isPending ? 'Sending…' : `Send request · ${formatNaira(totalPrice)}`}
+          <AppButton
+            onClick={handleSubmit}
+            disabled={submitDisabled}
+            loading={createRequest.isPending}
+            loadingLabel="Sending…"
+          >
+            {`Send request · ${formatNaira(totalPrice)}`}
           </AppButton>
         </StickyFooter>
       )}

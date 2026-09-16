@@ -43,8 +43,9 @@ Enter your email and we&apos;ll send you a link to reset your password.
 
       <AppInput label="Email" type="email" value={email} onChange={setEmail} placeholder="you@example.com" />
 
-      <AppButton onClick={handleSendCode} disabled={loading} style={{ marginTop: 22 }}>
-        {loading ? 'Sending…' : 'Send reset link'}
+      <AppButton onClick={handleSendCode} loading={loading}
+            loadingLabel="Sending…" style={{ marginTop: 22 }}>
+        Send reset link
       </AppButton>
     </AppPage>
   );

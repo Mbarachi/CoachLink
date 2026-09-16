@@ -152,8 +152,9 @@ const ProfileManagementPage: React.FC = () => {
 
       {coach && (
         <StickyFooter style={{ paddingLeft: 0, paddingRight: 0 }}>
-          <AppButton size="md" disabled={update.isPending} onClick={() => void save()}>
-            {update.isPending ? 'Saving…' : 'Save profile'}
+          <AppButton size="md" loading={update.isPending}
+            loadingLabel="Saving…" onClick={() => void save()}>
+            Save profile
           </AppButton>
         </StickyFooter>
       )}
