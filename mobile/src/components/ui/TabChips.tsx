@@ -9,7 +9,9 @@ interface TabChipsProps {
 }
 
 const TabChips: React.FC<TabChipsProps> = ({ tabs, active, onChange, style }) => (
-  <div style={{ display: 'flex', gap: 8, ...style }}>
+  // Scrolls rather than clipping: four tabs do not fit a narrow phone, and a
+  // tab the athlete cannot reach is worse than one they have to swipe to.
+  <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 2, ...style }}>
     {tabs.map((t, i) => (
       <span
         key={t}
@@ -18,7 +20,7 @@ const TabChips: React.FC<TabChipsProps> = ({ tabs, active, onChange, style }) =>
           background: active === i ? 'var(--cl-ink)' : 'var(--cl-surface)',
           color: active === i ? 'var(--cl-accent)' : 'var(--cl-muted-3)',
           border: active === i ? 'none' : '1px solid var(--cl-border)',
-          fontWeight: 600, fontSize: 13, padding: '8px 16px',
+          fontWeight: 600, fontSize: 13, padding: '8px 15px', flexShrink: 0, whiteSpace: 'nowrap',
           borderRadius: 'var(--cl-radius-chip)', cursor: 'pointer',
         }}
       >{t}</span>

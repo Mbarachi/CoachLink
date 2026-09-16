@@ -27,6 +27,7 @@ import MyBookingsPage from '@/pages/athlete/MyBookingsPage';
 import NotificationsPage from '@/pages/athlete/NotificationsPage';
 import PaymentPage from '@/pages/athlete/PaymentPage';
 import ProfilePage from '@/pages/athlete/ProfilePage';
+import RequestDetailsPage from '@/pages/athlete/RequestDetailsPage';
 import ReviewSentPage from '@/pages/athlete/ReviewSentPage';
 import SearchCoachesPage from '@/pages/athlete/SearchCoachesPage';
 import SettingsPage from '@/pages/athlete/SettingsPage';
@@ -40,6 +41,7 @@ const AthleteRoutes: React.FC = () => (
       <Route path="/athlete/bookings/:bookingId"        component={BookingDetailsPage} exact />
       <Route path="/athlete/bookings/:bookingId/review" component={LeaveReviewPage}    exact />
       <Route path="/athlete/review-sent"                component={ReviewSentPage}     exact />
+      <Route path="/athlete/requests/:requestId"        component={RequestDetailsPage} exact />
       <Route path="/athlete/notifications" component={NotificationsPage} exact />
       <Route path="/athlete/profile"       component={ProfilePage}       exact />
 
