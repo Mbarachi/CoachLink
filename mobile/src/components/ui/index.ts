@@ -9,6 +9,7 @@ export { default as DetailRow } from './DetailRow';
 export { default as EmptyIllustration } from './EmptyIllustration';
 export type { IllustrationName } from './EmptyIllustration';
 export { default as EmptyState } from './EmptyState';
+export { default as FilePicker } from './FilePicker';
 export { default as FormLabel } from './FormLabel';
 export { default as InitialsAvatar } from './InitialsAvatar';
 export { default as ListRow } from './ListRow';

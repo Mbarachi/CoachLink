@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { AppButton, AppCard, AppInput, AppPage, BackButton, FormLabel } from '@/components/ui';
+import { AppButton, AppCard, AppInput, AppPage, BackButton, FilePicker, FormLabel } from '@/components/ui';
 import { useCreateCoachProfile, useSports } from '@/hooks';
 import { uploadCoachFiles } from '@/services/firebase/uploads';
 import { getErrorMessage } from '@/lib/apiError';
@@ -55,7 +55,6 @@ const CoachOnboardingPage: React.FC = () => {
 
   // The files themselves, not just a preview and a boolean — the previous
   // version read the photo into a data URL and discarded the ID entirely.
-  const [photo, setPhoto] = useState<string | null>(null);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [idFile, setIdFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -199,35 +198,25 @@ const CoachOnboardingPage: React.FC = () => {
         {step === 3 && (
           <>
             <FormLabel>Profile photo <span style={{ color: 'var(--cl-accent)' }}>*</span></FormLabel>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-              <div style={{ width: 64, height: 64, borderRadius: 18, background: photo ? undefined : 'var(--cl-subtle)', backgroundImage: photo ? `url(${photo})` : undefined, backgroundSize: 'cover', backgroundPosition: 'center', border: '1.5px dashed var(--cl-muted-line)', flexShrink: 0 }} />
-              <label style={{ border: '1.6px solid var(--cl-ink)', background: 'var(--cl-surface)', borderRadius: 12, padding: '10px 16px', fontFamily: 'var(--cl-font-body)', fontWeight: 700, fontSize: 13, color: 'var(--cl-ink)', cursor: 'pointer' }}>
-                Upload photo
-                <input
-                  type="file"
-                  accept="image/*"
-                  style={{ display: 'none' }}
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (!file) return;
-                    const reader = new FileReader();
-                    setPhotoFile(file);
-                    reader.onload = (ev) => setPhoto(ev.target?.result as string);
-                    reader.readAsDataURL(file);
-                  }}
-                />
-              </label>
-            </div>
+            <FilePicker
+              value={photoFile}
+              onChange={setPhotoFile}
+              accept={['image/jpeg', 'image/png', 'image/webp']}
+              maxBytes={5 * 1024 * 1024}
+              allowCamera
+              hint="JPEG or PNG, up to 5MB"
+            />
 
             <FormLabel style={{ margin: '20px 0 8px' }}>Government-issued ID <span style={{ color: 'var(--cl-accent)' }}>*</span></FormLabel>
-            <label style={{ display: 'flex', alignItems: 'center', gap: 12, border: '1.5px dashed var(--cl-muted-line)', borderRadius: 14, padding: 16, background: 'var(--cl-surface)', cursor: 'pointer' }}>
-              <div style={{ width: 34, height: 34, borderRadius: 10, background: idFile ? 'var(--cl-success-bg)' : 'var(--cl-subtle)', flexShrink: 0 }} />
-              <div style={{ flex: 1 }}>
-                <div style={{ fontWeight: 600, fontSize: 13.5, color: 'var(--cl-ink)' }}>{idFile ? idFile.name : 'Upload ID for verification'}</div>
-                <div style={{ fontSize: 11.5, color: 'var(--cl-muted-1)', marginTop: 1 }}>Reviewed manually, usually within 24 hours.</div>
-              </div>
-              <input type="file" accept="image/*,application/pdf" style={{ display: 'none' }} onChange={(e) => setIdFile(e.target.files?.[0] ?? null)} />
-            </label>
+            <FilePicker
+              value={idFile}
+              onChange={setIdFile}
+              accept={['image/jpeg', 'image/png', 'application/pdf']}
+              maxBytes={5 * 1024 * 1024}
+              allowCamera
+              shape="wide"
+              hint="Photo or PDF. Reviewed by an admin, never shown to athletes."
+            />
 
             <FormLabel style={{ margin: '22px 0 9px' }}>Review</FormLabel>
             <AppCard padding="4px 16px" style={{ borderRadius: 16 }}>
