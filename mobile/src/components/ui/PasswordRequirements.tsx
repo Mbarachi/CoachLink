@@ -20,7 +20,7 @@ const PasswordRequirements: React.FC<PasswordRequirementsProps> = ({ password, s
   if (outstanding.length === 0) return null;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 5, margin: '9px 2px 15px', ...style }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 5, margin: '9px 2px 24px', ...style }}>
       {outstanding.map(rule => (
         <div key={rule.label} style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
           <IonIcon icon={ellipseOutline} style={{ fontSize: 14, color: 'var(--cl-muted-line)', flexShrink: 0 }} />

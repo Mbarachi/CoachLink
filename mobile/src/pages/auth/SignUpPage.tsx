@@ -6,6 +6,7 @@ import { useHistory } from 'react-router-dom';
 
 import { ControlledInput, ControlledPasswordInput, ControlledSelect } from '@/components/form';
 import { AppButton, AppPage, BackButton, PasswordRequirements } from '@/components/ui';
+import { unmetPasswordRules } from '@/lib/schemas/password';
 import { getErrorMessage, isBackendUnreachable } from '@/lib/apiError';
 import type { SignUpValues } from '@/lib/schemas/auth';
 import { signUpSchema } from '@/lib/schemas/auth';
@@ -75,6 +76,9 @@ const SignUpPage: React.FC = () => {
 
   const onInvalid = () => showToast('Please fix the highlighted fields.', 'warning');
 
+  // Mirrors what PasswordRequirements decides to render.
+  const showPasswordRules = Boolean(password) && unmetPasswordRules(password).length > 0;
+
   return (
     <AppPage scrollable padding="auth">
       <BackButton size={40} style={{ marginTop: 6 }} />
@@ -97,14 +101,17 @@ const SignUpPage: React.FC = () => {
       </div>
 
       {/* The checklist below already names what's outstanding, so the field
-          suppresses its own duplicate error message. */}
+          suppresses its own duplicate error message. It also carries the gap to
+          whatever comes next, so the field gives up its own margin only while
+          the checklist is actually showing — a valid password hides the
+          checklist, and without this the next label sat flush against it. */}
       <ControlledPasswordInput
         control={control}
         name="password"
         label="Password"
         placeholder="Create a password"
         hideError
-        style={{ marginBottom: password ? 0 : 15 }}
+        style={{ marginBottom: showPasswordRules ? 0 : 15 }}
       />
       <PasswordRequirements password={password} />
 
