@@ -8,6 +8,7 @@ import { firebaseAuth, firebaseDb, firebaseFunctions } from '@/lib/firebase';
 import type { Coach, CoachQueryParams, CreateCoachProfileDto, UpdateCoachProfileDto } from '@/types';
 
 import { coachFromSnap, toCoach } from './mappers';
+import type { CoachUploads } from './uploads';
 
 const coaches = () => collection(firebaseDb(), 'coachProfiles');
 
@@ -71,6 +72,17 @@ export const coachesService = {
 
   async update(id: string, dto: UpdateCoachProfileDto): Promise<Coach> {
     const res = await httpsCallable(firebaseFunctions(), 'updateCoachProfile')({ coachId: id, ...dto });
+    const data = res.data as Record<string, unknown> & { id: string };
+    return toCoach(data.id, data);
+  },
+
+  /**
+   * A rejected coach answering the rejection. The callable refuses this unless
+   * at least one document differs from the pair that was turned down, so the
+   * caller must have uploaded afresh — update() cannot touch these fields.
+   */
+  async resubmit(id: string, uploads: CoachUploads): Promise<Coach> {
+    const res = await httpsCallable(firebaseFunctions(), 'resubmitCoachProfile')({ coachId: id, ...uploads });
     const data = res.data as Record<string, unknown> & { id: string };
     return toCoach(data.id, data);
   },

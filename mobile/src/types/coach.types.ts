@@ -11,6 +11,10 @@ export interface CoachProfile {
   venue: string;
   area: string;
   verificationStatus: VerificationStatus;
+  /** Why an admin rejected or approved. Shown to the coach on a rejection. */
+  verificationNote: string | null;
+  /** Which attempt this is; 2 or more means the coach has resubmitted. */
+  submissionCount: number;
   rating: number;
   totalReviews: number;
   isActive: boolean;

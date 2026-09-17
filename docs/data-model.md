@@ -36,6 +36,9 @@ Fields:
 * venue
 * verificationStatus
 * verificationNote — why an admin approved or rejected; shown to the coach
+* previousRejectionNote — what the coach was told on the attempt before this one
+* submissionCount — 1 on the first submission, incremented on each resubmission
+* resubmittedAt
 * reviewedAt
 * reviewedById
 * rating
@@ -47,6 +50,18 @@ Verification Status:
 * PENDING
 * APPROVED
 * REJECTED
+
+Rules:
+
+A rejection is not the end of the line, and it is not reversed by an admin
+changing their mind. REJECTED returns to PENDING only when the coach supplies a
+replacement ID document or profile photo — at least one must actually differ
+from the pair that was turned down, so asking again with the same evidence is
+refused. An admin may never set PENDING directly.
+
+The documents are otherwise write-once: the ordinary profile update cannot
+touch profileImage or idDocumentPath, so identity evidence changes only through
+a resubmission that goes back for review.
 
 ---
 

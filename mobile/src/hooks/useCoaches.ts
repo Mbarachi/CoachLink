@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { coachesService } from '@/services';
+import type { CoachUploads } from '@/services/firebase/uploads';
 import type { CoachQueryParams, CreateCoachProfileDto, UpdateCoachProfileDto } from '@/types';
 
 export const coachKeys = {
@@ -47,6 +48,14 @@ export function useUpdateCoachProfile(id: string | undefined) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (dto: UpdateCoachProfileDto) => coachesService.update(id!, dto),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: coachKeys.all }),
+  });
+}
+
+export function useResubmitCoachProfile(id: string | undefined) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (uploads: CoachUploads) => coachesService.resubmit(id!, uploads),
     onSuccess: () => void qc.invalidateQueries({ queryKey: coachKeys.all }),
   });
 }
