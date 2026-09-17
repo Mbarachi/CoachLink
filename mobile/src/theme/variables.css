@@ -26,6 +26,17 @@
   --cl-destructive:   #c0392b;   /* Log out / danger           */
   --cl-bfae97:        #bfae97;   /* pricing card subtext       */
 
+  /* Sport banner scenes (SportBanner.tsx). A clay court really is terracotta,
+     so tennis borrows the accent family; the pool teal is desaturated to sit
+     beside it rather than fight it. */
+  --cl-court-line:    #F2E7D6;
+  --cl-sport-tennis:  #B85539;
+  --cl-sport-tennis-2:#A34A31;
+  --cl-sport-ball:    #D8E06A;
+  --cl-sport-swim:    #2F6F74;
+  --cl-sport-swim-2:  #275C61;
+  --cl-sport-deck:    #E4D6C0;
+
   /* ── Typography ───────────────────────────────────────── */
   --cl-font-display:  'Schibsted Grotesk', sans-serif;
   --cl-font-body:     'Plus Jakarta Sans', sans-serif;

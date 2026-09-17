@@ -3,10 +3,10 @@ import { useHistory, useParams } from 'react-router-dom';
 
 import {
   AppButton, AppCard, AppPage, EmptyState, InitialsAvatar,
-  QueryState, SectionHeading, StatusPill, StickyFooter,
+  QueryState, SectionHeading, SportBanner, StatusPill, StickyFooter,
 } from '@/components/ui';
 import { useCoach } from '@/hooks';
-import { coachInitials, coachName, coachSportNames } from '@/lib/coach';
+import { coachInitials, coachName, coachSportNames, primarySport } from '@/lib/coach';
 import { formatNaira } from '@/lib/format';
 
 const sectionStyle: React.CSSProperties = { fontSize: 15, margin: '20px 0 7px' };
@@ -20,22 +20,11 @@ const CoachDetailsPage: React.FC = () => {
   return (
     <AppPage>
       <div style={{ flex: 1, overflowY: 'auto' }}>
-        {/* The coach's own photo when they have uploaded one; the stripes are
-            the placeholder, not the design. */}
-        <div style={{
-          height: 236,
-          backgroundImage: coach?.profileImage
-            ? `url("${coach.profileImage}")`
-            : 'repeating-linear-gradient(125deg, var(--cl-photo-dark) 0 13px, var(--cl-photo-dark-2) 13px 26px)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          position: 'relative', display: 'flex', alignItems: 'flex-end', padding: 16,
-        }}>
+        {/* The sport, not the coach: their photo is the avatar below, and
+            painting it here as well showed the same face twice. */}
+        <SportBanner sport={coach ? primarySport(coach) : undefined}>
           <button onClick={() => history.goBack()} style={{ position: 'absolute', top: 50, left: 18, width: 38, height: 38, borderRadius: '50%', border: 'none', background: 'rgba(255,253,248,.92)', fontSize: 18, cursor: 'pointer' }}>‹</button>
-          {!coach?.profileImage && (
-            <span style={{ fontFamily: 'monospace', fontSize: 11, color: '#d8c6ab', background: 'rgba(0,0,0,.35)', padding: '4px 9px', borderRadius: 7 }}>coach · action photo</span>
-          )}
-        </div>
+        </SportBanner>
 
         <div style={{ padding: '0 var(--cl-px)', marginTop: -36, position: 'relative' }}>
           <QueryState isLoading={query.isPending} error={query.error} onRetry={() => void query.refetch()}>

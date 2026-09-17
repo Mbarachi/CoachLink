@@ -44,24 +44,12 @@ the Firebase console; verify a custom sending domain, which removes the main
 trigger; or generate the link server-side and send through Resend, which the
 Nest backend already did.
 
-**Coach cover image.** A second, optional image separate from the headshot,
-shown as a hero on the coach's detail page. Worth doing as the *venue* rather
-than a portrait — the pool or court where sessions actually happen — because
-that answers a question an athlete genuinely has, and a parent deciding where
-to send a child has it twice as hard. As decoration it is not worth the upload.
-
-Two constraints on where it goes. It does not belong on the coaches list card:
-that list is for scanning and comparing, a banner per row cuts how many coaches
-fit on a screen, and the image does not help anyone choose. And it does not
-belong in onboarding, which already carries two compulsory uploads and an
-unresolved drop-off problem — this is an optional upload from
-`ProfileManagementPage`, added after approval.
-
-Needs a fallback, as every user-supplied image here does. Sport-derived is the
-right one — a court for tennis, a pool for swimming — so a coach with no cover
-still reads as the right kind of coach. `EmptyIllustration` has no sport art
-yet, so that is two new illustrations.
-
+**Coach cover image — decided against.** The detail page hero is a per-sport
+illustration (`SportBanner`), not an upload. Asking a coach for a third image
+was judged unnecessary: it adds a step to a flow that already carries two
+compulsory uploads and an unresolved drop-off problem, and the sport scene
+gives the page somewhere to breathe without it. Revisit only if coaches start
+asking to show their own venue.
 
 ---
 
