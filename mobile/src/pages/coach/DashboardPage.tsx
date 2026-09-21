@@ -58,7 +58,7 @@ const DashboardPage: React.FC = () => {
           <InitialsAvatar initials={initials} size={48} radius={15} fontSize={16} />
         </div>
 
-        <VerificationCard coach={mine.data} onFix={() => history.push('/coach/profile')} />
+        <VerificationCard coach={mine.data} onFix={() => history.push('/coach/resubmit')} />
 
         {/* stat cards */}
         <div style={{ display: 'flex', gap: 10, marginTop: 18 }}>

@@ -18,6 +18,7 @@ import { Redirect, Route } from 'react-router-dom';
 
 import AvailabilityPage      from '@/pages/coach/AvailabilityPage';
 import CoachBookingsPage     from '@/pages/coach/BookingsPage';
+import ResubmitPage          from '@/pages/coach/ResubmitPage';
 import DashboardPage         from '@/pages/coach/DashboardPage';
 import EarningsSummaryPage   from '@/pages/coach/EarningsSummaryPage';
 import IncomingRequestsPage  from '@/pages/coach/IncomingRequestsPage';
@@ -35,6 +36,7 @@ const CoachRoutes: React.FC = () => (
       <Route path="/coach/earnings"     component={EarningsSummaryPage}   exact />
       <Route path="/coach/settings"     component={CoachSettingsPage}     exact />
       <Route path="/coach/profile"      component={ProfileManagementPage} exact />
+      <Route path="/coach/resubmit"     component={ResubmitPage}        exact />
 
       <Route path="/coach/requests/:id" component={RequestDetailsPage}    exact />
 

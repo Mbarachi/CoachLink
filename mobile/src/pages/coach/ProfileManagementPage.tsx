@@ -14,7 +14,6 @@ import {
   StatusPill,
   StickyFooter,
 } from '@/components/ui';
-import ResubmitPanel from '@/components/coach/ResubmitPanel';
 import { useMyCoachProfile, useSports, useUpdateCoachProfile } from '@/hooks';
 import { getErrorMessage } from '@/lib/apiError';
 import { initialsOf } from '@/lib/format';
@@ -114,13 +113,11 @@ const ProfileManagementPage: React.FC = () => {
                           ? coach.profile.submissionCount > 1
                             ? 'Back with an admin. We will let you know the outcome.'
                             : 'Athletes can see you once an admin approves your profile.'
-                          : 'Your profile was turned down. Replace your photo and ID below to have it looked at again.'}
+                          : 'Your profile was turned down. Resubmit your photo and ID from the dashboard to have it looked at again.'}
                       </div>
                     )}
                   </div>
                 </div>
-
-                {coach.profile.verificationStatus === 'REJECTED' && <ResubmitPanel coach={coach} />}
 
                 <FormLabel style={{ ...labelStyle, marginTop: 18 }}>Sports you coach</FormLabel>
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
