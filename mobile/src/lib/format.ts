@@ -26,3 +26,11 @@ export const describeSchedule = (daysOfWeek: number[], weeks: number | null) => 
   const days = daysOfWeek.map((d) => DAY_NAMES[d]).join(' & ');
   return weeks ? `${days} for ${weeks} weeks` : days;
 };
+
+/** Greeting matched to the reader's own clock. */
+export const timeOfDayGreeting = () => {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Good morning,';
+  if (hour < 18) return 'Good afternoon,';
+  return 'Good evening,';
+};

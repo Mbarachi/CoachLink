@@ -3,15 +3,8 @@ import { useHistory } from 'react-router-dom';
 
 import { AppCard, AppPage, EmptyState, InitialsAvatar, PageBody, StatusPill, VerifyEmailBanner } from '@/components/ui';
 import { useBookingRequests, useBookings } from '@/hooks';
-import { formatSessionDate, formatSessionTime, fullName, initialsOf } from '@/lib/format';
+import { formatSessionDate, formatSessionTime, fullName, initialsOf, timeOfDayGreeting } from '@/lib/format';
 import { useAuthStore } from '@/store/auth.store';
-
-function timeOfDayGreeting() {
-  const hour = new Date().getHours();
-  if (hour < 12) return 'Good morning,';
-  if (hour < 18) return 'Good afternoon,';
-  return 'Good evening,';
-}
 
 const HomePage: React.FC = () => {
   const history = useHistory();

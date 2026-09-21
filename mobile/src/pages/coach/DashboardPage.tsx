@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 
 import { AppCard, AppPage, EmptyState, InitialsAvatar, PageBody, QueryState, StatusPill, VerifyEmailBanner } from '@/components/ui';
 import { useBookingRequests, useCoaches } from '@/hooks';
-import { formatSessionDate, formatSessionTime, fullName, initialsOf } from '@/lib/format';
+import { formatSessionDate, formatSessionTime, fullName, initialsOf, timeOfDayGreeting } from '@/lib/format';
 import { useAuthStore } from '@/store/auth.store';
 
 const StatCard: React.FC<{ val: string; label: string; dark?: boolean }> = ({ val, label, dark }) => (
@@ -44,8 +44,13 @@ const DashboardPage: React.FC = () => {
         {/* greeting */}
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginTop: 4 }}>
           <div>
-            <div style={{ fontSize: 13, color: 'var(--cl-muted-1)' }}>Good morning,</div>
-            <div style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 800, fontSize: 25, letterSpacing: '-0.03em', color: 'var(--cl-ink)', marginTop: 1 }}>Coach {firstName}</div>
+            <div style={{ fontSize: 13, color: 'var(--cl-muted-1)' }}>{timeOfDayGreeting()}</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 1 }}>
+              <span style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 800, fontSize: 25, letterSpacing: '-0.03em', color: 'var(--cl-ink)' }}>{firstName}</span>
+              {/* Carries what the greeting used to say by prefixing "Coach", so
+                  the two do not repeat each other. */}
+              <StatusPill tone="accent" style={{ fontSize: 10.5, letterSpacing: '.02em', padding: '3px 9px' }}>Coach</StatusPill>
+            </div>
           </div>
           <InitialsAvatar initials={initials} size={48} radius={15} fontSize={16} />
         </div>
