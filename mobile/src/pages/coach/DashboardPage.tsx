@@ -2,8 +2,9 @@ import React, { useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { AppCard, AppPage, EmptyState, InitialsAvatar, PageBody, QueryState, StatusPill, VerifyEmailBanner } from '@/components/ui';
-import { useBookingRequests, useCoaches } from '@/hooks';
+import { useBookingRequests, useMyCoachProfile } from '@/hooks';
 import { formatSessionDate, formatSessionTime, fullName, initialsOf, timeOfDayGreeting } from '@/lib/format';
+import VerificationCard from '@/components/coach/VerificationCard';
 import { useAuthStore } from '@/store/auth.store';
 
 const StatCard: React.FC<{ val: string; label: string; dark?: boolean }> = ({ val, label, dark }) => (
@@ -33,9 +34,11 @@ const DashboardPage: React.FC = () => {
     );
   }, [accepted]);
 
-  // Rating lives on the coach's own profile; find it by the signed-in user id.
-  const coaches = useCoaches();
-  const myProfile = coaches.data?.find(c => c.profile.userId === user?.id)?.profile;
+  // Their own profile whatever its status. The public list is approved-only,
+  // so reading it from there left the coaches who most need their status —
+  // pending and rejected — unable to find themselves at all.
+  const mine = useMyCoachProfile();
+  const myProfile = mine.data?.profile;
 
   return (
     <AppPage padding="screen">
@@ -54,6 +57,8 @@ const DashboardPage: React.FC = () => {
           </div>
           <InitialsAvatar initials={initials} size={48} radius={15} fontSize={16} />
         </div>
+
+        <VerificationCard coach={mine.data} onFix={() => history.push('/coach/profile')} />
 
         {/* stat cards */}
         <div style={{ display: 'flex', gap: 10, marginTop: 18 }}>
