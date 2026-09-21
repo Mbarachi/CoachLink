@@ -83,6 +83,21 @@ head sits in the upper third — so faces land low and the room fills the frame.
 `object-position: 50% 30%` fixes it across the board at no cost.
 
 
+**A dead Firebase session shows as an error, not a sign-in.** `ProtectedRoute`
+gates on the persisted `isAuthenticated` flag in the auth store, which survives
+in localStorage after the Firebase session itself is gone. The route therefore
+renders, every query then fails `requireUid()` with "You must be signed in",
+and the user is told "Something went wrong" on a screen they cannot fix. Hit
+while testing the coach sessions screen. The flag should follow
+`onAuthStateChanged` rather than outlive it.
+
+**Routes are gated on being signed in, not on role.** `ProtectedRoute` checks
+authentication only, so an athlete can open `/coach/*` and a coach `/athlete/*`.
+No data leaks — the Firestore rules and the service's own scoping see to that,
+and each person is shown their own records — but screens appear that make no
+sense for the role, which is how the coach sessions screen was verified in the
+first place.
+
 ---
 
 ## Open risks

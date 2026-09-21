@@ -17,6 +17,7 @@ import React from 'react';
 import { Redirect, Route } from 'react-router-dom';
 
 import AvailabilityPage      from '@/pages/coach/AvailabilityPage';
+import CoachBookingsPage     from '@/pages/coach/BookingsPage';
 import DashboardPage         from '@/pages/coach/DashboardPage';
 import EarningsSummaryPage   from '@/pages/coach/EarningsSummaryPage';
 import IncomingRequestsPage  from '@/pages/coach/IncomingRequestsPage';
@@ -29,6 +30,7 @@ const CoachRoutes: React.FC = () => (
     <IonRouterOutlet>
       <Route path="/coach/dashboard"    component={DashboardPage}         exact />
       <Route path="/coach/requests"     component={IncomingRequestsPage}  exact />
+      <Route path="/coach/bookings"     component={CoachBookingsPage}     exact />
       <Route path="/coach/availability" component={AvailabilityPage}      exact />
       <Route path="/coach/earnings"     component={EarningsSummaryPage}   exact />
       <Route path="/coach/settings"     component={CoachSettingsPage}     exact />
@@ -48,9 +50,9 @@ const CoachRoutes: React.FC = () => (
         <IonIcon icon={listOutline} />
         <IonLabel>Requests</IonLabel>
       </IonTabButton>
-      <IonTabButton tab="availability" href="/coach/availability">
+      <IonTabButton tab="bookings"     href="/coach/bookings">
         <IonIcon icon={calendarOutline} />
-        <IonLabel>Calendar</IonLabel>
+        <IonLabel>Sessions</IonLabel>
       </IonTabButton>
       <IonTabButton tab="earnings"     href="/coach/earnings">
         <IonIcon icon={cashOutline} />
