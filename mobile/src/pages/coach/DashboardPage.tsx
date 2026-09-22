@@ -8,7 +8,7 @@ import VerificationCard from '@/components/coach/VerificationCard';
 import { useAuthStore } from '@/store/auth.store';
 
 const StatCard: React.FC<{ val: string; label: string; dark?: boolean }> = ({ val, label, dark }) => (
-  <div style={{ flex: 1, background: dark ? 'var(--cl-ink)' : 'var(--cl-surface)', border: dark ? 'none' : '1px solid var(--cl-border)', borderRadius: 18, padding: 16 }}>
+  <div style={{ flex: 1, background: dark ? 'var(--cl-ink-fill)' : 'var(--cl-surface)', border: dark ? 'none' : '1px solid var(--cl-border)', borderRadius: 18, padding: 16 }}>
     <div style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 800, fontSize: dark ? 26 : 21, color: dark ? 'var(--cl-accent)' : 'var(--cl-ink)' }}>{val}</div>
     <div style={{ fontSize: 11.5, color: dark ? 'var(--cl-bfae97)' : 'var(--cl-muted-1)', marginTop: 3 }}>{label}</div>
   </div>

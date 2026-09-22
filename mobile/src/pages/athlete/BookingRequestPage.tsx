@@ -142,7 +142,7 @@ const BookingRequestPage: React.FC = () => {
                     style={{
                       flex: 1, textAlign: 'center', padding: '11px 0', borderRadius: 11, cursor: 'pointer',
                       fontWeight: 700, fontSize: 13.5,
-                      background: mode === m ? 'var(--cl-ink)' : 'transparent',
+                      background: mode === m ? 'var(--cl-ink-fill)' : 'transparent',
                       color: mode === m ? 'var(--cl-accent)' : 'var(--cl-muted-3)',
                     }}
                   >{m === 'single' ? 'Single session' : 'Weekly package'}</div>
@@ -217,10 +217,10 @@ const BookingRequestPage: React.FC = () => {
                     ))}
                   </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--cl-ink)', borderRadius: 16, padding: 16, marginTop: 16 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--cl-ink-fill)', borderRadius: 16, padding: 16, marginTop: 16 }}>
                     <div>
                       <div style={{ fontSize: 12, color: 'var(--cl-bfae97)' }}>{sessionCount} sessions total</div>
-                      <div style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 800, fontSize: 22, color: 'var(--cl-surface)', marginTop: 3 }}>{formatNaira(totalPrice)}</div>
+                      <div style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 800, fontSize: 22, color: 'var(--cl-on-ink)', marginTop: 3 }}>{formatNaira(totalPrice)}</div>
                     </div>
                     <StatusPill tone="accent" style={{ color: 'var(--cl-ink)', padding: '6px 11px' }}>Package rate</StatusPill>
                   </div>
@@ -257,7 +257,7 @@ const BookingRequestPage: React.FC = () => {
               />
 
               <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start', background: 'var(--cl-subtle)', borderRadius: 13, padding: 13, marginTop: 14 }}>
-                <div style={{ width: 18, height: 18, borderRadius: '50%', background: 'var(--cl-ink)', color: 'var(--cl-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, flexShrink: 0 }}>i</div>
+                <div style={{ width: 18, height: 18, borderRadius: '50%', background: 'var(--cl-ink-fill)', color: 'var(--cl-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, flexShrink: 0 }}>i</div>
                 <span style={{ fontSize: 12.5, lineHeight: 1.45, color: 'var(--cl-muted-3)' }}>
                   You&apos;ll only pay after {coachName(coach)} accepts.
                 </span>

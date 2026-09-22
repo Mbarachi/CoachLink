@@ -9,6 +9,7 @@ import {
   PageBody,
   PageHeader,
   SectionLabel,
+  ThemeChoice,
   Toggle,
 } from '@/components/ui';
 import { useAuthStore } from '@/store/auth.store';
@@ -43,6 +44,7 @@ const SettingsPage: React.FC = () => {
 
         <SectionLabel>PREFERENCES</SectionLabel>
         <AppCard padding={0} style={groupStyle}>
+          <ThemeChoice />
           <ListRow label="Push notifications" right={<Toggle on={push} onChange={() => setPush(!push)} />} />
           <ListRow label="Email updates" right={<Toggle on={email} onChange={() => setEmail(!email)} />} />
           <ListRow label="Booking reminders" right={<Toggle on={remind} onChange={() => setRemind(!remind)} />} last />

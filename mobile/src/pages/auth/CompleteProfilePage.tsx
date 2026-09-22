@@ -44,7 +44,7 @@ const CompleteProfilePage: React.FC = () => {
                 onClick={() => setSport(s.name)}
                 style={{
                   flex: 1,
-                  background: active ? 'var(--cl-ink)' : 'var(--cl-surface)',
+                  background: active ? 'var(--cl-ink-fill)' : 'var(--cl-surface)',
                   border: active ? 'none' : '1px solid var(--cl-border)',
                   borderRadius: 18,
                   padding: 16,

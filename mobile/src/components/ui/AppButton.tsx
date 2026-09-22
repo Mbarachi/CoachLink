@@ -7,7 +7,7 @@ type Size = 'md' | 'lg';
 
 const VARIANTS: Record<Variant, React.CSSProperties> = {
   primary: { border: 'none', background: 'var(--cl-accent)', color: 'var(--cl-on-accent)' },
-  ink: { border: 'none', background: 'var(--cl-ink)', color: 'var(--cl-surface)' },
+  ink: { border: 'none', background: 'var(--cl-ink-fill)', color: 'var(--cl-on-ink)' },
   outline: { border: '1.6px solid var(--cl-ink)', background: 'var(--cl-surface)', color: 'var(--cl-ink)' },
   destructive: { border: '1px solid var(--cl-border)', background: 'var(--cl-surface)', color: 'var(--cl-destructive)' },
   text: { border: 'none', background: 'none', color: 'var(--cl-ink)' },

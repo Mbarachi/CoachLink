@@ -103,7 +103,7 @@ const PaymentPage: React.FC = () => {
               </AppCard>
 
               <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start', background: 'var(--cl-subtle)', borderRadius: 13, padding: 13, marginTop: 16 }}>
-                <div style={{ width: 18, height: 18, borderRadius: '50%', background: 'var(--cl-ink)', color: 'var(--cl-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, flexShrink: 0 }}>i</div>
+                <div style={{ width: 18, height: 18, borderRadius: '50%', background: 'var(--cl-ink-fill)', color: 'var(--cl-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, flexShrink: 0 }}>i</div>
                 <span style={{ fontSize: 12.5, lineHeight: 1.45, color: 'var(--cl-muted-3)' }}>
                   One payment covers every unpaid session on this booking. You&apos;ll pay on
                   Paystack&apos;s secure page — your card details never reach CoachLink.

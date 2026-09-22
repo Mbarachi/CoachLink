@@ -15,7 +15,7 @@ const ICONS: Record<NonNullable<Toast['color']>, string> = {
 const ICON_COLORS: Record<NonNullable<Toast['color']>, string> = {
   success: 'var(--cl-success-text)',
   warning: 'var(--cl-pending-text)',
-  danger: '#e8836a',
+  danger: 'var(--cl-danger-on-ink)',
   primary: 'var(--cl-accent)',
 };
 
@@ -43,7 +43,7 @@ const ToastItem: React.FC<{ toast: Toast }> = ({ toast }) => {
       onClick={() => dismissToast(toast.id)}
       style={{
         display: 'flex', alignItems: 'center', gap: 9,
-        background: 'var(--cl-ink)', color: 'var(--cl-surface)',
+        background: 'var(--cl-ink-fill)', color: 'var(--cl-on-ink)',
         padding: '13px 18px', borderRadius: 'var(--cl-radius-chip)',
         boxShadow: '0 12px 28px rgba(0,0,0,.28)',
         fontFamily: 'var(--cl-font-body)', fontWeight: 600, fontSize: 13.5, lineHeight: 1.35,

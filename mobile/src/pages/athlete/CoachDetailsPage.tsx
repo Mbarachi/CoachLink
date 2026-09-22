@@ -2,7 +2,7 @@ import React from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 
 import {
-  AppButton, AppCard, AppPage, EmptyState, InitialsAvatar,
+  AppButton, AppCard, AppPage, BackButton, EmptyState, InitialsAvatar,
   QueryState, SectionHeading, SportBanner, StatusPill, StickyFooter,
 } from '@/components/ui';
 import { useCoach } from '@/hooks';
@@ -23,7 +23,7 @@ const CoachDetailsPage: React.FC = () => {
         {/* The sport, not the coach: their photo is the avatar below, and
             painting it here as well showed the same face twice. */}
         <SportBanner sport={coach ? primarySport(coach) : undefined}>
-          <button onClick={() => history.goBack()} style={{ position: 'absolute', top: 50, left: 18, width: 38, height: 38, borderRadius: '50%', border: 'none', background: 'rgba(255,253,248,.92)', fontSize: 18, cursor: 'pointer' }}>‹</button>
+          <BackButton style={{ position: 'absolute', top: 50, left: 18 }} />
         </SportBanner>
 
         <div style={{ padding: '0 var(--cl-px)', marginTop: -36, position: 'relative' }}>
@@ -77,14 +77,14 @@ const CoachDetailsPage: React.FC = () => {
                 </AppCard>
 
                 <SectionHeading style={sectionStyle}>Pricing</SectionHeading>
-                <div style={{ background: 'var(--cl-ink)', borderRadius: 17, padding: 16, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ background: 'var(--cl-ink-fill)', borderRadius: 17, padding: 16, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div>
-                    <div style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 700, fontSize: 22, color: 'var(--cl-surface)' }}>
+                    <div style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 700, fontSize: 22, color: 'var(--cl-on-ink)' }}>
                       {formatNaira(coach.profile.sessionRate)}
                     </div>
                     <div style={{ fontSize: 12, color: 'var(--cl-bfae97)', marginTop: 2 }}>per session</div>
                   </div>
-                  <StatusPill tone="accent" style={{ fontWeight: 600, padding: '6px 11px', color: 'var(--cl-surface)' }}>Within range</StatusPill>
+                  <StatusPill tone="accent" style={{ fontWeight: 600, padding: '6px 11px', color: 'var(--cl-on-accent)' }}>Within range</StatusPill>
                 </div>
 
                 <SectionHeading style={sectionStyle}>Reviews</SectionHeading>

@@ -6,6 +6,10 @@ import { useBookingRequests, useBookings } from '@/hooks';
 import { formatSessionDate, formatSessionTime, fullName, initialsOf, timeOfDayGreeting } from '@/lib/format';
 import { useAuthStore } from '@/store/auth.store';
 
+/** Gutter between hero slides. The track advances by a slide *plus* this,
+ *  so the cards read as separate cards rather than one scrolling strip. */
+const HERO_GAP = 14;
+
 const HomePage: React.FC = () => {
   const history = useHistory();
   const user = useAuthStore(s => s.user);
@@ -112,7 +116,7 @@ const HomePage: React.FC = () => {
                   onClick={s.action ? () => history.push('/athlete/bookings') : undefined}
                   style={{
                     flex: 1, borderRadius: 18, padding: 15,
-                    background: s.dark ? 'var(--cl-ink)' : 'var(--cl-surface)',
+                    background: s.dark ? 'var(--cl-ink-fill)' : 'var(--cl-surface)',
                     border: s.dark ? 'none' : '1px solid var(--cl-border)',
                     cursor: s.action ? 'pointer' : 'default',
                   }}
@@ -128,56 +132,56 @@ const HomePage: React.FC = () => {
         {/* hero carousel */}
         <div style={{ padding: '22px var(--cl-px) 0' }}>
           <div style={{ overflow: 'hidden', borderRadius: 20 }}>
-            <div style={{ display: 'flex', transition: 'transform .55s cubic-bezier(.4,0,.2,1)', transform: `translateX(-${hero * 100}%)` }}>
+            <div style={{ display: 'flex', gap: HERO_GAP, transition: 'transform .55s cubic-bezier(.4,0,.2,1)', transform: `translateX(calc(${hero} * (-100% - ${HERO_GAP}px)))` }}>
               {/* Slide 1: Swimming */}
-              <div onClick={() => history.push('/athlete/search')} style={{ flexShrink: 0, width: '100%', boxSizing: 'border-box', background: 'var(--cl-ink)', borderRadius: 20, padding: 18, display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', overflow: 'hidden' }}>
+              <div onClick={() => history.push('/athlete/search')} style={{ flexShrink: 0, width: '100%', boxSizing: 'border-box', background: 'var(--cl-ink-fill)', borderRadius: 20, padding: 18, display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', overflow: 'hidden' }}>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 800, fontSize: 23, letterSpacing: '-0.02em', color: 'var(--cl-surface)', margin: '7px 0 4px', lineHeight: 1.04 }}>Learn to<br />swim</div>
+                  <div style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 800, fontSize: 23, letterSpacing: '-0.02em', color: 'var(--cl-on-ink)', margin: '7px 0 4px', lineHeight: 1.04 }}>Learn to<br />swim</div>
                   <div style={{ fontSize: 12, color: 'var(--cl-bfae97)' }}>Freestyle to open water</div>
-                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginTop: 14, background: 'var(--cl-canvas)', color: 'var(--cl-ink)', fontWeight: 700, fontSize: 12.5, padding: '8px 14px', borderRadius: 'var(--cl-radius-chip)' }}>Explore <span style={{ fontSize: 14 }}>→</span></div>
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginTop: 14, background: 'var(--cl-on-ink)', color: 'var(--cl-ink-fill)', fontWeight: 700, fontSize: 12.5, padding: '8px 14px', borderRadius: 'var(--cl-radius-chip)' }}>Explore <span style={{ fontSize: 14 }}>→</span></div>
                 </div>
                 <svg viewBox="0 0 150 140" width="138" height="129" style={{ flexShrink: 0 }} xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="92" cy="48" r="30" fill="#E1623C" opacity="0.16" />
+                  <circle cx="92" cy="48" r="30" fill="var(--cl-accent)" opacity="0.16" />
                   <g strokeLinecap="round" fill="none">
-                    <path d="M4 118 q14 -11 28 0 t28 0 t28 0 t28 0 t28 0" stroke="#F3E9DC" strokeWidth="4" opacity="0.22" />
-                    <path d="M4 104 q14 -11 28 0 t28 0 t28 0 t28 0 t28 0" stroke="#E1623C" strokeWidth="5" />
+                    <path d="M4 118 q14 -11 28 0 t28 0 t28 0 t28 0 t28 0" stroke="var(--cl-on-ink)" strokeWidth="4" opacity="0.22" />
+                    <path d="M4 104 q14 -11 28 0 t28 0 t28 0 t28 0 t28 0" stroke="var(--cl-accent)" strokeWidth="5" />
                   </g>
                   <g transform="rotate(-9 78 84)">
-                    <rect x="44" y="76" width="52" height="16" rx="8" fill="#F3E9DC" />
+                    <rect x="44" y="76" width="52" height="16" rx="8" fill="var(--cl-on-ink)" />
                   </g>
-                  <circle cx="103" cy="74" r="10.5" fill="#F3E9DC" />
-                  <path d="M93.5 72 a10.5 10.5 0 0 1 19 -1.5 l-19 1.5 Z" fill="#E1623C" />
-                  <circle cx="99" cy="75" r="2.4" fill="#241C13" />
-                  <path d="M108 78 q16 -16 26 -8" stroke="#F3E9DC" strokeWidth="7" strokeLinecap="round" fill="none" />
-                  <path d="M48 86 q-14 4 -20 14 M56 92 q-12 8 -14 18" stroke="#F3E9DC" strokeWidth="6.5" strokeLinecap="round" fill="none" opacity="0.9" />
-                  <circle cx="132" cy="66" r="3.2" fill="#E1623C" />
-                  <circle cx="26" cy="112" r="3" fill="#F3E9DC" opacity="0.6" />
-                  <circle cx="40" cy="120" r="2.2" fill="#E1623C" opacity="0.8" />
+                  <circle cx="103" cy="74" r="10.5" fill="var(--cl-on-ink)" />
+                  <path d="M93.5 72 a10.5 10.5 0 0 1 19 -1.5 l-19 1.5 Z" fill="var(--cl-accent)" />
+                  <circle cx="99" cy="75" r="2.4" fill="var(--cl-ink-fill)" />
+                  <path d="M108 78 q16 -16 26 -8" stroke="var(--cl-on-ink)" strokeWidth="7" strokeLinecap="round" fill="none" />
+                  <path d="M48 86 q-14 4 -20 14 M56 92 q-12 8 -14 18" stroke="var(--cl-on-ink)" strokeWidth="6.5" strokeLinecap="round" fill="none" opacity="0.9" />
+                  <circle cx="132" cy="66" r="3.2" fill="var(--cl-accent)" />
+                  <circle cx="26" cy="112" r="3" fill="var(--cl-on-ink)" opacity="0.6" />
+                  <circle cx="40" cy="120" r="2.2" fill="var(--cl-accent)" opacity="0.8" />
                 </svg>
               </div>
 
               {/* Slide 2: Tennis */}
               <div onClick={() => history.push('/athlete/search')} style={{ flexShrink: 0, width: '100%', boxSizing: 'border-box', background: 'var(--cl-accent)', borderRadius: 20, padding: 18, display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', overflow: 'hidden' }}>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 800, fontSize: 23, letterSpacing: '-0.02em', color: 'var(--cl-surface)', margin: '7px 0 4px', lineHeight: 1.04 }}>Master<br />your serve</div>
-                  <div style={{ fontSize: 12, color: '#f7dccf' }}>Baseline to match play</div>
-                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginTop: 14, background: 'var(--cl-ink)', color: 'var(--cl-surface)', fontWeight: 700, fontSize: 12.5, padding: '8px 14px', borderRadius: 'var(--cl-radius-chip)' }}>Explore <span style={{ fontSize: 14 }}>→</span></div>
+                  <div style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 800, fontSize: 23, letterSpacing: '-0.02em', color: 'var(--cl-on-accent)', margin: '7px 0 4px', lineHeight: 1.04 }}>Master<br />your serve</div>
+                  <div style={{ fontSize: 12, color: 'var(--cl-on-accent-muted)' }}>Baseline to match play</div>
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginTop: 14, background: 'var(--cl-ink-fill)', color: 'var(--cl-on-ink)', fontWeight: 700, fontSize: 12.5, padding: '8px 14px', borderRadius: 'var(--cl-radius-chip)' }}>Explore <span style={{ fontSize: 14 }}>→</span></div>
                 </div>
                 <svg viewBox="0 0 150 140" width="138" height="129" style={{ flexShrink: 0 }} xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="58" cy="44" r="30" fill="#241C13" opacity="0.12" />
-                  <ellipse cx="72" cy="122" rx="34" ry="5" fill="#241C13" opacity="0.15" />
-                  <circle cx="70" cy="44" r="10.5" fill="#241C13" />
-                  <rect x="63" y="54" width="15" height="33" rx="7.5" fill="#241C13" />
-                  <path d="M70 88 l-9 26 M74 88 l9 26" stroke="#241C13" strokeWidth="7.5" strokeLinecap="round" />
-                  <path d="M76 62 q16 -8 24 -26" stroke="#241C13" strokeWidth="7.5" strokeLinecap="round" fill="none" />
-                  <path d="M64 64 q-10 6 -13 17" stroke="#241C13" strokeWidth="7" strokeLinecap="round" fill="none" />
+                  <circle cx="58" cy="44" r="30" fill="var(--cl-ink-fill)" opacity="0.12" />
+                  <ellipse cx="72" cy="122" rx="34" ry="5" fill="var(--cl-ink-fill)" opacity="0.15" />
+                  <circle cx="70" cy="44" r="10.5" fill="var(--cl-ink-fill)" />
+                  <rect x="63" y="54" width="15" height="33" rx="7.5" fill="var(--cl-ink-fill)" />
+                  <path d="M70 88 l-9 26 M74 88 l9 26" stroke="var(--cl-ink-fill)" strokeWidth="7.5" strokeLinecap="round" />
+                  <path d="M76 62 q16 -8 24 -26" stroke="var(--cl-ink-fill)" strokeWidth="7.5" strokeLinecap="round" fill="none" />
+                  <path d="M64 64 q-10 6 -13 17" stroke="var(--cl-ink-fill)" strokeWidth="7" strokeLinecap="round" fill="none" />
                   <g transform="rotate(30 106 30)">
-                    <ellipse cx="106" cy="30" rx="12" ry="15.5" fill="#F3E9DC" stroke="#241C13" strokeWidth="4.5" />
-                    <path d="M100 30 h12 M106 17 v26" stroke="#241C13" strokeWidth="1.4" opacity="0.5" />
+                    <ellipse cx="106" cy="30" rx="12" ry="15.5" fill="var(--cl-on-ink)" stroke="var(--cl-ink-fill)" strokeWidth="4.5" />
+                    <path d="M100 30 h12 M106 17 v26" stroke="var(--cl-ink-fill)" strokeWidth="1.4" opacity="0.5" />
                   </g>
-                  <circle cx="126" cy="58" r="8.5" fill="#F3E9DC" />
-                  <path d="M120 53 q7 5 0 10" stroke="#E1623C" strokeWidth="1.8" fill="none" />
-                  <path d="M118 44 q3 -3 6 -1 M114 50 q3 -3 6 -1" stroke="#241C13" strokeWidth="2" strokeLinecap="round" fill="none" opacity="0.5" />
+                  <circle cx="126" cy="58" r="8.5" fill="var(--cl-on-ink)" />
+                  <path d="M120 53 q7 5 0 10" stroke="var(--cl-accent)" strokeWidth="1.8" fill="none" />
+                  <path d="M118 44 q3 -3 6 -1 M114 50 q3 -3 6 -1" stroke="var(--cl-ink-fill)" strokeWidth="2" strokeLinecap="round" fill="none" opacity="0.5" />
                 </svg>
               </div>
             </div>

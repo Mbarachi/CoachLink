@@ -20,7 +20,7 @@ const SplashPage: React.FC = () => {
   }, [isAuthenticated, user, history]);
 
   return (
-    <AppPage background="var(--cl-ink)" center>
+    <AppPage background="var(--cl-ink-fill)" center>
       <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
         <div style={{
           position: 'absolute', top: -50, right: -50, width: 240, height: 240, borderRadius: '50%',
@@ -30,9 +30,9 @@ const SplashPage: React.FC = () => {
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 13 }}>
         <div style={{ width: 46, height: 46, borderRadius: 14, background: 'var(--cl-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ width: 19, height: 19, borderRadius: '50%', background: 'var(--cl-ink)' }} />
+          <div style={{ width: 19, height: 19, borderRadius: '50%', background: 'var(--cl-ink-fill)' }} />
         </div>
-        <span style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 800, fontSize: 32, color: 'var(--cl-canvas)', letterSpacing: '-0.03em' }}>
+        <span style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 800, fontSize: 32, color: 'var(--cl-on-ink)', letterSpacing: '-0.03em' }}>
           CoachLink
         </span>
       </div>

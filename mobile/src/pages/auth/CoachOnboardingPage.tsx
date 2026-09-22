@@ -142,7 +142,7 @@ const CoachOnboardingPage: React.FC = () => {
                   <div
                     key={s.id}
                     onClick={() => setSportId(s.id)}
-                    style={{ flex: 1, background: active ? 'var(--cl-ink)' : 'var(--cl-surface)', border: active ? 'none' : '1px solid var(--cl-border)', borderRadius: 15, padding: 14, textAlign: 'center', cursor: 'pointer' }}
+                    style={{ flex: 1, background: active ? 'var(--cl-ink-fill)' : 'var(--cl-surface)', border: active ? 'none' : '1px solid var(--cl-border)', borderRadius: 15, padding: 14, textAlign: 'center', cursor: 'pointer' }}
                   >
                     <div style={{ fontSize: 22 }}>{s.icon}</div>
                     <div style={{ fontWeight: 700, fontSize: 13.5, color: active ? 'var(--cl-surface)' : 'var(--cl-ink)', marginTop: 6 }}>{s.name}</div>
@@ -177,7 +177,7 @@ const CoachOnboardingPage: React.FC = () => {
             <AppInput label="Price per session" value={price} onChange={setPrice} placeholder="₦12,000" labelStyle={{ margin: '16px 0 7px' }} />
 
             <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start', background: 'var(--cl-subtle)', borderRadius: 13, padding: 12, marginTop: 11 }}>
-              <div style={{ width: 16, height: 16, borderRadius: '50%', background: 'var(--cl-ink)', color: 'var(--cl-canvas)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 700, flexShrink: 0 }}>i</div>
+              <div style={{ width: 16, height: 16, borderRadius: '50%', background: 'var(--cl-ink-fill)', color: 'var(--cl-on-ink)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 700, flexShrink: 0 }}>i</div>
               <span style={{ fontSize: 12, lineHeight: 1.45, color: 'var(--cl-muted-3)' }}>Recommended for {sportName.toLowerCase()}: ₦5,000 – ₦15,000 per session.</span>
             </div>
           </>

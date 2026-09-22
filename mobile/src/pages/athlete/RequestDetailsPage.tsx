@@ -81,7 +81,7 @@ const RequestDetailsPage: React.FC = () => {
 
               {BANNERS[req.status] && (
                 <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start', background: 'var(--cl-subtle)', borderRadius: 14, padding: 14, marginTop: 16 }}>
-                  <div style={{ width: 18, height: 18, borderRadius: '50%', background: 'var(--cl-ink)', color: 'var(--cl-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, flexShrink: 0 }}>i</div>
+                  <div style={{ width: 18, height: 18, borderRadius: '50%', background: 'var(--cl-ink-fill)', color: 'var(--cl-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, flexShrink: 0 }}>i</div>
                   <span style={{ fontSize: 12.5, lineHeight: 1.5, color: 'var(--cl-muted-3)' }}>{BANNERS[req.status]}</span>
                 </div>
               )}
@@ -120,7 +120,7 @@ const RequestDetailsPage: React.FC = () => {
                   loading={respond.isPending}
                   loadingLabel="Withdrawing…"
                   onClick={() => void withdraw()}
-                  style={{ height: 52, fontSize: 15, marginTop: 18, border: '1.6px solid #f0c9bb' }}
+                  style={{ height: 52, fontSize: 15, marginTop: 18, border: '1.6px solid var(--cl-destructive-line)' }}
                 >
                   Withdraw request
                 </AppButton>

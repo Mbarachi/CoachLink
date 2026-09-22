@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 type Tone = 'ink' | 'subtle';
 
 const TONES: Record<Tone, React.CSSProperties> = {
-  ink: { background: 'var(--cl-ink)', color: 'var(--cl-accent)' },
+  ink: { background: 'var(--cl-ink-fill)', color: 'var(--cl-accent)' },
   subtle: { background: 'var(--cl-subtle)', color: 'var(--cl-ink)' },
 };
 

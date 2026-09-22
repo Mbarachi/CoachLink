@@ -9,6 +9,22 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <!-- Paints the stored theme before first paint, so a dark-mode user never
+         sees a flash of cream. Mirrors theme.store.ts: same storage key, same
+         resolution rule. Kept inline and tiny on purpose. -->
+    <script>
+      (function () {
+        try {
+          var raw = localStorage.getItem('coachlink-theme');
+          var mode = raw ? (JSON.parse(raw).state || {}).mode : 'system';
+          var dark = mode === 'dark' || (mode !== 'light'
+            && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -21,7 +21,7 @@ const Chip: React.FC<{ label: string; active: boolean; onClick: () => void }> = 
     onClick={onClick}
     style={{
       flexShrink: 0,
-      background: active ? 'var(--cl-ink)' : 'var(--cl-surface)',
+      background: active ? 'var(--cl-ink-fill)' : 'var(--cl-surface)',
       color: active ? 'var(--cl-accent)' : 'var(--cl-muted-3)',
       border: active ? 'none' : '1px solid var(--cl-border)',
       fontWeight: 600, fontSize: 13,
@@ -82,7 +82,7 @@ const SearchCoachesPage: React.FC = () => {
                 onClick={() => setVenue(venue === v ? null : v)}
                 style={{
                   flexShrink: 0,
-                  background: venue === v ? 'var(--cl-ink)' : 'var(--cl-subtle)',
+                  background: venue === v ? 'var(--cl-ink-fill)' : 'var(--cl-subtle)',
                   color: venue === v ? 'var(--cl-accent)' : 'var(--cl-ink)',
                   fontWeight: 600, fontSize: 12.5, padding: '7px 14px',
                   borderRadius: 'var(--cl-radius-chip)', cursor: 'pointer',

@@ -16,7 +16,7 @@ const Toggle: React.FC<ToggleProps> = ({ on, onChange }) => (
   >
     <div style={{
       position: 'absolute', top: 2, left: on ? 20 : 2, width: 20, height: 20,
-      borderRadius: '50%', background: 'var(--cl-surface)', transition: 'left .15s',
+      borderRadius: '50%', background: 'var(--cl-on-ink)', transition: 'left .15s',
     }} />
   </div>
 );

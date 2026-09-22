@@ -1,12 +1,13 @@
 import React from 'react';
 
-export type PillTone = 'pending' | 'accent' | 'success' | 'neutral';
+export type PillTone = 'pending' | 'accent' | 'success' | 'neutral' | 'destructive';
 
 const TONES: Record<PillTone, React.CSSProperties> = {
   pending: { background: 'var(--cl-pending-bg)', color: 'var(--cl-pending-text)' },
   accent: { background: 'var(--cl-accent)', color: 'var(--cl-on-accent)' },
   success: { background: 'var(--cl-success-bg)', color: 'var(--cl-success-text)' },
   neutral: { background: 'var(--cl-subtle)', color: 'var(--cl-muted-1)' },
+  destructive: { background: 'var(--cl-destructive)', color: 'var(--cl-on-destructive)' },
 };
 
 /**
@@ -16,6 +17,7 @@ const TONES: Record<PillTone, React.CSSProperties> = {
  */
 export const STATUS_TONES: Record<string, PillTone> = {
   PENDING: 'pending',
+  REJECTED: 'destructive',
   PENDING_PAYMENT: 'pending',
   NEW: 'accent',
   ACCEPTED: 'accent',

@@ -1,13 +1,22 @@
 /* ============================================================
    CoachLink — Clay Design Tokens (single source of truth)
    Swap only the hex values here to re-theme the whole app.
+
+   Light is the base palette on :root. Dark overrides live in the
+   :root[data-theme="dark"] block further down — a single block,
+   because theme.store.ts always writes a *resolved* value ("light"
+   or "dark") onto <html>. "Follow the system" is resolved in JS
+   rather than by a second prefers-color-scheme block, so there is
+   exactly one place to edit a dark value.
    ============================================================ */
 
 :root {
+  color-scheme: light;
+
   /* ── Clay palette ──────────────────────────────────────── */
   --cl-canvas:        #F3E9DC;   /* screen / page background   */
   --cl-surface:       #FFFDF8;   /* cards, inputs, list rows   */
-  --cl-ink:           #241C13;   /* headings, body, dark fills */
+  --cl-ink:           #241C13;   /* headings, body text        */
   --cl-accent:        #E1623C;   /* primary buttons, selected  */
   --cl-on-accent:     #FFFFFF;   /* text/icons on accent fill  */
   --cl-border:        #ECDFCD;   /* card / input borders       */
@@ -17,18 +26,34 @@
   --cl-muted-2:       #a08e76;   /* tertiary / labels          */
   --cl-muted-3:       #6e5f4d;   /* body-muted                 */
   --cl-muted-line:    #c2b09a;   /* inactive icons, off-toggle */
-  --cl-photo-dark:    #2b2117;   /* image placeholder stripe A */
-  --cl-photo-dark-2:  #352818;   /* image placeholder stripe B */
+  --cl-photo-dark:    #2b2117;   /* dark placeholder stripe A  */
+  --cl-photo-dark-2:  #352818;   /* dark placeholder stripe B  */
+  --cl-photo-light:   #E7D7C2;   /* light placeholder stripe A */
+  --cl-photo-light-2: #EFE3D3;   /* light placeholder stripe B */
   --cl-success-text:  #2c6e2c;   /* Confirmed pill text        */
   --cl-success-bg:    #e3f4e3;   /* Confirmed pill bg          */
   --cl-pending-text:  #9a7b3c;   /* Pending pill text          */
   --cl-pending-bg:    #F3E7CE;   /* Pending pill bg            */
   --cl-destructive:   #c0392b;   /* Log out / danger           */
-  --cl-bfae97:        #bfae97;   /* pricing card subtext       */
+  --cl-on-destructive:#FFFFFF;   /* text on a solid red fill   */
+  --cl-destructive-bg:#FDEDE8;   /* rejected banner / reason box */
+  --cl-destructive-line:#f0c9bb; /* destructive outline button   */
+
+  /* The emphasis surface, and what sits on it. In light mode this is a
+     near-black panel against cream; in dark mode it inverts mechanism and
+     becomes a *raised* warm panel, because nothing can be darker than the
+     dark canvas. Either way --cl-on-ink is the readable mark on top, so
+     never pair an ink fill with --cl-surface or --cl-canvas for text. */
+  --cl-ink-fill:      #241C13;   /* emphasis card / dark fill  */
+  --cl-on-ink:        #FFFDF8;   /* text/marks on an ink fill  */
+  --cl-bfae97:        #bfae97;   /* muted subtext on ink fill  */
+  --cl-danger-on-ink: #e8836a;   /* danger glyph on ink toast  */
+  --cl-on-accent-muted:#f7dccf;  /* muted subtext on accent    */
 
   /* Sport banner scenes (SportBanner.tsx). A clay court really is terracotta,
      so tennis borrows the accent family; the pool teal is desaturated to sit
-     beside it rather than fight it. */
+     beside it rather than fight it. These are self-contained illustrations —
+     saturated enough to read on either canvas, so they do not get dark values. */
   --cl-court-line:    #F2E7D6;
   --cl-sport-tennis:  #B85539;
   --cl-sport-tennis-2:#A34A31;
@@ -52,15 +77,62 @@
   --cl-px:            22px;   /* screen horizontal padding    */
   --cl-px-auth:       26px;   /* auth screen h-padding        */
 
-  /* ──────────────────────────────────────────────────────
-     Ionic CSS custom property overrides
-     All Ionic components inherit from these.
-  ─────────────────────────────────────────────────────── */
+  /* ── Ionic bridge ─────────────────────────────────────── */
   --ion-background-color:     var(--cl-canvas);
   --ion-background-color-rgb: 243, 233, 220;
   --ion-text-color:           var(--cl-ink);
   --ion-font-family:          var(--cl-font-body);
+}
 
+/* ============================================================
+   Dark — "Clay after dark"
+   Warm bark and espresso rather than neutral grey, so the brand
+   still reads as the same app with the lights off.
+   ============================================================ */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --cl-canvas:        #17120D;   /* deep bark                  */
+  --cl-surface:       #211A13;   /* raised card                */
+  --cl-ink:           #F3E9DC;   /* text inverts to cream      */
+  --cl-border:        #342A20;
+  --cl-border-alt:    #3E3226;
+  --cl-subtle:        #2B2219;
+
+  /* Ordered by readability, inverted from light: muted-3 is the most
+     legible body tone, muted-2 the dimmest label. */
+  --cl-muted-1:       #A3907A;
+  --cl-muted-2:       #8A7A66;
+  --cl-muted-3:       #C4B39C;
+  --cl-muted-line:    #4A3C2E;
+
+  --cl-photo-dark:    #3A2E22;
+  --cl-photo-dark-2:  #453626;
+  --cl-photo-light:   #2B2219;
+  --cl-photo-light-2: #342A20;
+
+  /* Status tones lift toward the light end so they stay legible on bark.
+     --cl-on-destructive goes dark because the solid red pill would drop
+     under 3.5:1 with white text once the red itself is lightened. */
+  --cl-success-text:  #7FC47F;
+  --cl-success-bg:    #1E2E1E;
+  --cl-pending-text:  #D9B872;
+  --cl-pending-bg:    #2F2612;
+  --cl-destructive:   #E06A5C;
+  --cl-on-destructive:#2A1410;
+  --cl-destructive-bg:#3A1F1A;
+  --cl-destructive-line:#5C332B;
+
+  /* Raised rather than sunken — see the note on --cl-ink-fill above. */
+  --cl-ink-fill:      #3A2E20;
+  --cl-on-ink:        #F3E9DC;
+  --cl-bfae97:        #B5A48C;
+
+  --ion-background-color-rgb: 23, 18, 13;
+}
+
+/* ── Ionic colour roles (derived, so they follow the theme) ─── */
+:root {
   /* Primary → accent */
   --ion-color-primary:           var(--cl-accent);
   --ion-color-primary-rgb:       225, 98, 60;
@@ -68,10 +140,10 @@
   --ion-color-primary-shade:     #c9572f;
   --ion-color-primary-tint:      #e47250;
 
-  /* Secondary → ink */
-  --ion-color-secondary:          var(--cl-ink);
+  /* Secondary → the emphasis fill */
+  --ion-color-secondary:          var(--cl-ink-fill);
   --ion-color-secondary-rgb:      36, 28, 19;
-  --ion-color-secondary-contrast: var(--cl-canvas);
+  --ion-color-secondary-contrast: var(--cl-on-ink);
   --ion-color-secondary-shade:    #1a1410;
   --ion-color-secondary-tint:     #3a2f25;
 
@@ -92,7 +164,7 @@
   /* Danger → destructive */
   --ion-color-danger:          var(--cl-destructive);
   --ion-color-danger-rgb:      192, 57, 43;
-  --ion-color-danger-contrast: #ffffff;
+  --ion-color-danger-contrast: var(--cl-on-destructive);
 
   /* Success */
   --ion-color-success:         var(--cl-success-text);

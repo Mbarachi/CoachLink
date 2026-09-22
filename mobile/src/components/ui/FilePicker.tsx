@@ -126,7 +126,7 @@ const FilePicker: React.FC<FilePickerProps> = ({
               <button
                 type="button"
                 onClick={() => void shoot()}
-                style={{ border: '1.6px solid var(--cl-ink)', background: 'var(--cl-ink)', color: 'var(--cl-surface)', borderRadius: 12, padding: '9px 14px', fontFamily: 'var(--cl-font-body)', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}
+                style={{ border: '1.6px solid var(--cl-ink-fill)', background: 'var(--cl-ink-fill)', color: 'var(--cl-on-ink)', borderRadius: 12, padding: '9px 14px', fontFamily: 'var(--cl-font-body)', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}
               >Take photo</button>
             )}
             <button

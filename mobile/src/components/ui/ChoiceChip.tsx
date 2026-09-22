@@ -14,7 +14,7 @@ const ChoiceChip: React.FC<ChoiceChipProps> = ({ children, active = false, onCli
     style={{
       fontSize: 13, fontWeight: 600, padding: '9px 15px', borderRadius: 11,
       cursor: onClick ? 'pointer' : 'default',
-      background: active ? 'var(--cl-ink)' : 'var(--cl-surface)',
+      background: active ? 'var(--cl-ink-fill)' : 'var(--cl-surface)',
       color: active ? 'var(--cl-accent)' : 'var(--cl-muted-3)',
       border: active ? 'none' : '1px solid var(--cl-border)',
       ...style,

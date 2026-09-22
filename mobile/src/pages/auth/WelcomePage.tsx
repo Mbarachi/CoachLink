@@ -9,7 +9,7 @@ const WelcomePage: React.FC = () => {
   return (
     <AppPage padding="auth">
       <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginTop: 8, flexShrink: 0 }}>
-        <div style={{ width: 28, height: 28, borderRadius: 9, background: 'var(--cl-ink)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ width: 28, height: 28, borderRadius: 9, background: 'var(--cl-ink-fill)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{ width: 12, height: 12, borderRadius: '50%', background: 'var(--cl-accent)' }} />
         </div>
         <span style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 800, fontSize: 20, color: 'var(--cl-ink)', letterSpacing: '-0.03em' }}>CoachLink</span>
@@ -17,7 +17,7 @@ const WelcomePage: React.FC = () => {
 
       <div style={{
         marginTop: 22, borderRadius: 26, height: 316, flexShrink: 0,
-        backgroundImage: 'repeating-linear-gradient(125deg, #E7D7C2 0 13px, #EFE3D3 13px 26px)',
+        backgroundImage: 'repeating-linear-gradient(125deg, var(--cl-photo-light) 0 13px, var(--cl-photo-light-2) 13px 26px)',
         border: '1px solid var(--cl-border)',
         display: 'flex', alignItems: 'flex-end', padding: 16, overflow: 'hidden',
       }}>

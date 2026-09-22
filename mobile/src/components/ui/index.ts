@@ -31,6 +31,7 @@ export type { PillTone } from './StatusPill';
 export { default as StickyFooter } from './StickyFooter';
 export { default as SuccessScreen } from './SuccessScreen';
 export { default as TabChips } from './TabChips';
+export { default as ThemeChoice } from './ThemeChoice';
 export { default as Toggle } from './Toggle';
 export { default as VerifyEmailBanner } from './VerifyEmailBanner';
 export { default as ToastContainer } from './ToastContainer';

@@ -69,7 +69,7 @@ const RequestDetailsPage: React.FC = () => {
 
               {req.childName && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'var(--cl-accent)', borderRadius: 14, padding: 13, marginTop: 16 }}>
-                  <div style={{ width: 20, height: 20, borderRadius: 6, background: 'var(--cl-ink)', flexShrink: 0 }} />
+                  <div style={{ width: 20, height: 20, borderRadius: 6, background: 'var(--cl-ink-fill)', flexShrink: 0 }} />
                   <div style={{ fontSize: 13, color: 'var(--cl-ink)' }}>
                     <strong>Booking for a child:</strong> {req.childName}
                     {req.childAge !== null && `, age ${req.childAge}`}
@@ -130,7 +130,7 @@ const RequestDetailsPage: React.FC = () => {
             variant="destructive" size="md" fullWidth={false}
             disabled={respond.isPending}
             onClick={() => void decide('DECLINED')}
-            style={{ flex: 1, fontSize: 15, border: '1.6px solid #f0c9bb' }}
+            style={{ flex: 1, fontSize: 15, border: '1.6px solid var(--cl-destructive-line)' }}
           >
             Decline
           </AppButton>

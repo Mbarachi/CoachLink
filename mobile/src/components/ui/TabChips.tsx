@@ -17,7 +17,7 @@ const TabChips: React.FC<TabChipsProps> = ({ tabs, active, onChange, style }) =>
         key={t}
         onClick={() => onChange(i)}
         style={{
-          background: active === i ? 'var(--cl-ink)' : 'var(--cl-surface)',
+          background: active === i ? 'var(--cl-ink-fill)' : 'var(--cl-surface)',
           color: active === i ? 'var(--cl-accent)' : 'var(--cl-muted-3)',
           border: active === i ? 'none' : '1px solid var(--cl-border)',
           fontWeight: 600, fontSize: 13, padding: '8px 15px', flexShrink: 0, whiteSpace: 'nowrap',
