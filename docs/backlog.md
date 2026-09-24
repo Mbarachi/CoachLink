@@ -34,8 +34,9 @@ directory over. The compromises below that name `firestore.indexes.json` and
 the session date to have passed, and every booking is currently dated ahead, so
 a past paid session has to be seeded before this is even testable.
 
-**Earnings / payouts** — payments land with Paystack; nothing moves money on to
-coaches. A bigger question than payments was.
+**Prepaid packages as a leakage defence** — packages exist as a booking shape,
+but nothing about them is priced or marketed as "pay for five, stay for five".
+See Open risks.
 
 ---
 
@@ -187,6 +188,20 @@ Recorded so the PRD screen inventory is not mistaken for the whole build.
 
 ---
 
+**Paystack has to approve the business for transfers.** Payments in work on a
+plain live account; paying money *out* does not. Until transfers are enabled
+every payout will fail and sit at FAILED with Paystack's reason attached — the
+earnings are still recorded correctly, they simply do not move. Worth confirming
+before the first real coach completes a session, not after.
+
+**A payout is sent as soon as a session is marked complete**, and the coach is
+the one who marks it. There is no hold period and no dispute window, so a
+session marked complete that did not happen is money already gone. Fine at this
+size, where every coach is known; a 24-hour hold is the first thing to add if it
+is ever abused.
+
+---
+
 ## Open risks
 
 **Disintermediation.** The first session gets booked here; the second gets
@@ -195,16 +210,17 @@ high repeat, a single named provider, met in person, nothing to ship — and the
 local default is a WhatsApp thread and a transfer. Price around it rather than
 try to seal it.
 
-Worth noting the take rate is not decided anywhere yet. The PRD sets session
-pricing and says nothing about what CoachLink keeps, so this is still an open
-choice rather than something to defend.
+The take rate is now set at **8%**, a decision made in September 2026 and held
+in one place — `COMMISSION_RATE` in the backend's `types.ts`. The PRD sets
+session pricing and says nothing about what CoachLink keeps, so the PRD is what
+is out of date here, not the code.
 
 Sequenced, and the first two matter most:
 
-- **Payouts come first**, and they are already listed above under Not built. A
-  coach who cannot be paid reliably will push for cash on their own — so the
-  single largest driver of leakage right now is a feature we have not shipped.
-- **Keep the rate below the annoyance threshold.** At 20% of a ₦15,000 session
+- **Payouts come first.** Shipped: a completed session pays the coach
+  automatically. A coach who cannot be paid reliably will push for cash on
+  their own, so this was the single largest driver of leakage.
+- **The rate sits below the annoyance threshold.** At 20% of a ₦15,000 session
   a coach saves ₦3,000 by calling, which is worth the call. At 8% they save
   ₦1,200 and the friction of arranging it wins.
 - **Prepaid packages**, 5 or 10 sessions. Money already taken beats any policy:
