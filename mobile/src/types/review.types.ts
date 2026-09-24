@@ -3,13 +3,16 @@ export interface Review {
   athleteId: string;
   coachId: string;
   bookingId: string;
-  rating: number; // 1–5
+  /** 1–5. */
+  rating: number;
   comment: string | null;
+  /** Snapshotted on the review, so a coach page renders from one read. */
+  athleteName: string;
+  athleteImage: string | null;
   createdAt: string;
 }
 
 export interface CreateReviewDto {
-  coachId: string;
   bookingId: string;
   rating: number;
   comment?: string;

@@ -5,6 +5,7 @@ export type NotificationType =
   | 'PAYMENT_RECEIVED'
   | 'PAYMENT_REQUIRED'
   | 'BOOKING_CONFIRMED'
+  | 'REVIEW_RECEIVED'
   | 'GENERAL';
 
 export interface Notification {

@@ -5,7 +5,7 @@ import {
   AppCard, AppPage, EmptyState, InitialsAvatar,
   PageBody, PageTitle, QueryState, StatusPill, TabChips,
 } from '@/components/ui';
-import { useBookingRequests, useBookings } from '@/hooks';
+import { useBookingRequests, useBookings, useMyReviewedBookings } from '@/hooks';
 import { formatNaira, formatSessionDate, formatSessionTime, fullName, initialsOf } from '@/lib/format';
 
 const TABS = ['Pending', 'To pay', 'Upcoming', 'Past'] as const;
@@ -54,8 +54,10 @@ const MyBookingsPage: React.FC = () => {
 
   const bookingsQuery = useBookings();
   const requestsQuery = useBookingRequests();
+  const reviewed = useMyReviewedBookings();
   const bookings = useMemo(() => bookingsQuery.data ?? [], [bookingsQuery.data]);
   const requests = useMemo(() => requestsQuery.data ?? [], [requestsQuery.data]);
+  const reviewedIds = useMemo(() => reviewed.data ?? [], [reviewed.data]);
 
   const rows = useMemo<Record<Tab, Row[]>>(() => {
     const fromBooking = (b: (typeof bookings)[number]): Row => ({
@@ -67,6 +69,11 @@ const MyBookingsPage: React.FC = () => {
       amount: b.sessionRate,
       status: b.status,
       sessions: 1,
+      // A review nobody is asked for is a review nobody writes, and Past is
+      // the only screen an athlete revisits after a session.
+      note: b.status === 'COMPLETED' && !reviewedIds.includes(b.id)
+        ? `Tap to review ${b.coach.firstName}`
+        : undefined,
     });
 
     const fromRequest = (r: (typeof requests)[number]): Row => ({
@@ -95,7 +102,7 @@ const MyBookingsPage: React.FC = () => {
         ...requests.filter((r) => ['DECLINED', 'EXPIRED', 'CANCELLED'].includes(r.status)).map(fromRequest),
       ],
     };
-  }, [bookings, requests]);
+  }, [bookings, requests, reviewedIds]);
 
   const visible = rows[TABS[tab]];
   const labels = TABS.map((t) => (rows[t].length > 0 ? `${t} · ${rows[t].length}` : t));

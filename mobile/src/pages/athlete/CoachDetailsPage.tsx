@@ -3,11 +3,11 @@ import { useHistory, useParams } from 'react-router-dom';
 
 import {
   AppButton, AppCard, AppPage, BackButton, EmptyState, InitialsAvatar, PageBody,
-  QueryState, SectionHeading, SportBanner, StatusPill, StickyFooter,
+  QueryState, SectionHeading, SportBanner, StarRating, StatusPill, StickyFooter,
 } from '@/components/ui';
-import { useCoach } from '@/hooks';
+import { useCoach, useCoachReviews } from '@/hooks';
 import { coachInitials, coachName, coachSportNames, primarySport } from '@/lib/coach';
-import { formatNaira } from '@/lib/format';
+import { formatNaira, formatShortDate, initialsOf } from '@/lib/format';
 
 const sectionStyle: React.CSSProperties = { fontSize: 15, margin: '20px 0 7px' };
 
@@ -16,6 +16,7 @@ const CoachDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const query = useCoach(id);
   const coach = query.data;
+  const reviews = useCoachReviews(id);
 
   return (
     <AppPage>
@@ -87,17 +88,46 @@ const CoachDetailsPage: React.FC = () => {
                   <StatusPill tone="accent" style={{ fontWeight: 600, padding: '6px 11px', color: 'var(--cl-on-accent)' }}>Within range</StatusPill>
                 </div>
 
-                <SectionHeading style={sectionStyle}>Reviews</SectionHeading>
-                {/* Reviews have no backend module yet, so this stays honest rather
-                    than showing an invented testimonial. */}
-                <AppCard padding={4} style={{ borderRadius: 15 }}>
-                  <EmptyState
-                    compact
-                    illustration="reviews"
-                    title="No reviews yet"
-                    message="Reviews appear here once athletes have completed sessions with this coach."
-                  />
-                </AppCard>
+                <SectionHeading style={sectionStyle}>
+                  Reviews{reviews.data?.length ? ` (${reviews.data.length})` : ''}
+                </SectionHeading>
+                {/* A failed review fetch is not worth an error screen over the
+                    whole profile: the rest of the page is still useful. */}
+                {reviews.data && reviews.data.length > 0 ? (
+                  reviews.data.map((r) => (
+                    <AppCard key={r.id} style={{ borderRadius: 15 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 11 }}>
+                        <InitialsAvatar
+                          initials={initialsOf(r.athleteName.split(' ')[0], r.athleteName.split(' ')[1])}
+                          size={36} radius={11} fontSize={13}
+                        />
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontWeight: 700, fontSize: 13.5, color: 'var(--cl-ink)' }}>
+                            {r.athleteName}
+                          </div>
+                          <div style={{ fontSize: 11.5, color: 'var(--cl-muted-2)', marginTop: 1 }}>
+                            {formatShortDate(r.createdAt)}
+                          </div>
+                        </div>
+                        <StarRating value={r.rating} size={14} />
+                      </div>
+                      {r.comment && (
+                        <p style={{ fontSize: 13.5, lineHeight: 1.55, color: 'var(--cl-muted-3)', margin: '11px 0 0' }}>
+                          {r.comment}
+                        </p>
+                      )}
+                    </AppCard>
+                  ))
+                ) : (
+                  <AppCard padding={4} style={{ borderRadius: 15 }}>
+                    <EmptyState
+                      compact
+                      illustration="reviews"
+                      title="No reviews yet"
+                      message="Reviews appear here once athletes have completed sessions with this coach."
+                    />
+                  </AppCard>
+                )}
 
                 <div style={{ height: 96 }} />
               </>

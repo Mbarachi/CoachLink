@@ -11,5 +11,6 @@ export { bookingsService } from './firebase/bookings.service';
 export { paymentsService } from './firebase/payments.service';
 export { notificationsService } from './firebase/notifications.service';
 export { payoutsService } from './firebase/payouts.service';
+export { reviewsService } from './firebase/reviews.service';
 export { uploadCoachFiles } from './firebase/uploads';
 export type { CoachUploads } from './firebase/uploads';

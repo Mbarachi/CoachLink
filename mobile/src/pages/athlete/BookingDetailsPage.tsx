@@ -3,9 +3,9 @@ import { useHistory, useParams } from 'react-router-dom';
 
 import {
   AppButton, AppCard, AppPage, DetailRow, InitialsAvatar,
-  PageBody, PageHeader, QueryState, StatusPill,
+  PageBody, PageHeader, QueryState, StarRating, StatusPill,
 } from '@/components/ui';
-import { useBooking, useUpdateBooking } from '@/hooks';
+import { useBooking, useBookingReview, useUpdateBooking } from '@/hooks';
 import { getErrorMessage } from '@/lib/apiError';
 import {
   formatNaira, formatSessionDate, formatSessionTime, fullName, initialsOf,
@@ -15,7 +15,7 @@ import { useUiStore } from '@/store/ui.store';
 const BANNERS: Partial<Record<string, string>> = {
   PENDING_PAYMENT: 'Your coach accepted. Pay to confirm this session — payments go live shortly.',
   UPCOMING: 'Confirmed. Your coach is expecting you.',
-  COMPLETED: 'This session is done. Reviews open once that module is live.',
+  COMPLETED: 'This session is done.',
   CANCELLED: 'This session was cancelled.',
 };
 
@@ -27,6 +27,9 @@ const BookingDetailsPage: React.FC = () => {
   const query = useBooking(bookingId);
   const update = useUpdateBooking(bookingId);
   const booking = query.data;
+  // Only asked for once the session is done: on every other status the answer
+  // is known to be none.
+  const review = useBookingReview(booking?.status === 'COMPLETED' ? bookingId : undefined);
 
   const cancel = async () => {
     try {
@@ -91,6 +94,30 @@ const BookingDetailsPage: React.FC = () => {
                 >
                   Pay {formatNaira(booking.sessionRate)} to confirm
                 </AppButton>
+              )}
+
+              {booking.status === 'COMPLETED' && !review.isPending && (
+                review.data ? (
+                  <AppCard style={{ marginTop: 18 }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--cl-muted-3)', marginBottom: 8 }}>
+                      Your review
+                    </div>
+                    <StarRating value={review.data.rating} size={18} />
+                    {review.data.comment && (
+                      <p style={{ fontSize: 13.5, lineHeight: 1.55, color: 'var(--cl-muted-3)', margin: '10px 0 0' }}>
+                        {review.data.comment}
+                      </p>
+                    )}
+                  </AppCard>
+                ) : (
+                  <AppButton
+                    size="md"
+                    onClick={() => history.push(`/athlete/bookings/${booking.id}/review`)}
+                    style={{ height: 52, fontSize: 15, marginTop: 18 }}
+                  >
+                    Leave a review
+                  </AppButton>
+                )
               )}
 
               {canCancel && (

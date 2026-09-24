@@ -14,6 +14,7 @@ const GLYPHS: Record<NotificationType, string> = {
   BOOKING_CONFIRMED: '✓',
   PAYMENT_RECEIVED: '₦',
   PAYMENT_REQUIRED: '₦',
+  REVIEW_RECEIVED: '★',
   GENERAL: '!',
 };
 

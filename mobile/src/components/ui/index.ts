@@ -25,6 +25,7 @@ export { default as PasswordRequirements } from './PasswordRequirements';
 export { default as SectionHeading } from './SectionHeading';
 export { default as SectionLabel } from './SectionLabel';
 export { default as Spinner } from './Spinner';
+export { default as StarRating } from './StarRating';
 export { default as SportBanner, sportBannerFor } from './SportBanner';
 export type { SportBannerName } from './SportBanner';
 export { default as StatusPill, STATUS_TONES, statusLabel } from './StatusPill';
