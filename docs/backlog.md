@@ -109,12 +109,10 @@ is publicly readable, so a scraper or a runaway client listener bills you.
 **One project serves dev and prod.** `coachlink-22ee0` is both. A second
 project would make "let us wipe it and start again" a safe thing to say.
 
-**Coach photos are served full-size.** A coaches-list tile is 62x62 and the
-stored file is up to 1200x1600, so every row downloads roughly a hundred times
-the image data it paints, per coach, on a list. On a Lagos mobile connection
-that is a visible stall. `FilePicker` already caps captures at 1200px, so the
-fix is not a tighter cap but a derivative: a Storage-triggered function writing
-a small square variant that the list reads, falling back to the original.
+**Coach photos uploaded before September 2026 are still full-size.** New ones
+are capped at an 800px long edge on the phone before upload, but the ones
+already in Storage were not, and a list tile is 62x62. Either re-upload them or
+write a Storage-triggered function that makes a small variant for the list.
 
 The crop is centre-biased too. `object-fit: cover` on a 3:4 portrait in a
 square tile keeps the middle and discards the top, but on portrait photos the
@@ -139,20 +137,16 @@ for dark UI, but a step down. The knob is dark `--cl-ink-fill` (`#3A2E20`),
 which is also the emphasis card, so the two move together; decoupling them
 costs a second token.
 
-**A dead Firebase session shows as an error, not a sign-in.** `ProtectedRoute`
-gates on the persisted `isAuthenticated` flag in the auth store, which survives
-in localStorage after the Firebase session itself is gone. The route therefore
-renders, every query then fails `requireUid()` with "You must be signed in",
-and the user is told "Something went wrong" on a screen they cannot fix. Hit
-while testing the coach sessions screen. The flag should follow
-`onAuthStateChanged` rather than outlive it.
+**Settings toggles are decoration.** Push notifications, Email updates and
+Booking reminders are `useState` in the page — they flip, and nothing reads
+them. The push one is the problem: someone who turns it off still gets pushed,
+which is a promise broken rather than a feature missing. Either wire it to
+OneSignal's subscription state or take the row out.
 
-**Routes are gated on being signed in, not on role.** `ProtectedRoute` checks
-authentication only, so an athlete can open `/coach/*` and a coach `/athlete/*`.
-No data leaks — the Firestore rules and the service's own scoping see to that,
-and each person is shown their own records — but screens appear that make no
-sense for the role, which is how the coach sessions screen was verified in the
-first place.
+**Twelve settings rows do nothing.** Edit profile (athlete), Email & password,
+Location, Payout account, Help & FAQ and Privacy & terms, across both roles.
+Payout account is the odd one: the form exists, on the Earnings screen, so that
+row only needs pointing at it.
 
 ---
 
