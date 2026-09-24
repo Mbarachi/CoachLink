@@ -1,5 +1,5 @@
 import {
-  collection, doc, getDocs, limit, orderBy, query, updateDoc, where, writeBatch,
+  collection, doc, getDocs, limit, onSnapshot, orderBy, query, updateDoc, where, writeBatch,
 } from 'firebase/firestore';
 
 import { firebaseAuth, firebaseDb } from '@/lib/firebase';
@@ -36,6 +36,31 @@ export const notificationsService = {
       limit(50),
     ));
     return snap.docs.map((d) => toNotification(d.id, d.data()));
+  },
+
+  /**
+   * The same query, kept open.
+   *
+   * A notification is the one thing in this app that arrives while you are
+   * looking at a different screen, so asking once and caching leaves the bell
+   * silently wrong until something happens to re-read. Firestore pushes the
+   * change instead, which costs one held connection and no polling.
+   *
+   * Returns the unsubscribe function.
+   */
+  subscribe(userId: string, onChange: (items: Notification[]) => void): () => void {
+    return onSnapshot(
+      query(
+        notifications(),
+        where('userId', '==', userId),
+        orderBy('createdAt', 'desc'),
+        limit(50),
+      ),
+      (snap) => onChange(snap.docs.map((d) => toNotification(d.id, d.data()))),
+      // A dropped listener must not take the screen with it; the one-shot
+      // read still backs the page.
+      (err) => console.error('Notification listener stopped', err),
+    );
   },
 
   async markRead(id: string): Promise<void> {

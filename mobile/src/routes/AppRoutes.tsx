@@ -16,7 +16,7 @@ import SignInPage from '@/pages/auth/SignInPage';
 import SignUpPage from '@/pages/auth/SignUpPage';
 import SplashPage from '@/pages/auth/SplashPage';
 import WelcomePage from '@/pages/auth/WelcomePage';
-import { useAndroidBackButton, usePushNavigator } from '@/hooks';
+import { useAndroidBackButton, useNotificationsLive, usePushNavigator } from '@/hooks';
 import { useAuthStore } from '@/store/auth.store';
 
 import AthleteRoutes from './AthleteRoutes';
@@ -30,6 +30,9 @@ const AppRoutes: React.FC = () => {
 
   // Lets a tapped push notification reach the screen it names.
   usePushNavigator();
+
+  // Keeps the bell honest without anything having to re-read.
+  useNotificationsLive();
 
   return (
     <IonRouterOutlet id="main">
