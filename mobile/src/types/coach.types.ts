@@ -1,5 +1,15 @@
 export type VerificationStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 
+/**
+ * Weekday ("0" = Sunday) to the times that day opens, as "HH:00".
+ *
+ * A weekly pattern rather than dated slots: a coach says "Mondays at 6 and 7"
+ * once instead of keeping a calendar forever. An empty map means they have
+ * published nothing, and the server treats that as open rather than making
+ * them unbookable.
+ */
+export type Availability = Record<string, string[]>;
+
 export interface CoachProfile {
   id: string;
   userId: string;
@@ -18,6 +28,7 @@ export interface CoachProfile {
   rating: number;
   totalReviews: number;
   isActive: boolean;
+  availability: Availability;
 }
 
 export interface Sport {
@@ -48,6 +59,7 @@ export interface CreateCoachProfileDto {
   venue: string;
   area?: string;
   sportIds: string[];
+  availability?: Availability;
 }
 
 export type UpdateCoachProfileDto = Partial<CreateCoachProfileDto>;

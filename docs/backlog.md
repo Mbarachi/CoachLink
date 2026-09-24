@@ -34,10 +34,6 @@ directory over. The compromises below that name `firestore.indexes.json` and
 the session date to have passed, and every booking is currently dated ahead, so
 a past paid session has to be seeded before this is even testable.
 
-**Coach availability** — athletes propose free-form times. There is no
-availability model, so a coach can be sent a request for a slot they were never
-free for.
-
 **Earnings / payouts** — payments land with Paystack; nothing moves money on to
 coaches. A bigger question than payments was.
 

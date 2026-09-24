@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 
 import {
@@ -20,16 +20,11 @@ import { coachInitials, coachName } from '@/lib/coach';
 import { getErrorMessage } from '@/lib/apiError';
 import { requestPushPermission } from '@/lib/push';
 import { DAY_NAMES, formatNaira } from '@/lib/format';
+import { SLOTS, hasNoAvailability, slotLabel, slotsOnDate } from '@/lib/slots';
 import { useAuthStore } from '@/store/auth.store';
 import { useUiStore } from '@/store/ui.store';
 
 /** Value is what the API wants (24h), label is what the athlete sees. */
-const TIMES = [
-  { value: '06:00', label: '6:00 AM' },
-  { value: '08:00', label: '8:00 AM' },
-  { value: '10:00', label: '10:00 AM' },
-  { value: '16:00', label: '4:00 PM' },
-];
 const WEEK_OPTIONS = [2, 4, 8, 12];
 /** The API caps a request at 24 sessions; weeks * days must stay under it. */
 const MAX_SESSIONS = 24;
@@ -64,12 +59,47 @@ const BookingRequestPage: React.FC = () => {
   const [mode, setMode] = useState<'single' | 'package'>('single');
   const [sportId, setSportId] = useState<string | null>(null);
   const [dateIndex, setDateIndex] = useState(0);
-  const [timeIndex, setTimeIndex] = useState(1);
+  const [startTime, setStartTime] = useState('');
   const [weeks, setWeeks] = useState(WEEK_OPTIONS[1]);
   const [pkgDays, setPkgDays] = useState<number[]>([3, 5]);
   const [note, setNote] = useState('');
   const [childName, setChildName] = useState('');
   const [childAge, setChildAge] = useState('');
+
+  const availability = coach?.profile.availability;
+
+  /** Weekdays the coach opens at all. A coach who set nothing stays fully open. */
+  const openWeekdays = useMemo(() => {
+    if (hasNoAvailability(availability)) return new Set(DAY_NAMES.map((_, i) => i));
+    return new Set(
+      Object.entries(availability ?? {})
+        .filter(([, times]) => times.length > 0)
+        .map(([day]) => Number(day)),
+    );
+  }, [availability]);
+
+  /**
+   * For a package the start time has to work on *every* chosen day, so this is
+   * their intersection — offering a time that only suits Monday would produce
+   * a request the server then rejects.
+   */
+  const availableTimes = useMemo(() => {
+    if (hasNoAvailability(availability)) return SLOTS;
+    if (mode === 'single') {
+      return slotsOnDate(availability, new Date(`${dates[dateIndex].iso}T00:00:00`));
+    }
+    if (pkgDays.length === 0) return [];
+    return pkgDays.reduce<string[]>((shared, day, i) => {
+      const times = availability?.[String(day)] ?? [];
+      return i === 0 ? times : shared.filter((t) => times.includes(t));
+    }, []);
+  }, [availability, mode, dates, dateIndex, pkgDays]);
+
+  // Keeps the choice valid as the day or package days change under it.
+  useEffect(() => {
+    if (availableTimes.length === 0) { setStartTime(''); return; }
+    if (!availableTimes.includes(startTime)) setStartTime(availableTimes[0]);
+  }, [availableTimes, startTime]);
 
   const sports = coach?.sports ?? [];
   const chosenSport = sportId ?? sports[0]?.id ?? null;
@@ -82,7 +112,8 @@ const BookingRequestPage: React.FC = () => {
     setPkgDays((prev) => (prev.includes(d) ? prev.filter((x) => x !== d) : [...prev, d]));
 
   const submitDisabled =
-    createRequest.isPending || !chosenSport || (mode === 'package' && (pkgDays.length === 0 || overCap));
+    createRequest.isPending || !chosenSport || !startTime
+    || (mode === 'package' && (pkgDays.length === 0 || overCap));
 
   const handleSubmit = async () => {
     if (!coach || !chosenSport) return;
@@ -98,7 +129,7 @@ const BookingRequestPage: React.FC = () => {
         sportId: chosenSport,
         mode: mode === 'package' ? 'PACKAGE' : 'SINGLE',
         startDate: dates[dateIndex].iso,
-        startTime: TIMES[timeIndex].value,
+        startTime,
         ...(mode === 'package' ? { weeks, daysOfWeek: [...pkgDays].sort((a, b) => a - b) } : {}),
         ...(note.trim() ? { notes: note.trim() } : {}),
         ...(isParent ? { childName: childName.trim(), childAge: Number(childAge) } : {}),
@@ -185,17 +216,21 @@ const BookingRequestPage: React.FC = () => {
 
               <SectionHeading>{mode === 'single' ? 'Select date' : 'Starting from'}</SectionHeading>
               <div style={{ display: 'flex', gap: 7, overflowX: 'auto', paddingBottom: 4 }}>
-                {dates.map((d, i) => (
-                  <div key={d.iso} onClick={() => setDateIndex(i)} style={{
+                {dates.map((d, i) => {
+                  const closed = !openWeekdays.has(new Date(`${d.iso}T00:00:00`).getDay());
+                  return (
+                  <div key={d.iso} onClick={() => { if (!closed) setDateIndex(i); }} style={{
                     minWidth: 56, flexShrink: 0, textAlign: 'center', padding: '11px 0', borderRadius: 13,
                     background: dateIndex === i ? 'var(--cl-accent)' : 'var(--cl-surface)',
                     border: `1px solid ${dateIndex === i ? 'var(--cl-accent)' : 'var(--cl-border)'}`,
-                    cursor: 'pointer',
+                    cursor: closed ? 'default' : 'pointer',
+                    opacity: closed ? 0.38 : 1,
                   }}>
-                    <div style={{ fontSize: 10, color: dateIndex === i ? 'var(--cl-surface)' : 'var(--cl-muted-2)' }}>{d.day}</div>
-                    <div style={{ fontWeight: 700, fontSize: 15, color: dateIndex === i ? 'var(--cl-surface)' : 'var(--cl-ink)', marginTop: 3 }}>{d.date}</div>
+                    <div style={{ fontSize: 10, color: dateIndex === i ? 'var(--cl-on-accent)' : 'var(--cl-muted-2)' }}>{d.day}</div>
+                    <div style={{ fontWeight: 700, fontSize: 15, color: dateIndex === i ? 'var(--cl-on-accent)' : 'var(--cl-ink)', marginTop: 3 }}>{d.date}</div>
                   </div>
-                ))}
+                  );
+                })}
               </div>
 
               {mode === 'package' && (
@@ -214,14 +249,21 @@ const BookingRequestPage: React.FC = () => {
 
                   <SectionHeading>Which days each week?</SectionHeading>
                   <div style={{ display: 'flex', gap: 8 }}>
-                    {DAY_NAMES.map((label, dayIndex) => (
-                      <ChoiceChip
-                        key={label}
-                        active={pkgDays.includes(dayIndex)}
-                        onClick={() => togglePkgDay(dayIndex)}
-                        style={{ flex: 1, textAlign: 'center', fontWeight: 700, padding: '10px 0', border: '1px solid var(--cl-border)' }}
-                      >{label[0]}</ChoiceChip>
-                    ))}
+                    {DAY_NAMES.map((label, dayIndex) => {
+                      const closed = !openWeekdays.has(dayIndex);
+                      return (
+                        <ChoiceChip
+                          key={label}
+                          active={pkgDays.includes(dayIndex)}
+                          onClick={closed ? undefined : () => togglePkgDay(dayIndex)}
+                          style={{
+                            flex: 1, textAlign: 'center', fontWeight: 700, padding: '10px 0',
+                            border: '1px solid var(--cl-border)',
+                            opacity: closed ? 0.38 : 1,
+                          }}
+                        >{label[0]}</ChoiceChip>
+                      );
+                    })}
                   </div>
 
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--cl-ink-fill)', borderRadius: 16, padding: 16, marginTop: 16 }}>
@@ -242,14 +284,21 @@ const BookingRequestPage: React.FC = () => {
 
               <SectionHeading>Select time</SectionHeading>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                {TIMES.map((t, i) => (
+                {availableTimes.map((slot) => (
                   <ChoiceChip
-                    key={t.value}
-                    active={timeIndex === i}
-                    onClick={() => setTimeIndex(i)}
-                    style={timeIndex === i ? { border: 'none' } : undefined}
-                  >{t.label}</ChoiceChip>
+                    key={slot}
+                    active={startTime === slot}
+                    onClick={() => setStartTime(slot)}
+                    style={startTime === slot ? { border: 'none' } : undefined}
+                  >{slotLabel(slot)}</ChoiceChip>
                 ))}
+                {availableTimes.length === 0 && (
+                  <p style={{ fontSize: 12.5, color: 'var(--cl-muted-1)', margin: '2px 2px 0' }}>
+                    {mode === 'package'
+                      ? 'No single time suits every day you picked. Try fewer days.'
+                      : 'This coach is not available on that day.'}
+                  </p>
+                )}
               </div>
 
               <SectionHeading>
