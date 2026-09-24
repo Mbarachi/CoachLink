@@ -28,7 +28,7 @@ const NotificationsPage: React.FC = () => {
   const markAllRead = useMarkAllNotificationsRead();
 
   const items = query.data ?? [];
-  const unreadIds = items.filter((n) => !n.isRead).map((n) => n.id);
+  const hasUnread = items.some((n) => !n.isRead);
 
   const open = (n: Notification) => {
     // Marked read optimistically in effect — the navigation matters more than
@@ -41,9 +41,9 @@ const NotificationsPage: React.FC = () => {
     <AppPage padding="screen">
       <div style={{ flexShrink: 0, display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
         <PageTitle>Notifications</PageTitle>
-        {unreadIds.length > 0 && (
+        {hasUnread && (
           <span
-            onClick={() => markAllRead.mutate(unreadIds)}
+            onClick={() => markAllRead.mutate()}
             style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--cl-ink)', cursor: 'pointer' }}
           >
             Mark all read

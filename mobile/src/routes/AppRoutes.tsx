@@ -16,7 +16,10 @@ import SignInPage from '@/pages/auth/SignInPage';
 import SignUpPage from '@/pages/auth/SignUpPage';
 import SplashPage from '@/pages/auth/SplashPage';
 import WelcomePage from '@/pages/auth/WelcomePage';
-import { useAndroidBackButton, useNotificationsLive, usePushNavigator, useRefetchOnResume } from '@/hooks';
+import {
+  useAndroidBackButton, useNotificationsLive, usePushNavigator, useRefetchOnResume,
+  useSessionWatch,
+} from '@/hooks';
 import { useAuthStore } from '@/store/auth.store';
 
 import AthleteRoutes from './AthleteRoutes';
@@ -24,6 +27,9 @@ import CoachRoutes from './CoachRoutes';
 
 const AppRoutes: React.FC = () => {
   const role = useAuthStore((s) => s.user?.role);
+
+  // A session Firebase has ended must not leave the app pretending otherwise.
+  useSessionWatch();
 
   // Android's hardware back button, which otherwise walks raw webview history.
   useAndroidBackButton();
@@ -58,10 +64,10 @@ const AppRoutes: React.FC = () => {
       <Route path="/auth/coach-onboarding" component={CoachOnboardingPage} exact />
 
       {/* ── Protected: Athlete / Parent ────────────────────── */}
-      <ProtectedRoute path="/athlete" component={AthleteRoutes} />
+      <ProtectedRoute path="/athlete" component={AthleteRoutes} roles={['ATHLETE', 'PARENT']} />
 
       {/* ── Protected: Coach ───────────────────────────────── */}
-      <ProtectedRoute path="/coach" component={CoachRoutes} />
+      <ProtectedRoute path="/coach" component={CoachRoutes} roles={['COACH']} />
 
       {/* ── Default redirect ───────────────────────────────── */}
       <Route exact path="/">

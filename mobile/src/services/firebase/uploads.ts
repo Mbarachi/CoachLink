@@ -1,6 +1,7 @@
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 
 import { firebaseAuth, firebaseStorage } from '@/lib/firebase';
+import { downscaleImage } from '@/lib/image';
 
 const MAX_PROFILE_BYTES = 5 * 1024 * 1024;
 const MAX_ID_BYTES = 10 * 1024 * 1024;
@@ -46,8 +47,12 @@ export async function uploadCoachFiles(photo: File, idDocument: File): Promise<C
     throw new Error('Your ID must be an image or a PDF.');
   }
 
-  const photoRef = ref(firebaseStorage(), `coaches/${uid}/profile/photo.${extensionOf(photo)}`);
-  await uploadBytes(photoRef, photo, { contentType: photo.type });
+  // Checked at the size they chose, stored at the size we need: the 5MB limit
+  // above is about what they may pick, not what every listing row downloads.
+  const shrunk = await downscaleImage(photo);
+
+  const photoRef = ref(firebaseStorage(), `coaches/${uid}/profile/photo.${extensionOf(shrunk)}`);
+  await uploadBytes(photoRef, shrunk, { contentType: shrunk.type });
 
   const idRef = ref(firebaseStorage(), `coaches/${uid}/id/document.${extensionOf(idDocument)}`);
   await uploadBytes(idRef, idDocument, { contentType: idDocument.type });

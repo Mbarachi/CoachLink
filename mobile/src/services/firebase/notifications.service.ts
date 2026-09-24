@@ -67,11 +67,27 @@ export const notificationsService = {
     await updateDoc(doc(notifications(), id), { isRead: true });
   },
 
-  /** One batch rather than N writes, so "mark all read" is a single round trip. */
-  async markAllRead(ids: string[]): Promise<void> {
-    if (ids.length === 0) return;
-    const batch = writeBatch(firebaseDb());
-    for (const id of ids) batch.update(doc(notifications(), id), { isRead: true });
-    await batch.commit();
+  /**
+   * Clears every unread row, not just the ones on screen.
+   *
+   * The list is capped at 50 for read cost, so passing the page's ids in would
+   * leave a 51st unread for good — and the badge counts what the server holds,
+   * not what was rendered, so it would never reach zero. This asks the server
+   * what is unread instead. Batched in 500s because that is Firestore's limit.
+   */
+  async markAllRead(): Promise<void> {
+    const uid = requireUid();
+    const snap = await getDocs(query(
+      notifications(),
+      where('userId', '==', uid),
+      where('isRead', '==', false),
+    ));
+    if (snap.empty) return;
+
+    for (let i = 0; i < snap.docs.length; i += 500) {
+      const batch = writeBatch(firebaseDb());
+      for (const d of snap.docs.slice(i, i + 500)) batch.update(d.ref, { isRead: true });
+      await batch.commit();
+    }
   },
 };

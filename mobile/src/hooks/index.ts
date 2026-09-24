@@ -7,6 +7,7 @@ export * from './usePayouts';
 export * from './useReviews';
 export * from './usePushNavigator';
 export * from './useRefetchOnResume';
+export * from './useSessionWatch';
 export * from './useMe';
 export * from './useDebounced';
 export * from './useAndroidBackButton';

@@ -15,7 +15,14 @@ export function isBackendUnreachable(error: unknown): boolean {
   return code === 'unavailable' || code === 'auth/network-request-failed';
 }
 
-/** Extracts a user-facing message from a NestJS error response. */
+/** True when the failure is the session, not the request — so the fix is signing in. */
+export function isSignedOut(error: unknown): boolean {
+  const code = firebaseCode(error);
+  return code === 'unauthenticated' || code === 'auth/user-token-expired'
+    || code === 'auth/user-disabled';
+}
+
+/** Extracts a user-facing message from a Firebase error. */
 export function getErrorMessage(error: unknown, fallback = 'Something went wrong. Please try again.'): string {
   const code = firebaseCode(error);
   if (code) {
