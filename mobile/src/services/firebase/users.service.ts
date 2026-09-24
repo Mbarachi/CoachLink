@@ -1,6 +1,7 @@
 import { doc, getDoc } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
 
+import { NotFoundError } from '@/lib/apiError';
 import { firebaseAuth, firebaseDb, firebaseFunctions } from '@/lib/firebase';
 import type { UpdateUserDto, User } from '@/types';
 
@@ -16,7 +17,7 @@ export const usersService = {
   async getMe(): Promise<User> {
     const uid = requireUid();
     const snap = await getDoc(doc(firebaseDb(), 'users', uid));
-    if (!snap.exists()) throw new Error('User not found.');
+    if (!snap.exists()) throw new NotFoundError('That account no longer exists.');
     return toUser(uid, snap.data());
   },
 

@@ -4,6 +4,7 @@ import {
 import type { QueryConstraint } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
 
+import { NotFoundError } from '@/lib/apiError';
 import { firebaseAuth, firebaseDb, firebaseFunctions } from '@/lib/firebase';
 import type { Coach, CoachQueryParams, CreateCoachProfileDto, UpdateCoachProfileDto } from '@/types';
 
@@ -52,7 +53,7 @@ export const coachesService = {
 
   async getById(id: string): Promise<Coach> {
     const snap = await getDoc(doc(coaches(), id));
-    if (!snap.exists()) throw new Error('Coach not found.');
+    if (!snap.exists()) throw new NotFoundError('That coach is no longer listed.');
     return toCoach(snap.id, snap.data());
   },
 

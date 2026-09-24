@@ -15,6 +15,28 @@ export function isBackendUnreachable(error: unknown): boolean {
   return code === 'unavailable' || code === 'auth/network-request-failed';
 }
 
+/**
+ * A record that is not there.
+ *
+ * Carries the same `code` shape Firebase uses, so one check covers both a
+ * missing document read directly and a callable that answers 'not-found'.
+ * Worth a class of its own because the honest screen for it is different:
+ * retrying will not bring back a booking that was deleted, and a notification
+ * tapped weeks later is the ordinary way to arrive at one.
+ */
+export class NotFoundError extends Error {
+  readonly code = 'not-found';
+
+  constructor(message: string) {
+    super(message);
+    this.name = 'NotFoundError';
+  }
+}
+
+export function isNotFound(error: unknown): boolean {
+  return firebaseCode(error) === 'not-found';
+}
+
 /** True when the failure is the session, not the request — so the fix is signing in. */
 export function isSignedOut(error: unknown): boolean {
   const code = firebaseCode(error);

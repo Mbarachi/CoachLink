@@ -2,6 +2,7 @@ import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firesto
 import type { QueryConstraint } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
 
+import { NotFoundError } from '@/lib/apiError';
 import { firebaseAuth, firebaseDb, firebaseFunctions } from '@/lib/firebase';
 import type { Booking, BookingQuery, UpdateBookingDto } from '@/types';
 
@@ -44,7 +45,7 @@ export const bookingsService = {
 
   async getById(id: string): Promise<Booking> {
     const snap = await getDoc(doc(bookings(), id));
-    if (!snap.exists()) throw new Error('Booking not found.');
+    if (!snap.exists()) throw new NotFoundError('That session is no longer available.');
     return toBooking(snap.id, snap.data());
   },
 
