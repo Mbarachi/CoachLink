@@ -22,6 +22,7 @@ import ResubmitPage          from '@/pages/coach/ResubmitPage';
 import DashboardPage         from '@/pages/coach/DashboardPage';
 import EarningsSummaryPage   from '@/pages/coach/EarningsSummaryPage';
 import IncomingRequestsPage  from '@/pages/coach/IncomingRequestsPage';
+import NotificationsPage     from '@/pages/athlete/NotificationsPage';
 import ProfileManagementPage from '@/pages/coach/ProfileManagementPage';
 import RequestDetailsPage    from '@/pages/coach/RequestDetailsPage';
 import CoachSettingsPage     from '@/pages/coach/SettingsPage';
@@ -34,6 +35,7 @@ const CoachRoutes: React.FC = () => (
       <Route path="/coach/bookings"     component={CoachBookingsPage}     exact />
       <Route path="/coach/availability" component={AvailabilityPage}      exact />
       <Route path="/coach/earnings"     component={EarningsSummaryPage}   exact />
+      <Route path="/coach/notifications" component={NotificationsPage}    exact />
       <Route path="/coach/settings"     component={CoachSettingsPage}     exact />
       <Route path="/coach/profile"      component={ProfileManagementPage} exact />
       <Route path="/coach/resubmit"     component={ResubmitPage}        exact />
