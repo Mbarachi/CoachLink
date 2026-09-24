@@ -9,6 +9,7 @@ import {
   PageBody,
   PageTitle,
   QueryState,
+  RatingStar,
 } from '@/components/ui';
 import { useCoaches, useDebounced, useSports } from '@/hooks';
 import { coachInitials, coachName, primarySport, venuesOf } from '@/lib/coach';
@@ -127,7 +128,9 @@ const SearchCoachesPage: React.FC = () => {
                   <div style={{ textAlign: 'right', flexShrink: 0 }}>
                     <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--cl-ink)' }}>{formatNaira(co.profile.sessionRate)}</div>
                     <div style={{ fontSize: 11.5, color: 'var(--cl-muted-1)', marginTop: 2 }}>
-                      {co.profile.totalReviews > 0 ? `★ ${co.profile.rating.toFixed(1)}` : 'New'}
+                      {co.profile.totalReviews > 0
+                        ? <><RatingStar /> {co.profile.rating.toFixed(1)}</>
+                        : 'New'}
                     </div>
                   </div>
                 </AppCard>

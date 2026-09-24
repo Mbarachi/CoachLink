@@ -21,6 +21,7 @@ export { default as PageTitle } from './PageTitle';
 export { default as PasswordInput } from './PasswordInput';
 export { default as PhotoTile } from './PhotoTile';
 export { default as QueryState, LoadingState, ErrorState } from './QueryState';
+export { default as RatingStar } from './RatingStar';
 export { default as PasswordRequirements } from './PasswordRequirements';
 export { default as SectionHeading } from './SectionHeading';
 export { default as SectionLabel } from './SectionLabel';

@@ -1,7 +1,9 @@
 import React, { useMemo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { AppCard, AppPage, EmptyState, PageBody, PageHeader, PhotoTile, QueryState } from '@/components/ui';
+import {
+  AppCard, AppPage, EmptyState, PageBody, PageHeader, PhotoTile, QueryState, RatingStar,
+} from '@/components/ui';
 import { useCoaches } from '@/hooks';
 import { coachInitials, coachName, primarySport } from '@/lib/coach';
 import { formatNaira } from '@/lib/format';
@@ -89,7 +91,9 @@ const CoachListingPage: React.FC = () => {
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginTop: 8 }}>
                     <span style={{ fontSize: 11.5, fontWeight: 600, color: 'var(--cl-ink)', background: 'var(--cl-subtle)', padding: '4px 9px', borderRadius: 7 }}>
-                      {co.profile.totalReviews > 0 ? `★ ${co.profile.rating.toFixed(1)}` : 'New coach'}
+                      {co.profile.totalReviews > 0
+                        ? <><RatingStar /> {co.profile.rating.toFixed(1)}</>
+                        : 'New coach'}
                     </span>
                     <span style={{ fontSize: 11.5, color: 'var(--cl-muted-1)' }}>{co.profile.venue}</span>
                   </div>

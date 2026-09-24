@@ -78,7 +78,10 @@ const NotificationsPage: React.FC = () => {
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontSize: 16, fontWeight: 700,
                   background: isActionable(n) ? 'var(--cl-accent)' : 'var(--cl-subtle)',
-                  color: isActionable(n) ? 'var(--cl-on-accent)' : 'var(--cl-ink)',
+                  // A star is gold wherever it appears, including here.
+                  color: n.type === 'REVIEW_RECEIVED'
+                    ? 'var(--cl-star)'
+                    : isActionable(n) ? 'var(--cl-on-accent)' : 'var(--cl-ink)',
                 }}>{GLYPHS[n.type] ?? '!'}</div>
 
                 <div style={{ flex: 1, minWidth: 0 }}>

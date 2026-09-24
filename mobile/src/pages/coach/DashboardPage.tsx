@@ -1,14 +1,26 @@
 import React, { useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { AppCard, AppPage, EmptyState, InitialsAvatar, NotificationBell, PageBody, QueryState, StatusPill, VerifyEmailBanner } from '@/components/ui';
+import {
+  AppCard, AppPage, EmptyState, InitialsAvatar, NotificationBell, PageBody, QueryState,
+  RatingStar, StatusPill, VerifyEmailBanner,
+} from '@/components/ui';
 import { useBookingRequests, useMyCoachProfile } from '@/hooks';
 import { formatSessionDate, formatSessionTime, fullName, initialsOf, timeOfDayGreeting } from '@/lib/format';
 import VerificationCard from '@/components/coach/VerificationCard';
 import { useAuthStore } from '@/store/auth.store';
 
-const StatCard: React.FC<{ val: string; label: string; dark?: boolean }> = ({ val, label, dark }) => (
-  <div style={{ flex: 1, background: dark ? 'var(--cl-ink-fill)' : 'var(--cl-surface)', border: dark ? 'none' : '1px solid var(--cl-border)', borderRadius: 18, padding: 16 }}>
+const StatCard: React.FC<{
+  val: React.ReactNode; label: string; dark?: boolean; onClick?: () => void;
+}> = ({ val, label, dark, onClick }) => (
+  <div
+    onClick={onClick}
+    style={{
+      flex: 1, background: dark ? 'var(--cl-ink-fill)' : 'var(--cl-surface)',
+      border: dark ? 'none' : '1px solid var(--cl-border)', borderRadius: 18, padding: 16,
+      cursor: onClick ? 'pointer' : undefined,
+    }}
+  >
     <div style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 800, fontSize: dark ? 26 : 21, color: dark ? 'var(--cl-accent)' : 'var(--cl-ink)' }}>{val}</div>
     <div style={{ fontSize: 11.5, color: dark ? 'var(--cl-bfae97)' : 'var(--cl-muted-1)', marginTop: 3 }}>{label}</div>
   </div>
@@ -72,7 +84,10 @@ const DashboardPage: React.FC = () => {
           {/* Earnings need the Payments module, which isn't built yet. */}
           <StatCard val="₦0" label="Earned this month" />
           <StatCard
-            val={myProfile && myProfile.totalReviews > 0 ? `${myProfile.rating.toFixed(1)} ★` : '—'}
+            onClick={() => history.push('/coach/reviews')}
+            val={myProfile && myProfile.totalReviews > 0
+              ? <>{myProfile.rating.toFixed(1)} <RatingStar /></>
+              : '—'}
             label={
               myProfile && myProfile.totalReviews > 0
                 ? `Rating · ${myProfile.totalReviews} reviews`

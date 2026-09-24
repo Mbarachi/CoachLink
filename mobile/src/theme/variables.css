@@ -34,7 +34,7 @@
   --cl-success-bg:    #e3f4e3;   /* Confirmed pill bg          */
   --cl-pending-text:  #9a7b3c;   /* Pending pill text          */
   --cl-pending-bg:    #F3E7CE;   /* Pending pill bg            */
-  --cl-star:          #D9A425;   /* filled review star         */
+  --cl-star:          #E0A42B;   /* review star — one gold in both themes */
   --cl-destructive:   #c0392b;   /* Log out / danger           */
   --cl-on-destructive:#FFFFFF;   /* text on a solid red fill   */
   --cl-destructive-bg:#FDEDE8;   /* rejected banner / reason box */
@@ -98,7 +98,6 @@
   --cl-ink:           #F3E9DC;   /* text inverts to cream      */
   --cl-border:        #342A20;
   --cl-border-alt:    #3E3226;
-  --cl-star:          #E7B93F;
   --cl-subtle:        #2B2219;
 
   /* Ordered by readability, inverted from light: muted-3 is the most

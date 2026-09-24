@@ -3,7 +3,7 @@ import { useHistory, useParams } from 'react-router-dom';
 
 import {
   AppButton, AppCard, AppPage, BackButton, EmptyState, InitialsAvatar, PageBody,
-  QueryState, SectionHeading, SportBanner, StarRating, StatusPill, StickyFooter,
+  QueryState, RatingStar, SectionHeading, SportBanner, StarRating, StatusPill, StickyFooter,
 } from '@/components/ui';
 import { useCoach, useCoachReviews } from '@/hooks';
 import { coachInitials, coachName, coachSportNames, primarySport } from '@/lib/coach';
@@ -42,7 +42,7 @@ const CoachDetailsPage: React.FC = () => {
                 </div>
                 <div style={{ fontSize: 13.5, color: 'var(--cl-ink)', marginTop: 7, fontWeight: 600 }}>
                   {coach.profile.totalReviews > 0 ? (
-                    <>★ {coach.profile.rating.toFixed(1)}{' '}
+                    <><RatingStar /> {coach.profile.rating.toFixed(1)}{' '}
                       <span style={{ color: 'var(--cl-muted-2)', fontWeight: 400 }}>
                         ({coach.profile.totalReviews} {coach.profile.totalReviews === 1 ? 'review' : 'reviews'})
                       </span>
