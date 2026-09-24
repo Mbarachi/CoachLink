@@ -48,7 +48,7 @@ const AthleteRoutes: React.FC = () => (
       <Route path="/athlete/coaches"                              component={CoachListingPage}   exact />
       <Route path="/athlete/coaches/:id"                          component={CoachDetailsPage}   exact />
       <Route path="/athlete/booking-request/:coachId"             component={BookingRequestPage} exact />
-      <Route path="/athlete/payment/:bookingRequestId"            component={PaymentPage}        exact />
+      <Route path="/athlete/payment/:bookingId"            component={PaymentPage}        exact />
       <Route path="/athlete/booking-success/:bookingId"           component={BookingSuccessPage} exact />
       <Route path="/athlete/settings"                             component={SettingsPage}       exact />
 

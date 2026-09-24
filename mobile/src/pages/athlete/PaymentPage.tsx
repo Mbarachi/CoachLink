@@ -16,11 +16,14 @@ import { queryClient } from '@/lib/queryClient';
 
 const PaymentPage: React.FC = () => {
   const history = useHistory();
-  const { bookingRequestId } = useParams<{ bookingRequestId: string }>();
+  const { bookingId } = useParams<{ bookingId: string }>();
   const showToast = useUiStore((s) => s.showToast);
 
-  // Routed here with a booking id; payment covers the whole request it belongs to.
-  const bookingQuery = useBooking(bookingRequestId);
+  // A booking id, not a request id — the param was named bookingRequestId for
+  // a while, which sent a notification link to a lookup in the wrong
+  // collection. Payment still settles the whole request the booking belongs
+  // to; see the initialize call below, which takes the id off the booking.
+  const bookingQuery = useBooking(bookingId);
   const booking = bookingQuery.data;
 
   const [working, setWorking] = useState(false);
