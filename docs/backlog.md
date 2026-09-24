@@ -30,10 +30,6 @@ directory over. The compromises below that name `firestore.indexes.json` and
 
 ## Not built
 
-**Reviews** — blocked until a booking can reach COMPLETED. Completion requires
-the session date to have passed, and every booking is currently dated ahead, so
-a past paid session has to be seeded before this is even testable.
-
 **Prepaid packages as a leakage defence** — packages exist as a booking shape,
 but nothing about them is priced or marketed as "pay for five, stay for five".
 See Open risks.
@@ -90,6 +86,11 @@ gives the page somewhere to breathe without it. Revisit only if coaches start
 asking to show their own venue.
 
 ---
+
+**Reviews cannot be tested without a past session.** Completion requires the
+session date to have passed and every seeded booking is dated ahead, so trying
+the review flow means seeding a paid booking in the past or waiting for one to
+age into it. The same gap blocks testing payouts end to end.
 
 ## Known compromises
 
