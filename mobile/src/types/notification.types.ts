@@ -14,5 +14,7 @@ export interface Notification {
   message: string;
   type: NotificationType;
   isRead: boolean;
+  /** In-app path the row opens, or null when it is only an FYI. */
+  link: string | null;
   createdAt: string;
 }

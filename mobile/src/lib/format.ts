@@ -34,3 +34,17 @@ export const timeOfDayGreeting = () => {
   if (hour < 18) return 'Good afternoon,';
   return 'Good evening,';
 };
+
+/**
+ * Compact age for a notification row: 2m, 3h, 5d, then a date. Rounded down,
+ * because "1h" reading as 59 minutes old is fine and "in 0 seconds" is not.
+ */
+export const formatRelativeTime = (iso: string) => {
+  const seconds = Math.max(0, (Date.now() - new Date(iso).getTime()) / 1000);
+  if (seconds < 60) return 'now';
+  if (seconds < 3600) return `${Math.floor(seconds / 60)}m`;
+  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h`;
+  if (seconds < 604800) return `${Math.floor(seconds / 86400)}d`;
+  return formatShortDate(iso);
+};
+

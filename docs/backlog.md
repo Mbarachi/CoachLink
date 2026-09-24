@@ -5,20 +5,34 @@ Ordered roughly by how much they cost if left alone.
 
 ---
 
+## Repo layout
+
+The project is two repositories, and nothing in this one says so.
+
+- `Mbarachi/CoachLink` (this repo) — the Ionic app, plus a dead NestJS
+  `backend/` (see PRD drift below).
+- `Mbarachi/coachlink-firebase` — the live backend: the callable functions,
+  Firestore rules and indexes, storage rules, the rules test suite, and the
+  admin back-office at `public/admin.html`, served at `/admin` by a hosting
+  rewrite.
+
+Cloning this repo alone gives you a client with no visible server and no hint
+that one exists. A paragraph in the README and the sibling path in `dev.sh` is
+the whole fix.
+
+Worth doing, because the absence has already produced one wrong conclusion: an
+audit of this repo alone reported coach approval and the backend itself as
+missing launch blockers, when both are built, committed and deployed one
+directory over. The compromises below that name `firestore.indexes.json` and
+`test/rules.mjs` refer to files in that second repo, not this one.
+
+---
+
 ## Not built
 
 **Reviews** — blocked until a booking can reach COMPLETED. Completion requires
 the session date to have passed, and every booking is currently dated ahead, so
 a past paid session has to be seeded before this is even testable.
-
-**Notifications** — open question of in-app list only versus real push. Push
-means FCM, device tokens and permission prompts, which is substantially more
-work than the list.
-
-**Coach bookings screen** — a hole in a shipped flow rather than a missing
-feature. The service already returns a coach's sessions correctly and no page
-consumes it, so a coach can accept work, be paid, and have no way to see their
-own schedule.
 
 **Coach availability** — athletes propose free-form times. There is no
 availability model, so a coach can be sent a request for a slot they were never
@@ -43,6 +57,33 @@ filtering signal. Three levels, increasing effort: customise the template in
 the Firebase console; verify a custom sending domain, which removes the main
 trigger; or generate the link server-side and send through Resend, which the
 Nest backend already did.
+
+**Push notifications** — V2 per the PRD's own roadmap, which settles the
+question the earlier entry here left open: MVP is the in-app list, and that is
+built. The design is already one signal for both channels. `notify()` writes a
+row to `notifications`; the in-app list queries it, and push would be a second
+consumer — an `onDocumentCreated` trigger reading the same row and sending to
+FCM. The row already carries `title`, `message` and `link` because those are
+exactly a push payload. Adding push therefore touches one new file and changes
+no event source. The real remaining cost is device tokens on the user document,
+the permission prompt, and APNs/FCM certificates.
+
+**Coach-side notifications — deliberately out.** The PRD puts the notifications
+screen under athlete/parent screens only, and a coach's equivalents are better
+placed already: the dashboard's pending-requests count, the incoming-requests
+list, and the verification banner for an approval or rejection. Writing coach
+rows with no screen to read them would be invisible data. Revisit with push,
+where the tray is the surface and no screen is needed.
+
+**Coach dashboard carousel — decided against.** The athlete home has a
+rotating hero; the coach dashboard does not, and should not. Athlete home is a
+discovery surface and both slides push into search. The coach dashboard is a
+work surface — a coach opens it to accept requests and check the week — so a
+rotating banner would sit directly above the pending-requests list and compete
+with the one thing that matters. Revisit only with a single static card that
+earns the space: a **Next session** card (`Wed 8:00 AM · Festival Hotel Pool`)
+is the obvious candidate, since "Sessions this week: 7" gives a count but never
+says when to leave the house.
 
 **Coach cover image — decided against.** The detail page hero is a per-sport
 illustration (`SportBanner`), not an upload. Asking a coach for a third image
@@ -83,6 +124,13 @@ head sits in the upper third — so faces land low and the room fills the frame.
 `object-position: 50% 30%` fixes it across the board at no cost.
 
 
+**Selected chips are weak in dark mode.** In light a selected chip is
+near-black against white — unmissable. In dark both it and its neighbours are
+dark fills, separated mainly by accent text and a border. Legible, and normal
+for dark UI, but a step down. The knob is dark `--cl-ink-fill` (`#3A2E20`),
+which is also the emphasis card, so the two move together; decoupling them
+costs a second token.
+
 **A dead Firebase session shows as an error, not a sign-in.** `ProtectedRoute`
 gates on the persisted `isAuthenticated` flag in the auth store, which survives
 in localStorage after the Firebase session itself is gone. The route therefore
@@ -97,6 +145,39 @@ No data leaks — the Firestore rules and the service's own scoping see to that,
 and each person is shown their own records — but screens appear that make no
 sense for the role, which is how the coach sessions screen was verified in the
 first place.
+
+---
+
+## PRD drift
+
+The PRD describes a product that was built differently. None of this is wrong
+in the code — the code works — but the document no longer describes it, and one
+of the two should move before go-live.
+
+- **Stack.** PRD says NestJS + PostgreSQL. Built on Firebase: Auth, Firestore,
+  Storage and callable Functions. `backend/` is still committed and still reads
+  as current; untouched since 2026-08-21.
+- **Media storage.** PRD says Cloudinary. Built on Firebase Storage.
+- **OTP verification.** PRD lists an "OTP Verification" screen. Built as an
+  email verification link — `/auth/otp` renders `CheckInboxPage`. Nothing sends
+  a six-digit code, though the design mockups still show one.
+
+Recommendation: update the PRD, not the build. Also decide what happens to
+`backend/` — a dead NestJS service left in the tree will cost whoever joins
+next a day of reading the wrong thing.
+
+---
+
+## Shipped outside PRD scope
+
+Recorded so the PRD screen inventory is not mistaken for the whole build.
+
+- **Dark mode** (2026-09-22). System / Light / Dark, chosen in Settings, with a
+  warm dark palette. Not in the PRD at any version.
+- **Coach resubmit screen.** The PRD has no rejected-coach path at all; the
+  flow exists so a rejection is answerable rather than terminal.
+- **Hero carousel gutter** on athlete home, and the per-sport coach hero noted
+  under Deferred above.
 
 ---
 

@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { AppCard, AppPage, EmptyState, InitialsAvatar, PageBody, StatusPill, VerifyEmailBanner } from '@/components/ui';
-import { useBookingRequests, useBookings } from '@/hooks';
+import { useBookingRequests, useBookings, useUnreadCount } from '@/hooks';
 import { formatSessionDate, formatSessionTime, fullName, initialsOf, timeOfDayGreeting } from '@/lib/format';
 import { useAuthStore } from '@/store/auth.store';
 
@@ -12,6 +12,7 @@ const HERO_GAP = 14;
 
 const HomePage: React.FC = () => {
   const history = useHistory();
+  const unread = useUnreadCount();
   const user = useAuthStore(s => s.user);
   const [hero, setHero] = useState<0 | 1>(0);
   const heroSlideCount = 2;
@@ -97,7 +98,9 @@ const HomePage: React.FC = () => {
             style={{ width: 40, height: 40, borderRadius: 13, border: '1px solid var(--cl-border)', background: 'var(--cl-surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', cursor: 'pointer', flexShrink: 0 }}
           >
             <div style={{ width: 14, height: 14, border: '1.8px solid var(--cl-ink)', borderRadius: '4px 4px 7px 7px' }} />
-            <div style={{ position: 'absolute', top: 9, right: 10, width: 7, height: 7, borderRadius: '50%', background: 'var(--cl-accent)', border: '1.5px solid var(--cl-surface)' }} />
+            {unread > 0 && (
+              <div style={{ position: 'absolute', top: 9, right: 10, width: 7, height: 7, borderRadius: '50%', background: 'var(--cl-accent)', border: '1.5px solid var(--cl-surface)' }} />
+            )}
           </div>
         </div>
       </div>

@@ -1,7 +1,7 @@
 import { Timestamp } from 'firebase/firestore';
 import type { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
 
-import type { Booking, BookingRequest, Coach, User } from '@/types';
+import type { Booking, BookingRequest, Coach, Notification, User } from '@/types';
 
 /**
  * Firestore hands back Timestamps where the REST API sent ISO strings. Every
@@ -147,5 +147,18 @@ export function toBooking(id: string, data: DocumentData): Booking {
     sport: data.sport,
     athlete: data.athlete,
     coach: data.coach,
+  };
+}
+
+export function toNotification(id: string, data: DocumentData): Notification {
+  return {
+    id,
+    userId: data.userId,
+    title: data.title ?? '',
+    message: data.message ?? '',
+    type: data.type ?? 'GENERAL',
+    isRead: data.isRead ?? false,
+    link: data.link ?? null,
+    createdAt: toIso(data.createdAt),
   };
 }

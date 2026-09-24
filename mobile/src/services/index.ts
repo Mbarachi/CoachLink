@@ -9,5 +9,6 @@ export { coachesService } from './firebase/coaches.service';
 export { bookingRequestsService } from './firebase/bookingRequests.service';
 export { bookingsService } from './firebase/bookings.service';
 export { paymentsService } from './firebase/payments.service';
+export { notificationsService } from './firebase/notifications.service';
 export { uploadCoachFiles } from './firebase/uploads';
 export type { CoachUploads } from './firebase/uploads';
