@@ -81,7 +81,7 @@ const ProfileManagementPage: React.FC = () => {
         <PageHeader title="My profile" />
       </div>
 
-      <PageBody>
+      <PageBody refreshable>
         {noProfile ? (
           <EmptyState
             illustration="unbuilt"

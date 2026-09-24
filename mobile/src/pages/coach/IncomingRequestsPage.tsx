@@ -36,7 +36,7 @@ const IncomingRequestsPage: React.FC = () => {
         <TabChips tabs={tabs} active={tab} onChange={setTab} />
       </div>
 
-      <PageBody style={{ paddingTop: 16 }}>
+      <PageBody refreshable style={{ paddingTop: 16 }}>
         <QueryState isLoading={query.isPending} error={query.error} onRetry={() => void query.refetch()}>
           {requests.length === 0 ? (
             <EmptyState

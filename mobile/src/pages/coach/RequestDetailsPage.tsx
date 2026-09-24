@@ -49,7 +49,7 @@ const RequestDetailsPage: React.FC = () => {
         <PageHeader title="Request details" />
       </div>
 
-      <PageBody>
+      <PageBody refreshable>
         <QueryState isLoading={query.isPending} error={query.error} onRetry={() => void query.refetch()}>
           {!req ? null : (
             <>

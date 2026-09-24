@@ -93,7 +93,7 @@ const SearchCoachesPage: React.FC = () => {
         )}
       </div>
 
-      <PageBody style={{ paddingTop: 14 }}>
+      <PageBody refreshable style={{ paddingTop: 14 }}>
         <QueryState isLoading={coaches.isPending} error={coaches.error} onRetry={() => void coaches.refetch()}>
           {results.length === 0 ? (
             <EmptyState

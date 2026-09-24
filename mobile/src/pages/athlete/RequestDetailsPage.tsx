@@ -52,7 +52,7 @@ const RequestDetailsPage: React.FC = () => {
         <PageHeader title="Request details" onBack={() => history.push('/athlete/bookings')} />
       </div>
 
-      <PageBody>
+      <PageBody refreshable>
         <QueryState isLoading={query.isPending} error={query.error} onRetry={() => void query.refetch()}>
           {!req ? null : (
             <>

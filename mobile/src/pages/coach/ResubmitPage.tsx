@@ -63,7 +63,7 @@ const ResubmitPage: React.FC = () => {
         <PageHeader title="My profile" />
       </div>
 
-      <PageBody>
+      <PageBody refreshable>
         <QueryState isLoading={query.isPending} error={query.error} onRetry={() => void query.refetch()}>
           {!coach ? null : coach.profile.verificationStatus !== 'REJECTED' ? (
             /* Nothing to answer — they arrived by a stale link or the back button. */

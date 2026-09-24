@@ -9,7 +9,6 @@ import {
 import {
   calendarOutline,
   homeOutline,
-  notificationsOutline,
   personOutline,
   searchOutline,
 } from 'ionicons/icons';
@@ -67,10 +66,6 @@ const AthleteRoutes: React.FC = () => (
       <IonTabButton tab="bookings"      href="/athlete/bookings">
         <IonIcon icon={calendarOutline} />
         <IonLabel>Bookings</IonLabel>
-      </IonTabButton>
-      <IonTabButton tab="notifications" href="/athlete/notifications">
-        <IonIcon icon={notificationsOutline} />
-        <IonLabel>Alerts</IonLabel>
       </IonTabButton>
       <IonTabButton tab="profile"       href="/athlete/profile">
         <IonIcon icon={personOutline} />

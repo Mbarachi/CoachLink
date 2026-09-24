@@ -73,7 +73,7 @@ const CoachBookingsPage: React.FC = () => {
         <TabChips tabs={labels} active={tab} onChange={setTab} />
       </div>
 
-      <PageBody style={{ paddingTop: 16 }}>
+      <PageBody refreshable style={{ paddingTop: 16 }}>
         <QueryState isLoading={query.isPending} error={query.error} onRetry={() => void query.refetch()}>
           {visible.length === 0 ? (
             <EmptyState illustration="calendar" {...EMPTY[TABS[tab]]} />

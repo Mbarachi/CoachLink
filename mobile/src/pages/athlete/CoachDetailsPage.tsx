@@ -2,7 +2,7 @@ import React from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 
 import {
-  AppButton, AppCard, AppPage, BackButton, EmptyState, InitialsAvatar,
+  AppButton, AppCard, AppPage, BackButton, EmptyState, InitialsAvatar, PageBody,
   QueryState, SectionHeading, SportBanner, StatusPill, StickyFooter,
 } from '@/components/ui';
 import { useCoach } from '@/hooks';
@@ -19,7 +19,7 @@ const CoachDetailsPage: React.FC = () => {
 
   return (
     <AppPage>
-      <div style={{ flex: 1, overflowY: 'auto' }}>
+      <PageBody refreshable pb={0}>
         {/* The sport, not the coach: their photo is the avatar below, and
             painting it here as well showed the same face twice. */}
         <SportBanner sport={coach ? primarySport(coach) : undefined}>
@@ -104,7 +104,7 @@ const CoachDetailsPage: React.FC = () => {
             )}
           </QueryState>
         </div>
-      </div>
+      </PageBody>
 
       {coach && (
         <StickyFooter style={{ display: 'flex', alignItems: 'center', gap: 14 }}>

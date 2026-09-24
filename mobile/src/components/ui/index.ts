@@ -13,6 +13,7 @@ export { default as FilePicker } from './FilePicker';
 export { default as FormLabel } from './FormLabel';
 export { default as InitialsAvatar } from './InitialsAvatar';
 export { default as ListRow } from './ListRow';
+export { default as NotificationBell } from './NotificationBell';
 export { default as LoadingOverlay } from './LoadingOverlay';
 export { default as PageBody } from './PageBody';
 export { default as PageHeader } from './PageHeader';

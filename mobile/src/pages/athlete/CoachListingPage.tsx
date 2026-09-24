@@ -62,7 +62,7 @@ const CoachListingPage: React.FC = () => {
         </div>
       </div>
 
-      <PageBody style={{ paddingTop: 14 }}>
+      <PageBody refreshable style={{ paddingTop: 14 }}>
         <QueryState isLoading={query.isPending} error={query.error} onRetry={() => void query.refetch()}>
           {coaches.length === 0 ? (
             <EmptyState

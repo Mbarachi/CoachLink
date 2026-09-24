@@ -4,6 +4,7 @@ export * from './useBookingRequests';
 export * from './useBookings';
 export * from './useNotifications';
 export * from './usePushNavigator';
+export * from './useRefetchOnResume';
 export * from './useMe';
 export * from './useDebounced';
 export * from './useAndroidBackButton';

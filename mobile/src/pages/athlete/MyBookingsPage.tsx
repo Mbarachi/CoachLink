@@ -107,7 +107,7 @@ const MyBookingsPage: React.FC = () => {
         <TabChips tabs={labels} active={tab} onChange={setTab} />
       </div>
 
-      <PageBody style={{ paddingTop: 16 }}>
+      <PageBody refreshable style={{ paddingTop: 16 }}>
         <QueryState
           isLoading={bookingsQuery.isPending || requestsQuery.isPending}
           error={bookingsQuery.error ?? requestsQuery.error}

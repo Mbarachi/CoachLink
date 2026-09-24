@@ -31,7 +31,7 @@ const ProfilePage: React.FC = () => {
 
   return (
     <AppPage padding="screen">
-      <PageBody pb={96}>
+      <PageBody refreshable pb={96}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '8px 0 18px' }}>
           <PageTitle style={{ margin: 0 }}>Profile</PageTitle>
           <button onClick={() => history.push('/athlete/settings')} style={{ width: 38, height: 38, borderRadius: '50%', border: '1px solid var(--cl-border)', background: 'var(--cl-surface)', fontSize: 16, cursor: 'pointer' }}>⚙</button>

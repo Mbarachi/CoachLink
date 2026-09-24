@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { AppCard, AppPage, EmptyState, InitialsAvatar, PageBody, QueryState, StatusPill, VerifyEmailBanner } from '@/components/ui';
-import { useBookingRequests, useMyCoachProfile, useUnreadCount } from '@/hooks';
+import { AppCard, AppPage, EmptyState, InitialsAvatar, NotificationBell, PageBody, QueryState, StatusPill, VerifyEmailBanner } from '@/components/ui';
+import { useBookingRequests, useMyCoachProfile } from '@/hooks';
 import { formatSessionDate, formatSessionTime, fullName, initialsOf, timeOfDayGreeting } from '@/lib/format';
 import VerificationCard from '@/components/coach/VerificationCard';
 import { useAuthStore } from '@/store/auth.store';
@@ -16,7 +16,6 @@ const StatCard: React.FC<{ val: string; label: string; dark?: boolean }> = ({ va
 
 const DashboardPage: React.FC = () => {
   const history = useHistory();
-  const unread = useUnreadCount();
   const user = useAuthStore((s) => s.user);
   const firstName = user?.firstName ?? '';
   const initials = initialsOf(user?.firstName, user?.lastName);
@@ -43,7 +42,7 @@ const DashboardPage: React.FC = () => {
 
   return (
     <AppPage padding="screen">
-      <PageBody pb={96}>
+      <PageBody refreshable pb={96}>
         <VerifyEmailBanner />
         {/* greeting */}
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginTop: 4 }}>
@@ -57,15 +56,7 @@ const DashboardPage: React.FC = () => {
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-            <div
-              onClick={() => history.push('/coach/notifications')}
-              style={{ width: 40, height: 40, borderRadius: 13, border: '1px solid var(--cl-border)', background: 'var(--cl-surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', cursor: 'pointer', flexShrink: 0 }}
-            >
-              <div style={{ width: 14, height: 14, border: '1.8px solid var(--cl-ink)', borderRadius: '4px 4px 7px 7px' }} />
-              {unread > 0 && (
-                <div style={{ position: 'absolute', top: 9, right: 10, width: 7, height: 7, borderRadius: '50%', background: 'var(--cl-accent)', border: '1.5px solid var(--cl-surface)' }} />
-              )}
-            </div>
+            <NotificationBell onClick={() => history.push('/coach/notifications')} />
             <InitialsAvatar initials={initials} size={48} radius={15} fontSize={16} />
           </div>
         </div>

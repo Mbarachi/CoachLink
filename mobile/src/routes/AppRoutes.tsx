@@ -16,7 +16,7 @@ import SignInPage from '@/pages/auth/SignInPage';
 import SignUpPage from '@/pages/auth/SignUpPage';
 import SplashPage from '@/pages/auth/SplashPage';
 import WelcomePage from '@/pages/auth/WelcomePage';
-import { useAndroidBackButton, useNotificationsLive, usePushNavigator } from '@/hooks';
+import { useAndroidBackButton, useNotificationsLive, usePushNavigator, useRefetchOnResume } from '@/hooks';
 import { useAuthStore } from '@/store/auth.store';
 
 import AthleteRoutes from './AthleteRoutes';
@@ -33,6 +33,9 @@ const AppRoutes: React.FC = () => {
 
   // Keeps the bell honest without anything having to re-read.
   useNotificationsLive();
+
+  // Most stale data comes from putting the phone down, not from not pulling.
+  useRefetchOnResume();
 
   return (
     <IonRouterOutlet id="main">
