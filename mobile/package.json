@@ -25,6 +25,7 @@
     "@hookform/resolvers": "^3.10.0",
     "@ionic/react": "^8.0.0",
     "@ionic/react-router": "^8.0.0",
+    "@onesignal/capacitor-plugin": "^1.2.0",
     "@tanstack/react-query": "^5.80.0",
     "@tanstack/react-query-devtools": "^5.80.0",
     "firebase": "^12.18.0",

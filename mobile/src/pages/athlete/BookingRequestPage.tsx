@@ -18,6 +18,7 @@ import { fieldStyle } from '@/components/ui';
 import { useCoach, useCreateBookingRequest } from '@/hooks';
 import { coachInitials, coachName } from '@/lib/coach';
 import { getErrorMessage } from '@/lib/apiError';
+import { requestPushPermission } from '@/lib/push';
 import { DAY_NAMES, formatNaira } from '@/lib/format';
 import { useAuthStore } from '@/store/auth.store';
 import { useUiStore } from '@/store/ui.store';
@@ -102,6 +103,12 @@ const BookingRequestPage: React.FC = () => {
         ...(note.trim() ? { notes: note.trim() } : {}),
         ...(isParent ? { childName: childName.trim(), childAge: Number(childAge) } : {}),
       });
+
+      // The one moment "tell me when the coach replies" needs no explaining,
+      // which is the only sensible time to spend iOS's single permission
+      // prompt. Not awaited — a refused or slow prompt must not hold up the
+      // screen that confirms the request was sent.
+      void requestPushPermission();
 
       history.push(`/athlete/booking-success/${request.id}`, {
         coachName: coachName(coach),

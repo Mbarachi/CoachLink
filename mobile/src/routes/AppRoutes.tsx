@@ -16,7 +16,7 @@ import SignInPage from '@/pages/auth/SignInPage';
 import SignUpPage from '@/pages/auth/SignUpPage';
 import SplashPage from '@/pages/auth/SplashPage';
 import WelcomePage from '@/pages/auth/WelcomePage';
-import { useAndroidBackButton } from '@/hooks';
+import { useAndroidBackButton, usePushNavigator } from '@/hooks';
 import { useAuthStore } from '@/store/auth.store';
 
 import AthleteRoutes from './AthleteRoutes';
@@ -27,6 +27,9 @@ const AppRoutes: React.FC = () => {
 
   // Android's hardware back button, which otherwise walks raw webview history.
   useAndroidBackButton();
+
+  // Lets a tapped push notification reach the screen it names.
+  usePushNavigator();
 
   return (
     <IonRouterOutlet id="main">

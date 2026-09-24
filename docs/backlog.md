@@ -124,6 +124,16 @@ head sits in the upper third — so faces land low and the room fills the frame.
 `object-position: 50% 30%` fixes it across the board at no cost.
 
 
+**The iOS deployment target is set by hand, outside git.** OneSignal's pod
+needs iOS 15, and `npx cap add ios` generates a project targeting 14, so
+`cap sync` fails on a fresh checkout with "required a higher minimum deployment
+target". `ios/` and `android/` are gitignored, so the fix does not travel: in
+`ios/App/Podfile` set `platform :ios, '15.0'`, and in
+`ios/App/App.xcodeproj/project.pbxproj` replace every
+`IPHONEOS_DEPLOYMENT_TARGET = 14.0` with `15.0` (four of them). Costs no real
+coverage — every device that runs iOS 14 can run 15. Worth a line in the mobile
+README, or committing the native projects.
+
 **Selected chips are weak in dark mode.** In light a selected chip is
 near-black against white — unmissable. In dark both it and its neighbours are
 dark fills, separated mainly by accent text and a border. Legible, and normal
