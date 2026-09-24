@@ -3,6 +3,7 @@ export * from './useCoaches';
 export * from './useBookingRequests';
 export * from './useBookings';
 export * from './useNotifications';
+export * from './usePayouts';
 export * from './usePushNavigator';
 export * from './useRefetchOnResume';
 export * from './useMe';

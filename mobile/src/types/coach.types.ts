@@ -1,3 +1,5 @@
+import type { PayoutAccount } from './payout.types';
+
 export type VerificationStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 
 /**
@@ -29,6 +31,8 @@ export interface CoachProfile {
   totalReviews: number;
   isActive: boolean;
   availability: Availability;
+  /** Absent until the coach says where to pay them. */
+  payoutAccount: PayoutAccount | null;
 }
 
 export interface Sport {
