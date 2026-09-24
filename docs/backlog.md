@@ -158,21 +158,18 @@ first place.
 
 ## PRD drift
 
-The PRD describes a product that was built differently. None of this is wrong
-in the code — the code works — but the document no longer describes it, and one
-of the two should move before go-live.
+Mostly closed. The PRD's Technical Stack section now records what was actually
+built and why it differs, and `backend/` has been deleted — a dead NestJS
+service left in the tree would have cost whoever joins next a day of reading
+the wrong thing.
 
-- **Stack.** PRD says NestJS + PostgreSQL. Built on Firebase: Auth, Firestore,
-  Storage and callable Functions. `backend/` is still committed and still reads
-  as current; untouched since 2026-08-21.
-- **Media storage.** PRD says Cloudinary. Built on Firebase Storage.
-- **OTP verification.** PRD lists an "OTP Verification" screen. Built as an
-  email verification link — `/auth/otp` renders `CheckInboxPage`. Nothing sends
-  a six-digit code, though the design mockups still show one.
+One left:
 
-Recommendation: update the PRD, not the build. Also decide what happens to
-`backend/` — a dead NestJS service left in the tree will cost whoever joins
-next a day of reading the wrong thing.
+- **OTP verification.** The PRD lists an "OTP Verification" screen and the
+  design mockups show a six-digit code. Built as an email verification link
+  instead — `/auth/otp` renders `CheckInboxPage`, and nothing sends a code.
+  Worth deciding whether the mockups change or the flow does, since the screen
+  a user meets is still titled as though a code is coming.
 
 ---
 

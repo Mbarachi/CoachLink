@@ -297,8 +297,15 @@ Frontend:
 
 Backend:
 
-* NestJS
-* PostgreSQL
+* Firebase Cloud Functions (v2, TypeScript), in the sibling repo coachlink-firebase
+* Firestore
+* Firebase Auth
+
+  Originally specified as NestJS + PostgreSQL, and built that way first. Both
+  were replaced by Firebase before launch: one developer maintaining a server,
+  a database and its migrations was the largest cost in the project, and none
+  of it was load-bearing for an MVP in one neighbourhood. The Nest service was
+  removed from this repo in September 2026; its history is in git.
 
 State Management:
 
@@ -319,7 +326,24 @@ Payments:
 
 Media Storage:
 
-* Cloudinary
+* Firebase Storage
+
+  Cloudinary as specified; Firebase Storage in practice, since the rest of the
+  stack moved. Coach photos are public download URLs; ID documents are stored
+  by path only, readable through rules by an admin alone, so that a government
+  document never has a shareable link that outlives a permission check.
+
+Notifications:
+
+* OneSignal, for notifications that arrive when the app is closed. Not in the
+  original spec, which assumed an in-app screen would do — but the point of a
+  notification is reaching a coach who is nowhere near the app.
+
+Commission:
+
+* CoachLink keeps 8% of each session; the coach is paid the rest automatically
+  once the session is marked complete. The original spec set session pricing
+  and was silent on what the platform keeps.
 
 ---
 
