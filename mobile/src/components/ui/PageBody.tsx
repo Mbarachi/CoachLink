@@ -8,6 +8,8 @@ const THRESHOLD = 64;
 const MAX_PULL = 96;
 /** Drag feels tethered rather than loose, and cannot outrun the screen. */
 const RESISTANCE = 0.5;
+/** Shortest time the spinner stays up once it has appeared. */
+const MIN_SPIN_MS = 450;
 
 interface PageBodyProps {
   children: React.ReactNode;
@@ -80,7 +82,10 @@ const PageBody: React.FC<PageBodyProps> = ({
     setRefreshing(true);
     setPull(THRESHOLD);
     try {
-      await refresh();
+      // Held open for a beat: a refetch answered from cache can finish in
+      // milliseconds, and a spinner that appears and vanishes reads as a
+      // glitch rather than as the refresh having happened.
+      await Promise.all([refresh(), new Promise((r) => setTimeout(r, MIN_SPIN_MS))]);
     } finally {
       setRefreshing(false);
       setPull(0);
@@ -119,12 +124,19 @@ const PageBody: React.FC<PageBodyProps> = ({
         >
           <Spinner
             size={20}
-            style={{
-              opacity: Math.min(1, pull / THRESHOLD),
-              // Winds up as it is dragged, then spins for real once released.
-              animation: refreshing ? undefined : 'none',
-              transform: refreshing ? undefined : `rotate(${pull * 4}deg)`,
-            }}
+            // While dragging it winds up by hand; once released it must spin.
+            // Spinner spreads this style last, so naming `animation` at all
+            // overrides its own keyframes — passing undefined does not fall
+            // back, it strips them. So the key is only present while dragging.
+            style={
+              refreshing
+                ? { opacity: 1 }
+                : {
+                  opacity: Math.min(1, pull / THRESHOLD),
+                  animation: 'none',
+                  transform: `rotate(${pull * 4}deg)`,
+                }
+            }
           />
         </div>
       )}
