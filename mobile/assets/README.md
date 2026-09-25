@@ -24,3 +24,21 @@ Two things to preserve if you re-export these from a design tool:
   the mark land about a third smaller than the legacy icon.
 
 The web and PWA icons in `public/` are generated from the same geometry.
+
+## Android needs a step capacitor-assets does not do
+
+`npm run icons` runs `scripts/android-adaptive-icon.mjs` afterwards, which
+replaces the Android adaptive icon with vector sources. Do not skip it, and
+re-run it after `npx cap add android` — `android/` is gitignored, so the fix
+cannot be committed.
+
+capacitor-assets writes the adaptive foreground and background as PNGs at the
+*legacy* launcher sizes (48/72/96/144/192). An adaptive layer is 108dp, which
+needs 108/162/216/324/432, so at xxxhdpi the launcher was upscaling a 192px
+bitmap to 432px — the mark and the flat background both came out visibly soft
+on a real phone. The script writes a colour for the background, which cannot
+blur, and a vector drawable for the mark, which is sharp at any density.
+
+The vector is a transcription of `coachlink-icon.svg` with the master's
+`translate(-1.75 -8.75)` baked into the coordinates. **Edit the SVG, then
+update the script to match** — nothing derives one from the other.
