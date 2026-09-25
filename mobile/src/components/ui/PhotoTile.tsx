@@ -37,7 +37,9 @@ const PhotoTile: React.FC<PhotoTileProps> = ({ initials, src, size = 62, radius,
           src={src as string}
           alt=""
           onError={() => setFailed(true)}
-          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+          // Biased upward for the same reason as InitialsAvatar: a centred
+          // crop of a portrait shot puts the face in the bottom third.
+          style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: '50% 30%', display: 'block' }}
         />
       ) : initials && (
         <span style={{

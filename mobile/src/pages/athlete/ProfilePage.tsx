@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { AppCard, AppPage, InitialsAvatar, PageBody, PageTitle, StatusPill } from '@/components/ui';
-import { useBookingRequests } from '@/hooks';
+import { useBookingRequests, useMyReviewedBookings } from '@/hooks';
 import { fullName, initialsOf } from '@/lib/format';
 import { useAuthStore } from '@/store/auth.store';
 
@@ -15,17 +15,17 @@ const ProfilePage: React.FC = () => {
   const roleLabel = user?.role === 'PARENT' ? 'Parent' : 'Athlete';
 
   const requests = useBookingRequests().data ?? [];
+  const reviewed = useMyReviewedBookings().data ?? [];
   const stats = useMemo(() => [
     { val: String(requests.filter(r => r.status === 'ACCEPTED').length), label: 'Sessions' },
     { val: String(new Set(requests.map(r => r.coachId)).size), label: 'Coaches' },
-    // Reviews need their own module before this can be anything but zero.
-    { val: '0', label: 'Reviews' },
-  ], [requests]);
+    { val: String(reviewed.length), label: 'Reviews' },
+  ], [requests, reviewed]);
 
   const menuItems = [
     { label: 'My bookings',     action: () => history.push('/athlete/bookings') },
-    { label: 'Payment methods', action: () => {} },
     { label: 'Notifications',   action: () => history.push('/athlete/notifications') },
+    { label: 'Help & FAQ',      action: () => history.push('/help') },
     { label: 'Settings',        action: () => history.push('/athlete/settings') },
   ];
 

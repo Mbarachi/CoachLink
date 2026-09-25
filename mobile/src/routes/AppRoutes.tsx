@@ -7,6 +7,8 @@ import { Redirect, Route } from 'react-router-dom';
 
 import ProtectedRoute from '@/components/ProtectedRoute';
 import CheckInboxPage from '@/pages/auth/CheckInboxPage';
+import HelpPage from '@/pages/legal/HelpPage';
+import LegalPage from '@/pages/legal/LegalPage';
 import CoachOnboardingPage from '@/pages/auth/CoachOnboardingPage';
 import CompleteProfilePage from '@/pages/auth/CompleteProfilePage';
 import ForgotPasswordPage from '@/pages/auth/ForgotPasswordPage';
@@ -51,6 +53,10 @@ const AppRoutes: React.FC = () => {
       <Route path="/athlete/coaches" component={CoachListingPage} exact />
       <Route path="/athlete/coaches/:id" component={CoachDetailsPage} exact />
       <Route path="/welcome" component={WelcomePage} exact />
+      {/* Public: the App Store needs a reachable privacy policy, and someone
+          deciding whether to sign up should be able to read it first. */}
+      <Route path="/help" component={HelpPage} exact />
+      <Route path="/legal" component={LegalPage} exact />
       <Route path="/auth/signin" component={SignInPage} exact />
       <Route path="/auth/signup" component={SignUpPage} exact />
       <Route path="/auth/forgot-password" component={ForgotPasswordPage} exact />

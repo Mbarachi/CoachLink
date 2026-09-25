@@ -5,8 +5,12 @@ import { AppButton, AppCard, AppInput, AppPage, BackButton, FilePicker, FormLabe
 import { useCreateCoachProfile, useSports } from '@/hooks';
 import { uploadCoachFiles } from '@/services/firebase/uploads';
 import { getErrorMessage } from '@/lib/apiError';
+import { DAY_LABELS, SLOTS } from '@/lib/slots';
 import { useAuthStore } from '@/store/auth.store';
 import { useUiStore } from '@/store/ui.store';
+
+/** Monday first, the way a coach thinks about their week. */
+const WEEK = [1, 2, 3, 4, 5, 6, 0] as const;
 
 const STEP_LABELS = ['Sport & experience', 'Venue & pricing', 'Availability', 'Verification & review'];
 const TOTAL_STEPS = STEP_LABELS.length;
@@ -44,14 +48,11 @@ const CoachOnboardingPage: React.FC = () => {
   const [venue, setVenue] = useState('');
   const [price, setPrice] = useState('');
 
-  const [days, setDays] = useState([
-    { label: 'Monday', active: true },
-    { label: 'Wednesday', active: true },
-    { label: 'Friday', active: true },
-    { label: 'Saturday', active: false },
-    { label: 'Sunday', active: false },
-  ]);
-  const toggleDay = (i: number) => setDays(d => d.map((x, j) => (j === i ? { ...x, active: !x.active } : x)));
+  // Indexed by JS weekday (0 = Sunday), because that is what Availability is
+  // keyed on and what the athlete's date picker compares against.
+  const [openDays, setOpenDays] = useState<number[]>([1, 3, 5]);
+  const toggleDay = (day: number) =>
+    setOpenDays(prev => (prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day]));
 
   // The files themselves, not just a preview and a boolean — the previous
   // version read the photo into a data URL and discarded the ID entirely.
@@ -96,6 +97,7 @@ const CoachOnboardingPage: React.FC = () => {
         sessionRate: Number(price.replace(/[^\d]/g, '')),
         venue: venue.trim(),
         sportIds: [chosenSport],
+        availability: Object.fromEntries(openDays.map(day => [String(day), SLOTS])),
       });
       // Creating a profile promotes the account to COACH server-side.
       updateUser({ role: 'COACH' });
@@ -188,14 +190,19 @@ const CoachOnboardingPage: React.FC = () => {
           <>
             <p style={{ fontSize: 13, color: 'var(--cl-muted-1)', margin: '0 0 14px' }}>Toggle the days you're generally available. You can fine-tune exact hours later.</p>
             <AppCard padding={0} style={{ borderRadius: 16, overflow: 'hidden' }}>
-              {days.map((d, i) => (
-                <div key={d.label} style={{ display: 'flex', alignItems: 'center', padding: 14, borderBottom: i < days.length - 1 ? '1px solid var(--cl-subtle)' : 'none' }}>
-                  <span style={{ flex: 1, fontWeight: 700, fontSize: 14, color: d.active ? 'var(--cl-ink)' : 'var(--cl-muted-2)' }}>{d.label}</span>
-                  <Toggle on={d.active} onChange={() => toggleDay(i)} />
+              {WEEK.map((day, i) => (
+                <div key={day} style={{ display: 'flex', alignItems: 'center', padding: 14, borderBottom: i < WEEK.length - 1 ? '1px solid var(--cl-subtle)' : 'none' }}>
+                  <span style={{ flex: 1, fontWeight: 700, fontSize: 14, color: openDays.includes(day) ? 'var(--cl-ink)' : 'var(--cl-muted-2)' }}>
+                    {DAY_LABELS[day]}
+                  </span>
+                  <Toggle on={openDays.includes(day)} onChange={() => toggleDay(day)} />
                 </div>
               ))}
             </AppCard>
-            <p style={{ fontSize: 11.5, color: 'var(--cl-muted-2)', margin: '11px 2px 0' }}>You can set exact time slots per day later from Availability.</p>
+            <p style={{ fontSize: 11.5, lineHeight: 1.45, color: 'var(--cl-muted-2)', margin: '11px 2px 0' }}>
+              Every hour from 5am to 9pm is offered on the days you pick. Narrow them
+              down any time from Availability on your dashboard.
+            </p>
           </>
         )}
 

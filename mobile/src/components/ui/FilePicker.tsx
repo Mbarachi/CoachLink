@@ -114,7 +114,7 @@ const FilePicker: React.FC<FilePickerProps> = ({
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
           {preview
-            ? <img src={preview} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            ? <img src={preview} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: '50% 30%' }} />
             : <span style={{ fontSize: 10.5, color: 'var(--cl-muted-2)', textAlign: 'center', padding: 4 }}>
                 {value ? 'No preview' : ''}
               </span>}

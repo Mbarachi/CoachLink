@@ -6,6 +6,7 @@ export * from './useNotifications';
 export * from './usePayouts';
 export * from './useReviews';
 export * from './usePushNavigator';
+export * from './usePushToggle';
 export * from './useRefetchOnResume';
 export * from './useSessionWatch';
 export * from './useMe';

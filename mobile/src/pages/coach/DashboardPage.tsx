@@ -5,8 +5,10 @@ import {
   AppCard, AppPage, EmptyState, InitialsAvatar, NotificationBell, PageBody, QueryState,
   RatingStar, StatusPill, VerifyEmailBanner,
 } from '@/components/ui';
-import { useBookingRequests, useMyCoachProfile } from '@/hooks';
-import { formatSessionDate, formatSessionTime, fullName, initialsOf, timeOfDayGreeting } from '@/lib/format';
+import { useBookingRequests, useMyCoachProfile, usePayouts } from '@/hooks';
+import {
+  formatNaira, formatSessionDate, formatSessionTime, fullName, initialsOf, timeOfDayGreeting,
+} from '@/lib/format';
 import VerificationCard from '@/components/coach/VerificationCard';
 import { useAuthStore } from '@/store/auth.store';
 
@@ -52,6 +54,20 @@ const DashboardPage: React.FC = () => {
   const mine = useMyCoachProfile();
   const myProfile = mine.data?.profile;
 
+  // What actually reached their bank this calendar month. Sent only, because a
+  // payout still in flight is not money they have.
+  const payouts = usePayouts();
+  const earnedThisMonth = useMemo(() => {
+    const now = new Date();
+    return (payouts.data ?? [])
+      .filter((p) => {
+        if (p.status !== 'SENT') return false;
+        const at = new Date(p.createdAt);
+        return at.getMonth() === now.getMonth() && at.getFullYear() === now.getFullYear();
+      })
+      .reduce((total, p) => total + p.amount, 0);
+  }, [payouts.data]);
+
   return (
     <AppPage padding="screen">
       <PageBody refreshable pb={96}>
@@ -81,8 +97,11 @@ const DashboardPage: React.FC = () => {
           <StatCard val={String(upcomingSessions)} label="Upcoming sessions" />
         </div>
         <div style={{ display: 'flex', gap: 10, marginTop: 10 }}>
-          {/* Earnings need the Payments module, which isn't built yet. */}
-          <StatCard val="₦0" label="Earned this month" />
+          <StatCard
+            val={formatNaira(earnedThisMonth)}
+            label="Earned this month"
+            onClick={() => history.push('/coach/earnings')}
+          />
           <StatCard
             onClick={() => history.push('/coach/reviews')}
             val={myProfile && myProfile.totalReviews > 0

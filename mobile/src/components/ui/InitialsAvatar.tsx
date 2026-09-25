@@ -50,7 +50,10 @@ const InitialsAvatar: React.FC<InitialsAvatarProps> = ({
           src={src as string}
           alt=""
           onError={() => setFailed(true)}
-          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+          // On a portrait photo in a square tile, cover keeps the middle and
+          // crops the top — so faces land low and the room fills the frame.
+          // Biasing upward puts the head where a face belongs.
+          style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: '50% 30%', display: 'block' }}
         />
       ) : initials}
     </div>

@@ -86,3 +86,42 @@ export async function requestPushPermission(): Promise<boolean> {
     return false;
   }
 }
+
+/**
+ * Whether this device is currently set to receive push.
+ *
+ * Reads OneSignal rather than a local flag: the OS setting can change outside
+ * the app, and a switch that shows a remembered answer instead of the real one
+ * is worse than no switch.
+ */
+export async function isPushOptedIn(): Promise<boolean> {
+  if (!Capacitor.isNativePlatform() || !APP_ID) return false;
+  try {
+    return await OneSignal.User.pushSubscription.getOptedInAsync();
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Turns push on or off for this device.
+ *
+ * Returns what the state actually became, not what was asked for — opting in
+ * needs OS permission, and someone who refused that prompt earlier will stay
+ * off however the switch was flipped.
+ */
+export async function setPushOptedIn(on: boolean): Promise<boolean> {
+  if (!Capacitor.isNativePlatform() || !APP_ID) return false;
+  try {
+    if (on) {
+      // optIn prompts if permission was never asked; if it was refused, this
+      // cannot undo that, which is why the result is read back.
+      await OneSignal.User.pushSubscription.optIn();
+    } else {
+      await OneSignal.User.pushSubscription.optOut();
+    }
+    return await OneSignal.User.pushSubscription.getOptedInAsync();
+  } catch {
+    return false;
+  }
+}
