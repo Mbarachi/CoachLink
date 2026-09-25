@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "icons": "capacitor-assets generate --assetPath assets --iconBackgroundColor \"#241C13\" --iconBackgroundColorDark \"#241C13\" --splashBackgroundColor \"#241C13\" --splashBackgroundColorDark \"#241C13\"",
     "preview": "vite preview",
     "lint": "eslint src --ext ts,tsx",
     "cap:sync": "cap sync",
@@ -38,6 +39,7 @@
     "zustand": "^5.0.0"
   },
   "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
     "@capacitor/cli": "^7.6.7",
     "@types/react": "^18.3.0",
     "@types/react-dom": "^18.3.0",
