@@ -137,16 +137,18 @@ for dark UI, but a step down. The knob is dark `--cl-ink-fill` (`#3A2E20`),
 which is also the emphasis card, so the two move together; decoupling them
 costs a second token.
 
-**Settings toggles are decoration.** Push notifications, Email updates and
-Booking reminders are `useState` in the page — they flip, and nothing reads
-them. The push one is the problem: someone who turns it off still gets pushed,
-which is a promise broken rather than a feature missing. Either wire it to
-OneSignal's subscription state or take the row out.
+**No athlete profile editor.** A coach can edit their profile; an athlete
+cannot. `updateMe` exists on the backend and nothing calls it, so name, phone
+and email are whatever sign-up captured. The Settings rows that implied
+otherwise were removed rather than left as dead ends.
 
-**Twelve settings rows do nothing.** Edit profile (athlete), Email & password,
-Location, Payout account, Help & FAQ and Privacy & terms, across both roles.
-Payout account is the odd one: the form exists, on the Earnings screen, so that
-row only needs pointing at it.
+**The reset password flow leaves the app.** Reviewed 2026-09-25 and parked. The
+new password is typed on a Firebase-branded web page, `/auth/reset-success` is
+routed but unreachable, and `/auth/forgot-password/otp` is named for a code the
+flow does not use. A fully in-app six-digit flow — which is what the PRD and
+mockups specify — needs an email provider and verified sending DNS, because
+there is no mail transport in the backend at all: Firebase Auth sends every
+email the product currently sends.
 
 ---
 
