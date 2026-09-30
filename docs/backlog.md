@@ -38,12 +38,6 @@ See Open risks.
 
 ## Deferred
 
-**Resuming incomplete onboarding** — nice to have. If someone quits the coach
-wizard midway, progress is lost. Worse than the lost typing: they are already
-authenticated, so the next launch drops them into the app with no coach
-profile and no prompt to finish. Needs step state persisted and a route back
-into the wizard.
-
 **Verification email presentation** — Firebase sends from
 `noreply@coachlink-22ee0.firebaseapp.com`, which reads as spam and is a strong
 filtering signal. Three levels, increasing effort: customise the template in
@@ -150,7 +144,9 @@ Recorded so the PRD screen inventory is not mistaken for the whole build.
 
 - **Dark mode** (2026-09-22). System / Light / Dark, chosen in Settings, with a
   warm dark palette. Not in the PRD at any version.
-- **Push notifications** (OneSignal) and an athlete profile editor.
+- **Push notifications** (OneSignal), an athlete profile editor, and resuming
+  the coach wizard (text is kept on the phone; the photo and ID are not, so they
+  are picked again).
 - **Coach resubmit screen.** The PRD has no rejected-coach path at all; the
   flow exists so a rejection is answerable rather than terminal.
 - **Hero carousel gutter** on athlete home, and the per-sport coach hero noted

@@ -4,6 +4,8 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { queryClient } from '@/lib/queryClient';
 import type { User } from '@/types';
 
+import { useCoachDraftStore } from './coachDraft.store';
+
 interface AuthState {
   user: User | null;
   accessToken: string | null;
@@ -35,6 +37,7 @@ export const useAuthStore = create<AuthState>()(
 
       clearAuth: () => {
         queryClient.clear();
+        useCoachDraftStore.getState().clear();
         set({ user: null, accessToken: null, isAuthenticated: false });
       },
     }),

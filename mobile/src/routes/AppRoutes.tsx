@@ -5,6 +5,7 @@ import CoachDetailsPage from '@/pages/athlete/CoachDetailsPage';
 import React from 'react';
 import { Redirect, Route } from 'react-router-dom';
 
+import CoachGate from '@/components/CoachGate';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import CheckInboxPage from '@/pages/auth/CheckInboxPage';
 import HelpPage from '@/pages/legal/HelpPage';
@@ -26,6 +27,11 @@ import { useAuthStore } from '@/store/auth.store';
 
 import AthleteRoutes from './AthleteRoutes';
 import CoachRoutes from './CoachRoutes';
+
+/** Defined out here so it keeps one identity — an inline one would remount the tabs. */
+const GatedCoachRoutes: React.FC = () => (
+  <CoachGate><CoachRoutes /></CoachGate>
+);
 
 const AppRoutes: React.FC = () => {
   const role = useAuthStore((s) => s.user?.role);
@@ -73,7 +79,7 @@ const AppRoutes: React.FC = () => {
       <ProtectedRoute path="/athlete" component={AthleteRoutes} roles={['ATHLETE', 'PARENT']} />
 
       {/* ── Protected: Coach ───────────────────────────────── */}
-      <ProtectedRoute path="/coach" component={CoachRoutes} roles={['COACH']} />
+      <ProtectedRoute path="/coach" component={GatedCoachRoutes} roles={['COACH']} />
 
       {/* ── Default redirect ───────────────────────────────── */}
       <Route exact path="/">

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { AppButton, AppCard, AppInput, AppPage, BackButton, FilePicker, FormLabel, LoadingOverlay } from '@/components/ui';
@@ -7,6 +7,7 @@ import { uploadCoachFiles } from '@/services/firebase/uploads';
 import { getErrorMessage } from '@/lib/apiError';
 import { DAY_LABELS, SLOTS } from '@/lib/slots';
 import { useAuthStore } from '@/store/auth.store';
+import { EMPTY_DRAFT, useCoachDraftStore } from '@/store/coachDraft.store';
 import { useUiStore } from '@/store/ui.store';
 
 /** Monday first, the way a coach thinks about their week. */
@@ -32,25 +33,33 @@ const CoachOnboardingPage: React.FC = () => {
   const history = useHistory();
   const showToast = useUiStore((s) => s.showToast);
   const updateUser = useAuthStore((s) => s.updateUser);
-  const [step, setStep] = useState(0);
+
+  // Picks up where a coach left off. Read once: after this the local state is
+  // the truth, and the effect below writes it back.
+  const uid = useAuthStore((s) => s.user?.id) ?? '';
+  const [initial] = useState(() => {
+    const saved = useCoachDraftStore.getState();
+    return saved.uid === uid ? saved.draft : EMPTY_DRAFT;
+  });
+  const [step, setStep] = useState(initial.step);
 
   const sportsQuery = useSports();
   const sports = sportsQuery.data ?? [];
   const createProfile = useCreateCoachProfile();
 
-  const [sportId, setSportId] = useState<string | null>(null);
+  const [sportId, setSportId] = useState<string | null>(initial.sportId);
   const chosenSport = sportId ?? sports[0]?.id ?? null;
   const sportName = sports.find((s) => s.id === chosenSport)?.name ?? '—';
 
-  const [experience, setExperience] = useState('5');
-  const [about, setAbout] = useState('');
+  const [experience, setExperience] = useState(initial.experience);
+  const [about, setAbout] = useState(initial.about);
 
-  const [venue, setVenue] = useState('');
-  const [price, setPrice] = useState('');
+  const [venue, setVenue] = useState(initial.venue);
+  const [price, setPrice] = useState(initial.price);
 
   // Indexed by JS weekday (0 = Sunday), because that is what Availability is
   // keyed on and what the athlete's date picker compares against.
-  const [openDays, setOpenDays] = useState<number[]>([1, 3, 5]);
+  const [openDays, setOpenDays] = useState<number[]>(initial.openDays);
   const toggleDay = (day: number) =>
     setOpenDays(prev => (prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day]));
 
@@ -59,6 +68,13 @@ const CoachOnboardingPage: React.FC = () => {
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [idFile, setIdFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
+
+  useEffect(() => {
+    if (!uid) return;
+    useCoachDraftStore.getState().save(uid, {
+      step, sportId: chosenSport, experience, about, venue, price, openDays,
+    });
+  }, [uid, step, chosenSport, experience, about, venue, price, openDays]);
 
   const back = () => {
     // Step 0 returns to role selection, which replaced itself in the history
@@ -101,6 +117,7 @@ const CoachOnboardingPage: React.FC = () => {
       });
       // Creating a profile promotes the account to COACH server-side.
       updateUser({ role: 'COACH' });
+      useCoachDraftStore.getState().clear();
       showToast('Submitted — an admin will review your profile.', 'success');
       history.replace('/coach/dashboard');
     } catch (err) {

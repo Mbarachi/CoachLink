@@ -61,7 +61,7 @@ export const coachesService = {
     const uid = firebaseAuth().currentUser?.uid;
     if (!uid) throw new Error('You must be signed in.');
     const snap = await getDocs(query(coaches(), where('userId', '==', uid), fsLimit(1)));
-    if (snap.empty) throw new Error('You do not have a coach profile yet.');
+    if (snap.empty) throw new NotFoundError('You do not have a coach profile yet.');
     return coachFromSnap(snap.docs[0]);
   },
 
