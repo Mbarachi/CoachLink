@@ -37,3 +37,15 @@ export const resetPasswordSchema = z
   });
 
 export type ResetPasswordValues = z.infer<typeof resetPasswordSchema>;
+
+export const editProfileSchema = z.object({
+  firstName: z.string().trim().min(1, 'First name is required'),
+  lastName: z.string().trim(),
+  phoneNumber: z
+    .string()
+    .trim()
+    .min(1, 'Phone number is required')
+    .refine(v => NIGERIAN_PHONE.test(v.replace(/\s/g, '')), 'Enter a valid 11-digit phone number'),
+});
+
+export type EditProfileValues = z.infer<typeof editProfileSchema>;

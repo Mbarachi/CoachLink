@@ -23,6 +23,7 @@ const ProfilePage: React.FC = () => {
   ], [requests, reviewed]);
 
   const menuItems = [
+    { label: 'Edit profile',    action: () => history.push('/athlete/profile/edit') },
     { label: 'My bookings',     action: () => history.push('/athlete/bookings') },
     { label: 'Notifications',   action: () => history.push('/athlete/notifications') },
     { label: 'Help & FAQ',      action: () => history.push('/help') },

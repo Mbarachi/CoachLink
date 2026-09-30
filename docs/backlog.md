@@ -51,16 +51,6 @@ the Firebase console; verify a custom sending domain, which removes the main
 trigger; or generate the link server-side and send through Resend, which the
 Nest backend already did.
 
-**Push notifications** — V2 per the PRD's own roadmap, which settles the
-question the earlier entry here left open: MVP is the in-app list, and that is
-built. The design is already one signal for both channels. `notify()` writes a
-row to `notifications`; the in-app list queries it, and push would be a second
-consumer — an `onDocumentCreated` trigger reading the same row and sending to
-FCM. The row already carries `title`, `message` and `link` because those are
-exactly a push payload. Adding push therefore touches one new file and changes
-no event source. The real remaining cost is device tokens on the user document,
-the permission prompt, and APNs/FCM certificates.
-
 **Coach-side notifications — deliberately out.** The PRD puts the notifications
 screen under athlete/parent screens only, and a coach's equivalents are better
 placed already: the dashboard's pending-requests count, the incoming-requests
@@ -114,12 +104,6 @@ are capped at an 800px long edge on the phone before upload, but the ones
 already in Storage were not, and a list tile is 62x62. Either re-upload them or
 write a Storage-triggered function that makes a small variant for the list.
 
-The crop is centre-biased too. `object-fit: cover` on a 3:4 portrait in a
-square tile keeps the middle and discards the top, but on portrait photos the
-head sits in the upper third — so faces land low and the room fills the frame.
-`object-position: 50% 30%` fixes it across the board at no cost.
-
-
 **The iOS deployment target is set by hand, outside git.** OneSignal's pod
 needs iOS 15, and `npx cap add ios` generates a project targeting 14, so
 `cap sync` fails on a fresh checkout with "required a higher minimum deployment
@@ -137,11 +121,6 @@ for dark UI, but a step down. The knob is dark `--cl-ink-fill` (`#3A2E20`),
 which is also the emphasis card, so the two move together; decoupling them
 costs a second token.
 
-**No athlete profile editor.** A coach can edit their profile; an athlete
-cannot. `updateMe` exists on the backend and nothing calls it, so name, phone
-and email are whatever sign-up captured. The Settings rows that implied
-otherwise were removed rather than left as dead ends.
-
 **The reset password flow leaves the app.** Reviewed 2026-09-25 and parked. The
 new password is typed on a Firebase-branded web page, `/auth/reset-success` is
 routed but unreachable, and `/auth/forgot-password/otp` is named for a code the
@@ -154,18 +133,14 @@ email the product currently sends.
 
 ## PRD drift
 
-Mostly closed. The PRD's Technical Stack section now records what was actually
+Closed, apart from the note below. The PRD's Technical Stack section now records what was actually
 built and why it differs, and `backend/` has been deleted — a dead NestJS
 service left in the tree would have cost whoever joins next a day of reading
 the wrong thing.
 
-One left:
-
-- **OTP verification.** The PRD lists an "OTP Verification" screen and the
-  design mockups show a six-digit code. Built as an email verification link
-  instead — `/auth/otp` renders `CheckInboxPage`, and nothing sends a code.
-  Worth deciding whether the mockups change or the flow does, since the screen
-  a user meets is still titled as though a code is coming.
+The PRD still lists an OTP screen and the mockups show a six-digit code; the
+built flow is an emailed link (`CheckInboxPage`, titled "Check your inbox").
+The reset flow is the same story — see Known compromises.
 
 ---
 
@@ -175,6 +150,7 @@ Recorded so the PRD screen inventory is not mistaken for the whole build.
 
 - **Dark mode** (2026-09-22). System / Light / Dark, chosen in Settings, with a
   warm dark palette. Not in the PRD at any version.
+- **Push notifications** (OneSignal) and an athlete profile editor.
 - **Coach resubmit screen.** The PRD has no rejected-coach path at all; the
   flow exists so a rejection is answerable rather than terminal.
 - **Hero carousel gutter** on athlete home, and the per-sport coach hero noted

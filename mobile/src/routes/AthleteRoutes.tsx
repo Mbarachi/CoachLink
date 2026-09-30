@@ -29,6 +29,7 @@ import ProfilePage from '@/pages/athlete/ProfilePage';
 import RequestDetailsPage from '@/pages/athlete/RequestDetailsPage';
 import ReviewSentPage from '@/pages/athlete/ReviewSentPage';
 import SearchCoachesPage from '@/pages/athlete/SearchCoachesPage';
+import EditProfilePage from '@/pages/athlete/EditProfilePage';
 import SettingsPage from '@/pages/athlete/SettingsPage';
 
 const AthleteRoutes: React.FC = () => (
@@ -43,6 +44,7 @@ const AthleteRoutes: React.FC = () => (
       <Route path="/athlete/requests/:requestId"        component={RequestDetailsPage} exact />
       <Route path="/athlete/notifications" component={NotificationsPage} exact />
       <Route path="/athlete/profile"       component={ProfilePage}       exact />
+      <Route path="/athlete/profile/edit"  component={EditProfilePage}   exact />
 
       <Route path="/athlete/coaches"                              component={CoachListingPage}   exact />
       <Route path="/athlete/coaches/:id"                          component={CoachDetailsPage}   exact />
