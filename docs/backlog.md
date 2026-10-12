@@ -69,6 +69,24 @@ compulsory uploads and an unresolved drop-off problem, and the sport scene
 gives the page somewhere to breathe without it. Revisit only if coaches start
 asking to show their own venue.
 
+**Training venue is free text — map or list?** A coach types any venue they
+like in the wizard, and nothing checks it is a real place. Two costs: an athlete
+can be sent somewhere that does not exist or is spelt so it cannot be found, and
+the search filter chips are built straight from what coaches typed
+(`venuesOf`), so "Festival Hotel Pool" and "festival hotel pool" become two
+chips. Options, increasing effort:
+- **A fixed list of known venues** the coach picks from, with "Other" sending a
+  new name to admin to add. Cheapest, fits a single area like Amuwo Odofin, and
+  fixes the duplicate chips outright.
+- **Admin checks the venue during coach approval**, as it already checks the ID.
+  No new code beyond a line on the review screen, but a typo still goes live.
+- **Map-based**: Google Places autocomplete, storing a place ID and
+  coordinates. Proves the place exists, enables "near me" and directions, but
+  adds an API key, billing and a map screen to a wizard with a drop-off problem.
+
+The fixed list is the likely first step; maps only earn their cost once the
+app spreads past a few neighbourhoods.
+
 ---
 
 **Reviews cannot be tested without a past session.** Completion requires the
