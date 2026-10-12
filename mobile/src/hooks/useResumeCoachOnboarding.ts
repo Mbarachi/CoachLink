@@ -1,47 +1,30 @@
 import { useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
 
 import { coachesService } from '@/services';
 import { useAuthStore } from '@/store/auth.store';
 
 /**
- * On launch, sends someone who is partway through becoming a coach back into
- * the wizard instead of the athlete home they would otherwise land on.
+ * Re-asks the server on every launch whether the account is partway through
+ * coach sign-up, and keeps the phone's answer in step with it. The server
+ * wins: a sign-up finished or abandoned on another phone stops this one
+ * sending them back, and one started elsewhere starts doing so.
  *
- * A side effect rather than a route guard on purpose. A guard has to render
- * something while it asks the server, and anything it renders inside Ionic's
- * outlet that is not the page itself either strands a spinner or remounts in
- * a loop — both of which shipped. Here the app renders as normal and simply
- * moves once the answer is in.
- *
- * The startup redirect normally gets there first, from the hint the phone
- * keeps; this is the backstop for when that hint is missing or out of date.
- *
- * Runs once per launch. Sign-in makes the same check itself, before choosing
- * where to go, so it never shows the athlete home first.
+ * Moving the user is not done here. The athlete routes are closed while the
+ * answer is yes (ProtectedRoute), so flipping it is enough. BootGate covers
+ * the first launch, when the phone has no answer to start from.
  */
 export function useResumeCoachOnboarding(): void {
-  const history = useHistory();
-
   useEffect(() => {
-    const { isAuthenticated, user } = useAuthStore.getState();
-    if (!isAuthenticated || user?.role === 'COACH') return;
+    const { isAuthenticated, user, coachDraftPending } = useAuthStore.getState();
+    // BootGate is already asking when there is no answer yet.
+    if (!isAuthenticated || user?.role === 'COACH' || coachDraftPending === null) return;
 
     let cancelled = false;
     void coachesService.getMyDraft()
       .then((draft) => {
-        if (cancelled) return;
-        // Keeps the phone's hint in step with the server, which wins: a draft
-        // finished or abandoned on another phone stops sending this one back.
-        useAuthStore.getState().setCoachDraftPending(Boolean(draft));
-        if (!draft) return;
-        // Only from the athlete side: never pull someone off the role screen,
-        // out of sign-up, or out of the wizard itself.
-        if (history.location.pathname.startsWith('/athlete')) {
-          history.replace('/auth/coach-onboarding');
-        }
+        if (!cancelled) useAuthStore.getState().setCoachDraftPending(Boolean(draft));
       })
       .catch(() => undefined);
     return () => { cancelled = true; };
-  }, [history]);
+  }, []);
 }

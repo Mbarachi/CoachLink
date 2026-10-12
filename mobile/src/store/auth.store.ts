@@ -12,9 +12,10 @@ interface AuthState {
    * This phone's memory that the account is partway through coach sign-up.
    * The server's coachDrafts document is the truth; this copy exists so a
    * cold start can open the wizard straight away instead of flashing the
-   * athlete home while it asks.
+   * athlete home while it asks. Null means this phone has not asked yet, which
+   * is when BootGate holds the app until the server answers.
    */
-  coachDraftPending: boolean;
+  coachDraftPending: boolean | null;
 
   setCoachDraftPending: (pending: boolean) => void;
   setAuth: (user: User, token: string) => void;
@@ -28,7 +29,7 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       accessToken: null,
       isAuthenticated: false,
-      coachDraftPending: false,
+      coachDraftPending: null,
 
       setCoachDraftPending: (coachDraftPending) => set({ coachDraftPending }),
 
@@ -36,7 +37,10 @@ export const useAuthStore = create<AuthState>()(
         // Drop anything cached for whoever was signed in before, so a new
         // account never renders the previous one's bookings or profile.
         queryClient.clear();
-        set({ user, accessToken, isAuthenticated: true });
+        // A fresh session starts from "not mid coach sign-up": true for a new
+        // account, and sign-in asks the server before it navigates anywhere.
+        // Null here would hold the whole app behind BootGate mid sign-up.
+        set({ user, accessToken, isAuthenticated: true, coachDraftPending: false });
       },
 
       updateUser: (partial) =>
@@ -46,7 +50,7 @@ export const useAuthStore = create<AuthState>()(
 
       clearAuth: () => {
         queryClient.clear();
-        set({ user: null, accessToken: null, isAuthenticated: false, coachDraftPending: false });
+        set({ user: null, accessToken: null, isAuthenticated: false, coachDraftPending: null });
       },
     }),
     {

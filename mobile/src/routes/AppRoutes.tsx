@@ -74,7 +74,12 @@ const AppRoutes: React.FC = () => {
       <Route path="/auth/coach-onboarding" component={CoachOnboardingPage} exact />
 
       {/* ── Protected: Athlete / Parent ────────────────────── */}
-      <ProtectedRoute path="/athlete" component={AthleteRoutes} roles={['ATHLETE', 'PARENT']} />
+      <ProtectedRoute
+        path="/athlete"
+        component={AthleteRoutes}
+        roles={['ATHLETE', 'PARENT']}
+        closedDuringCoachSignup
+      />
 
       {/* ── Protected: Coach ───────────────────────────────── */}
       <ProtectedRoute path="/coach" component={CoachRoutes} roles={['COACH']} />
@@ -83,7 +88,7 @@ const AppRoutes: React.FC = () => {
       <Route exact path="/">
         {role === 'COACH' ? (
           <Redirect to="/coach/dashboard" />
-        ) : role && coachDraftPending ? (
+        ) : role && coachDraftPending === true ? (
           // Partway through coach sign-up: straight back to it, no detour home.
           <Redirect to="/auth/coach-onboarding" />
         ) : role ? (

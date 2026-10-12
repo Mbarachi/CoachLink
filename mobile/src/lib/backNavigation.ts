@@ -36,8 +36,15 @@ const isAppRoute = (path: string) =>
 
 export function resolveBack(
   pathname: string,
-  { isAuthenticated, role }: { isAuthenticated: boolean; role?: UserRole },
+  { isAuthenticated, role, coachDraftPending }:
+    { isAuthenticated: boolean; role?: UserRole; coachDraftPending?: boolean | null },
 ): BackAction {
+  // Mid coach sign-up the athlete side is closed, so home would bounce
+  // straight back into the wizard. The role screen is as far back as it goes.
+  if (isAuthenticated && coachDraftPending === true && pathname === '/auth/role') {
+    return { type: 'exit' };
+  }
+
   if (ROOTS.has(pathname)) {
     return { type: 'exit' };
   }

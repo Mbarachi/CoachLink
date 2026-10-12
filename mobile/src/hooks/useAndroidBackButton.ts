@@ -17,6 +17,7 @@ export function useAndroidBackButton(): void {
   const location = useLocation();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const role = useAuthStore((s) => s.user?.role);
+  const coachDraftPending = useAuthStore((s) => s.coachDraftPending);
 
   useEffect(() => {
     const handle = App.addListener('backButton', ({ canGoBack }) => {
@@ -26,7 +27,7 @@ export function useAndroidBackButton(): void {
         return;
       }
 
-      const action = resolveBack(location.pathname, { isAuthenticated, role });
+      const action = resolveBack(location.pathname, { isAuthenticated, role, coachDraftPending });
 
       if (action.type === 'exit') {
         void App.exitApp();
@@ -47,5 +48,5 @@ export function useAndroidBackButton(): void {
     });
 
     return () => { void handle.then((l) => l.remove()); };
-  }, [history, location.pathname, isAuthenticated, role]);
+  }, [history, location.pathname, isAuthenticated, role, coachDraftPending]);
 }

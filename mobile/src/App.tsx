@@ -6,6 +6,7 @@ import React from 'react';
 
 import ToastContainer from '@/components/ui/ToastContainer';
 import { queryClient } from '@/lib/queryClient';
+import BootGate from '@/components/BootGate';
 import AppRoutes from '@/routes/AppRoutes';
 
 /* Core Ionic CSS */
@@ -37,9 +38,11 @@ setupIonicReact({ hardwareBackButton: false });
 const App: React.FC = () => (
   <QueryClientProvider client={queryClient}>
     <IonApp>
-      <IonReactRouter>
-        <AppRoutes />
-      </IonReactRouter>
+      <BootGate>
+        <IonReactRouter>
+          <AppRoutes />
+        </IonReactRouter>
+      </BootGate>
       <ToastContainer />
     </IonApp>
     <ReactQueryDevtools initialIsOpen={false} />
