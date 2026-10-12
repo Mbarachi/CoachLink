@@ -315,7 +315,7 @@ const CoachOnboardingPage: React.FC = () => {
               maxBytes={5 * 1024 * 1024}
               allowCamera
               shape="wide"
-              hint="Photo or PDF. Reviewed by an admin, never shown to athletes."
+              hint="Photo or PDF."
             />
 
             <FormLabel style={{ margin: '22px 0 9px' }}>Review</FormLabel>
