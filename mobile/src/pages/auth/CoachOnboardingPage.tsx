@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { AppButton, AppCard, AppInput, AppPage, BackButton, FilePicker, FormLabel, LoadingOverlay, LoadingState } from '@/components/ui';
 import { useCreateCoachProfile, useSports } from '@/hooks';
 import { uploadCoachFiles } from '@/services/firebase/uploads';
 import { getErrorMessage } from '@/lib/apiError';
+import { setBackOverride } from '@/lib/backNavigation';
 import { DAY_LABELS, SLOTS } from '@/lib/slots';
 import { EMPTY_DRAFT, type CoachDraft } from '@/lib/coachDraft';
 import { coachesService } from '@/services';
@@ -120,6 +121,15 @@ const CoachOnboardingPage: React.FC = () => {
       setStep(step - 1);
     }
   };
+  // The phone's back button does what the on-screen one does: one step back,
+  // and from the first step, back to wherever they came from.
+  const backRef = useRef(back);
+  backRef.current = back;
+  useEffect(() => {
+    setBackOverride('/auth/coach-onboarding', () => backRef.current());
+    return () => setBackOverride('/auth/coach-onboarding', null);
+  }, []);
+
   const next = () => {
     if (step === 0 && !experience.replace(/[^\d]/g, '')) {
       showToast('Enter your years of experience.', 'warning');

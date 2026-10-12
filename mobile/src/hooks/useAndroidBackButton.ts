@@ -2,7 +2,7 @@ import { App } from '@capacitor/app';
 import { useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { resolveBack } from '@/lib/backNavigation';
+import { backOverrideFor, resolveBack } from '@/lib/backNavigation';
 import { useAuthStore } from '@/store/auth.store';
 
 /**
@@ -20,6 +20,12 @@ export function useAndroidBackButton(): void {
 
   useEffect(() => {
     const handle = App.addListener('backButton', ({ canGoBack }) => {
+      const override = backOverrideFor(location.pathname);
+      if (override) {
+        override();
+        return;
+      }
+
       const action = resolveBack(location.pathname, { isAuthenticated, role });
 
       if (action.type === 'exit') {

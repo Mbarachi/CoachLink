@@ -28,7 +28,11 @@ import '@ionic/react/css/display.css';
 /* Theme variables */
 import '@/theme/variables.css';
 
-setupIonicReact();
+// Ionic's own hardware back handling is off: useAndroidBackButton is the only
+// handler. With both on, every press did two things at once, Ionic stepping
+// back through raw history while ours redirected, and repeated presses walked
+// a signed-in user all the way back to the Welcome screen.
+setupIonicReact({ hardwareBackButton: false });
 
 const App: React.FC = () => (
   <QueryClientProvider client={queryClient}>

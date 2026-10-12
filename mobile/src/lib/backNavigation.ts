@@ -61,3 +61,20 @@ export function resolveBack(
 
   return { type: 'history' };
 }
+
+/**
+ * A screen that knows better than history what back means — a multi-step
+ * form, where back is the previous step — can take the button over while it
+ * is showing. Keyed by path, because Ionic keeps a page mounted after leaving
+ * it, so "registered" alone would not mean "on screen".
+ */
+const overrides = new Map<string, () => void>();
+
+export function setBackOverride(pathname: string, handler: (() => void) | null): void {
+  if (handler) overrides.set(pathname, handler);
+  else overrides.delete(pathname);
+}
+
+export function backOverrideFor(pathname: string): (() => void) | undefined {
+  return overrides.get(pathname);
+}
