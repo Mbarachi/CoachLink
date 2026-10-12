@@ -5,6 +5,7 @@ import type { QueryConstraint } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
 
 import { NotFoundError } from '@/lib/apiError';
+import { EMPTY_DRAFT, type CoachDraft } from '@/lib/coachDraft';
 import { firebaseAuth, firebaseDb, firebaseFunctions } from '@/lib/firebase';
 import type { Coach, CoachQueryParams, CreateCoachProfileDto, UpdateCoachProfileDto } from '@/types';
 
@@ -63,6 +64,37 @@ export const coachesService = {
     const snap = await getDocs(query(coaches(), where('userId', '==', uid), fsLimit(1)));
     if (snap.empty) throw new NotFoundError('You do not have a coach profile yet.');
     return coachFromSnap(snap.docs[0]);
+  },
+
+  /**
+   * The signed-in account's unfinished onboarding, or null if there is none.
+   * Waits for Firebase to restore the session first: on a cold start this runs
+   * before that has happened, and asking too early would read as "no draft".
+   */
+  async getMyDraft(): Promise<CoachDraft | null> {
+    await firebaseAuth().authStateReady();
+    const uid = firebaseAuth().currentUser?.uid;
+    if (!uid) return null;
+    const snap = await getDoc(doc(firebaseDb(), 'coachDrafts', uid));
+    if (!snap.exists()) return null;
+    const d = snap.data();
+    return {
+      step: typeof d.step === 'number' ? d.step : 0,
+      sportId: typeof d.sportId === 'string' ? d.sportId : null,
+      experience: d.experience ?? '',
+      about: d.about ?? '',
+      venue: d.venue ?? '',
+      price: d.price ?? '',
+      openDays: Array.isArray(d.openDays) ? d.openDays : EMPTY_DRAFT.openDays,
+    };
+  },
+
+  async saveDraft(draft: CoachDraft): Promise<void> {
+    await httpsCallable(firebaseFunctions(), 'saveCoachDraft')(draft);
+  },
+
+  async discardDraft(): Promise<void> {
+    await httpsCallable(firebaseFunctions(), 'discardCoachDraft')({});
   },
 
   async create(dto: CreateCoachProfileDto): Promise<Coach> {

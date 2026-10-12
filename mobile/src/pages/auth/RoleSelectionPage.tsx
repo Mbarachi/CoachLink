@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 import { AppCard, AppPage } from '@/components/ui';
 import type { UserRole } from '@/types';
 import { useAuthStore } from '@/store/auth.store';
-import { useCoachDraftStore } from '@/store/coachDraft.store';
+import { coachesService } from '@/services';
 
 const roles = [
   {
@@ -47,9 +47,16 @@ const RoleSelectionPage: React.FC = () => {
   const updateUser = useAuthStore((s) => s.updateUser);
 
   const pick = (r: typeof roles[0]) => {
+    if (r.key === 'COACH') {
+      // Not marked as a coach yet, on the phone or the server: that happens
+      // when the profile is submitted. Marking it early is what sent a coach
+      // who quit halfway onto a coach dashboard with no profile behind it.
+      history.replace(r.dest);
+      return;
+    }
     updateUser({ role: r.key as UserRole });
-    // Choosing the other side is giving up on the coach wizard.
-    if (r.key !== 'COACH') useCoachDraftStore.getState().clear();
+    // Choosing the other side is giving up on the coach wizard, if one was started.
+    void coachesService.discardDraft().catch(() => undefined);
     history.replace(r.dest);
   };
 

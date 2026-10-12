@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { AppButton, AppCard, AppInput, AppPage, BackButton, FilePicker, FormLabel, LoadingOverlay } from '@/components/ui';
+import { AppButton, AppCard, AppInput, AppPage, BackButton, FilePicker, FormLabel, LoadingOverlay, LoadingState } from '@/components/ui';
 import { useCreateCoachProfile, useSports } from '@/hooks';
 import { uploadCoachFiles } from '@/services/firebase/uploads';
 import { getErrorMessage } from '@/lib/apiError';
 import { DAY_LABELS, SLOTS } from '@/lib/slots';
+import { EMPTY_DRAFT, type CoachDraft } from '@/lib/coachDraft';
+import { coachesService } from '@/services';
 import { useAuthStore } from '@/store/auth.store';
-import { EMPTY_DRAFT, useCoachDraftStore } from '@/store/coachDraft.store';
 import { useUiStore } from '@/store/ui.store';
 
 /** Monday first, the way a coach thinks about their week. */
@@ -34,32 +35,28 @@ const CoachOnboardingPage: React.FC = () => {
   const showToast = useUiStore((s) => s.showToast);
   const updateUser = useAuthStore((s) => s.updateUser);
 
-  // Picks up where a coach left off. Read once: after this the local state is
-  // the truth, and the effect below writes it back.
-  const uid = useAuthStore((s) => s.user?.id) ?? '';
-  const [initial] = useState(() => {
-    const saved = useCoachDraftStore.getState();
-    return saved.uid === uid ? saved.draft : EMPTY_DRAFT;
-  });
-  const [step, setStep] = useState(initial.step);
+  const [step, setStep] = useState(EMPTY_DRAFT.step);
+  // False until the saved draft has been read, so a returning coach never
+  // sees an empty form flash up and then fill itself in.
+  const [loaded, setLoaded] = useState(false);
 
   const sportsQuery = useSports();
   const sports = sportsQuery.data ?? [];
   const createProfile = useCreateCoachProfile();
 
-  const [sportId, setSportId] = useState<string | null>(initial.sportId);
+  const [sportId, setSportId] = useState<string | null>(EMPTY_DRAFT.sportId);
   const chosenSport = sportId ?? sports[0]?.id ?? null;
   const sportName = sports.find((s) => s.id === chosenSport)?.name ?? '—';
 
-  const [experience, setExperience] = useState(initial.experience);
-  const [about, setAbout] = useState(initial.about);
+  const [experience, setExperience] = useState(EMPTY_DRAFT.experience);
+  const [about, setAbout] = useState(EMPTY_DRAFT.about);
 
-  const [venue, setVenue] = useState(initial.venue);
-  const [price, setPrice] = useState(initial.price);
+  const [venue, setVenue] = useState(EMPTY_DRAFT.venue);
+  const [price, setPrice] = useState(EMPTY_DRAFT.price);
 
   // Indexed by JS weekday (0 = Sunday), because that is what Availability is
   // keyed on and what the athlete's date picker compares against.
-  const [openDays, setOpenDays] = useState<number[]>(initial.openDays);
+  const [openDays, setOpenDays] = useState<number[]>(EMPTY_DRAFT.openDays);
   const toggleDay = (day: number) =>
     setOpenDays(prev => (prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day]));
 
@@ -69,25 +66,59 @@ const CoachOnboardingPage: React.FC = () => {
   const [idFile, setIdFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
 
+  // Picks up where they left off — on this phone or any other, since the
+  // draft lives on the server. With no draft yet, saving the empty one is what
+  // marks the account as partway through, so sign-in can bring them back here.
   useEffect(() => {
-    if (!uid) return;
-    useCoachDraftStore.getState().save(uid, {
-      step, sportId: chosenSport, experience, about, venue, price, openDays,
+    let cancelled = false;
+    void (async () => {
+      let draft: CoachDraft | null = null;
+      try {
+        draft = await coachesService.getMyDraft();
+      } catch {
+        // Offline: start blank rather than strand them on a spinner.
+      }
+      if (cancelled) return;
+      const d = draft ?? EMPTY_DRAFT;
+      setStep(d.step);
+      setSportId(d.sportId);
+      setExperience(d.experience);
+      setAbout(d.about);
+      setVenue(d.venue);
+      setPrice(d.price);
+      setOpenDays(d.openDays);
+      setLoaded(true);
+      if (!draft) void coachesService.saveDraft(EMPTY_DRAFT).catch(() => undefined);
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  /** Saved on every step change, so Continue and Back both keep what was typed. */
+  const saveAt = (nextStep: number) => {
+    void coachesService.saveDraft({
+      step: nextStep, sportId: chosenSport, experience, about, venue, price, openDays,
+    }).catch(() => {
+      showToast("Couldn't save your progress — check your connection.", 'warning');
     });
-  }, [uid, step, chosenSport, experience, about, venue, price, openDays]);
+  };
 
   const back = () => {
     // Step 0 returns to role selection, which replaced itself in the history
     // stack on the way here — goBack() would skip past it to verification.
     if (step === 0) history.replace('/auth/role');
-    else setStep(s => s - 1);
+    else {
+      saveAt(step - 1);
+      setStep(step - 1);
+    }
   };
   const next = () => {
     if (step === 0 && !experience.replace(/[^\d]/g, '')) {
       showToast('Enter your years of experience.', 'warning');
       return;
     }
-    setStep(s => Math.min(s + 1, TOTAL_STEPS - 1));
+    const nextStep = Math.min(step + 1, TOTAL_STEPS - 1);
+    saveAt(nextStep);
+    setStep(nextStep);
   };
 
   const finish = async () => {
@@ -126,8 +157,8 @@ const CoachOnboardingPage: React.FC = () => {
         availability: Object.fromEntries(openDays.map(day => [String(day), SLOTS])),
       });
       // Creating a profile promotes the account to COACH server-side.
+      // The server deletes the draft in the same write.
       updateUser({ role: 'COACH' });
-      useCoachDraftStore.getState().clear();
       showToast('Submitted — an admin will review your profile.', 'success');
       history.replace('/coach/dashboard');
     } catch (err) {
@@ -136,6 +167,16 @@ const CoachOnboardingPage: React.FC = () => {
       setUploading(false);
     }
   };
+
+  // Same AppPage either way, so Ionic sees one page whose contents change —
+  // not a page swapped out from under it, which is what stranded the spinner.
+  if (!loaded) {
+    return (
+      <AppPage padding="auth" center>
+        <LoadingState label="Picking up where you left off…" />
+      </AppPage>
+    );
+  }
 
   return (
     <AppPage scrollable padding="auth">

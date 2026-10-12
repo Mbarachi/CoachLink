@@ -3,9 +3,8 @@ import { useHistory } from 'react-router-dom';
 
 import { AppButton, AppInput, AppPage, BackButton, PasswordInput } from '@/components/ui';
 import { getErrorMessage, isBackendUnreachable } from '@/lib/apiError';
-import { authService } from '@/services';
+import { authService, coachesService } from '@/services';
 import { useAuthStore } from '@/store/auth.store';
-import { useCoachDraftStore } from '@/store/coachDraft.store';
 import { useUiStore } from '@/store/ui.store';
 
 const SignInPage: React.FC = () => {
@@ -22,11 +21,12 @@ const SignInPage: React.FC = () => {
     try {
       const { user, accessToken } = await authService.signIn({ email, password });
       setAuth(user, accessToken);
-      // Sign-in replaces the phone's idea of the role with the server's, and the
-      // server only makes someone a coach once the profile is submitted — so a
-      // coach who quit the wizard comes back as an athlete. Their saved draft is
-      // the record that they were halfway through.
-      const resuming = user.role !== 'COACH' && useCoachDraftStore.getState().uid === user.id;
+      // The server only makes someone a coach once the profile is submitted, so
+      // a coach who quit the wizard signs in as an athlete. Their saved draft is
+      // the record that they were halfway through. A failed check just means
+      // the normal home screen; the startup check will try again next launch.
+      const resuming = user.role !== 'COACH'
+        && Boolean(await coachesService.getMyDraft().catch(() => null));
       history.replace(
         resuming ? '/auth/coach-onboarding' : user.role === 'COACH' ? '/coach/dashboard' : '/athlete/home',
       );

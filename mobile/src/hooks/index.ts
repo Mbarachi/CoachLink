@@ -8,6 +8,7 @@ export * from './useReviews';
 export * from './usePushNavigator';
 export * from './usePushToggle';
 export * from './useRefetchOnResume';
+export * from './useResumeCoachOnboarding';
 export * from './useSessionWatch';
 export * from './useMe';
 export * from './useDebounced';
