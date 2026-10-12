@@ -43,8 +43,9 @@ const SignUpPage: React.FC = () => {
   const onSubmit = async (values: SignUpValues) => {
     setLoading(true);
 
-    const [firstName, ...rest] = values.name.trim().split(' ');
-    const lastName = rest.join(' ') || '-';
+    // The schema guarantees at least two words.
+    const [firstName, ...rest] = values.name.trim().split(/\s+/);
+    const lastName = rest.join(' ');
 
     try {
       const { user, accessToken } = await authService.signUp({

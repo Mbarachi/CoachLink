@@ -6,7 +6,12 @@ const NIGERIAN_PHONE = /^0\d{10}$/;
 
 export const signUpSchema = z
   .object({
-    name: z.string().trim().min(1, 'Full name is required'),
+    name: z
+      .string()
+      .trim()
+      .min(1, 'Full name is required')
+      // The backend refuses an empty surname, and it used to be papered over with "-".
+      .refine(v => v.split(/\s+/).length >= 2, 'Enter your first and last name'),
     email: z.string().trim().min(1, 'Email is required').email('Enter a valid email address'),
     phoneNumber: z
       .string()
