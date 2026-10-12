@@ -40,7 +40,11 @@ export type ResetPasswordValues = z.infer<typeof resetPasswordSchema>;
 
 export const editProfileSchema = z.object({
   firstName: z.string().trim().min(1, 'First name is required'),
-  lastName: z.string().trim(),
+  lastName: z
+    .string()
+    .trim()
+    .min(1, 'Last name is required')
+    .refine(v => v !== '-', 'Last name is required'),
   phoneNumber: z
     .string()
     .trim()

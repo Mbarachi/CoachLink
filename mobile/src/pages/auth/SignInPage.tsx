@@ -5,6 +5,7 @@ import { AppButton, AppInput, AppPage, BackButton, PasswordInput } from '@/compo
 import { getErrorMessage, isBackendUnreachable } from '@/lib/apiError';
 import { authService } from '@/services';
 import { useAuthStore } from '@/store/auth.store';
+import { useCoachDraftStore } from '@/store/coachDraft.store';
 import { useUiStore } from '@/store/ui.store';
 
 const SignInPage: React.FC = () => {
@@ -21,7 +22,14 @@ const SignInPage: React.FC = () => {
     try {
       const { user, accessToken } = await authService.signIn({ email, password });
       setAuth(user, accessToken);
-      history.replace(user.role === 'COACH' ? '/coach/dashboard' : '/athlete/home');
+      // Sign-in replaces the phone's idea of the role with the server's, and the
+      // server only makes someone a coach once the profile is submitted — so a
+      // coach who quit the wizard comes back as an athlete. Their saved draft is
+      // the record that they were halfway through.
+      const resuming = user.role !== 'COACH' && useCoachDraftStore.getState().uid === user.id;
+      history.replace(
+        resuming ? '/auth/coach-onboarding' : user.role === 'COACH' ? '/coach/dashboard' : '/athlete/home',
+      );
     } catch (err) {
       if (isBackendUnreachable(err)) {
         showToast("Can't reach the server. Check that the backend is running.", 'danger');

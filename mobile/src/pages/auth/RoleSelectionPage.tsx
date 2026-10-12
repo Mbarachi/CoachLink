@@ -4,6 +4,7 @@ import { useHistory } from 'react-router-dom';
 import { AppCard, AppPage } from '@/components/ui';
 import type { UserRole } from '@/types';
 import { useAuthStore } from '@/store/auth.store';
+import { useCoachDraftStore } from '@/store/coachDraft.store';
 
 const roles = [
   {
@@ -47,6 +48,8 @@ const RoleSelectionPage: React.FC = () => {
 
   const pick = (r: typeof roles[0]) => {
     updateUser({ role: r.key as UserRole });
+    // Choosing the other side is giving up on the coach wizard.
+    if (r.key !== 'COACH') useCoachDraftStore.getState().clear();
     history.replace(r.dest);
   };
 

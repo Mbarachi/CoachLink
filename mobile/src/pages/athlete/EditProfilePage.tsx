@@ -13,7 +13,7 @@ import { editProfileSchema } from '@/lib/schemas/auth';
 import { useAuthStore } from '@/store/auth.store';
 import { useUiStore } from '@/store/ui.store';
 
-/** Sign-up stores a single-word name as "Ada" + "-"; show that as no surname. */
+/** Sign-up stores a single-word name as "Ada" + "-"; show that as a blank to fill in. */
 const surname = (v?: string) => (v && v !== '-' ? v : '');
 
 const EditProfilePage: React.FC = () => {
@@ -41,7 +41,7 @@ const EditProfilePage: React.FC = () => {
     try {
       await updateMe.mutateAsync({
         firstName: values.firstName.trim(),
-        lastName: values.lastName.trim() || '-',
+        lastName: values.lastName.trim(),
         phoneNumber: values.phoneNumber.replace(/\s/g, ''),
       });
       showToast('Profile updated.', 'success');

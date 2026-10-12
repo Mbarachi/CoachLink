@@ -82,11 +82,21 @@ const CoachOnboardingPage: React.FC = () => {
     if (step === 0) history.replace('/auth/role');
     else setStep(s => s - 1);
   };
-  const next = () => setStep(s => Math.min(s + 1, TOTAL_STEPS - 1));
+  const next = () => {
+    if (step === 0 && !experience.replace(/[^\d]/g, '')) {
+      showToast('Enter your years of experience.', 'warning');
+      return;
+    }
+    setStep(s => Math.min(s + 1, TOTAL_STEPS - 1));
+  };
 
   const finish = async () => {
     if (!chosenSport) {
       showToast('Pick the sport you coach.', 'warning');
+      return;
+    }
+    if (!experience.replace(/[^\d]/g, '')) {
+      showToast('Enter your years of experience.', 'warning');
       return;
     }
     if (!venue.trim() || !about.trim() || !price.trim()) {
@@ -109,7 +119,7 @@ const CoachOnboardingPage: React.FC = () => {
       await createProfile.mutateAsync({
         ...uploads,
         bio: about.trim(),
-        yearsOfExperience: Number(experience.replace(/[^\d]/g, '')) || 0,
+        yearsOfExperience: Number(experience.replace(/[^\d]/g, '')),
         sessionRate: Number(price.replace(/[^\d]/g, '')),
         venue: venue.trim(),
         sportIds: [chosenSport],
@@ -170,7 +180,7 @@ const CoachOnboardingPage: React.FC = () => {
               })}
             </div>
 
-            <AppInput label="Years of experience" value={experience} onChange={setExperience} labelStyle={{ margin: '20px 0 7px' }} />
+            <AppInput label="Years of experience" value={experience} onChange={setExperience} placeholder="e.g. 5" labelStyle={{ margin: '20px 0 7px' }} />
 
             <FormLabel style={{ margin: '15px 0 7px' }}>About you</FormLabel>
             <textarea
@@ -268,7 +278,7 @@ const CoachOnboardingPage: React.FC = () => {
             Submit for verification
           </AppButton>
         ) : (
-          <AppButton size="md" variant="ink" onClick={next}>Continue</AppButton>
+          <AppButton size="md" onClick={next}>Continue</AppButton>
         )}
       </div>
     </AppPage>

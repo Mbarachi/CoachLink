@@ -21,7 +21,7 @@ export interface CoachDraft {
 export const EMPTY_DRAFT: CoachDraft = {
   step: 0,
   sportId: null,
-  experience: '5',
+  experience: '',
   about: '',
   venue: '',
   price: '',
@@ -29,7 +29,8 @@ export const EMPTY_DRAFT: CoachDraft = {
 };
 
 interface CoachDraftState {
-  /** Whose draft this is, so a second account on the same phone starts clean. */
+  /** Whose draft this is, so a second account on the same phone starts clean.
+   *  It outlives a logout on purpose: signing back in is how a coach resumes. */
   uid: string | null;
   draft: CoachDraft;
   save: (uid: string, patch: Partial<CoachDraft>) => void;
