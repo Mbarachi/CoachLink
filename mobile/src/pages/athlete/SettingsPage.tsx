@@ -38,6 +38,14 @@ const SettingsPage: React.FC = () => {
         <AppCard padding={0} style={groupStyle}>
           <ListRow label="My bookings" onClick={() => history.push('/athlete/bookings')} />
           <ListRow label="Notifications" onClick={() => history.push('/athlete/notifications')} />
+          {/* The role screen promises this can be changed later, and an
+              athlete has no other way to start coaching. Becoming one is a
+              one-way step done by submitting a profile, so this is the only
+              direction offered. */}
+          <ListRow
+            label="Become a coach"
+            onClick={() => history.push('/auth/coach-onboarding', { from: 'settings' })}
+          />
           {/* A fact, not an action: there is one launch area, and no chevron,
               because nothing happens when it is tapped. */}
           <ListRow label="Location" right={<span style={{ fontSize: 13, color: 'var(--cl-muted-1)' }}>Amuwo Odofin</span>} last />

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 
 import { AppButton, AppCard, AppInput, AppPage, BackButton, FilePicker, FormLabel, LoadingOverlay, LoadingState } from '@/components/ui';
 import { useCreateCoachProfile, useSports } from '@/hooks';
@@ -32,6 +32,7 @@ const ReviewRow: React.FC<{ label: string; value: string; bold?: boolean; last?:
 
 const CoachOnboardingPage: React.FC = () => {
   const history = useHistory();
+  const fromSettings = useLocation<{ from?: string } | undefined>().state?.from === 'settings';
   const showToast = useUiStore((s) => s.showToast);
   const updateUser = useAuthStore((s) => s.updateUser);
 
@@ -104,10 +105,17 @@ const CoachOnboardingPage: React.FC = () => {
   };
 
   const back = () => {
-    // Step 0 returns to role selection, which replaced itself in the history
-    // stack on the way here — goBack() would skip past it to verification.
-    if (step === 0) history.replace('/auth/role');
-    else {
+    if (step === 0 && fromSettings) {
+      // An athlete who only came to look. Leaving from the first step drops
+      // the draft, or every launch after this would bring them back here.
+      void coachesService.discardDraft().catch(() => undefined);
+      useAuthStore.getState().setCoachDraftPending(false);
+      history.goBack();
+    } else if (step === 0) {
+      // Role selection replaced itself in the history stack on the way here,
+      // so goBack() would skip past it to verification.
+      history.replace('/auth/role');
+    } else {
       saveAt(step - 1);
       setStep(step - 1);
     }
