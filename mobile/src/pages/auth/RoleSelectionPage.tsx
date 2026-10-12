@@ -55,6 +55,7 @@ const RoleSelectionPage: React.FC = () => {
       return;
     }
     updateUser({ role: r.key as UserRole });
+    useAuthStore.getState().setCoachDraftPending(false);
     // Choosing the other side is giving up on the coach wizard, if one was started.
     void coachesService.discardDraft().catch(() => undefined);
     history.replace(r.dest);

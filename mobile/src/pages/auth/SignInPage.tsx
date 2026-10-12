@@ -27,6 +27,7 @@ const SignInPage: React.FC = () => {
       // the normal home screen; the startup check will try again next launch.
       const resuming = user.role !== 'COACH'
         && Boolean(await coachesService.getMyDraft().catch(() => null));
+      useAuthStore.getState().setCoachDraftPending(resuming);
       history.replace(
         resuming ? '/auth/coach-onboarding' : user.role === 'COACH' ? '/coach/dashboard' : '/athlete/home',
       );

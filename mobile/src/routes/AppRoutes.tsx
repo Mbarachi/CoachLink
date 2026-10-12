@@ -29,6 +29,7 @@ import CoachRoutes from './CoachRoutes';
 
 const AppRoutes: React.FC = () => {
   const role = useAuthStore((s) => s.user?.role);
+  const coachDraftPending = useAuthStore((s) => s.coachDraftPending);
 
   // A session Firebase has ended must not leave the app pretending otherwise.
   useSessionWatch();
@@ -82,6 +83,9 @@ const AppRoutes: React.FC = () => {
       <Route exact path="/">
         {role === 'COACH' ? (
           <Redirect to="/coach/dashboard" />
+        ) : role && coachDraftPending ? (
+          // Partway through coach sign-up: straight back to it, no detour home.
+          <Redirect to="/auth/coach-onboarding" />
         ) : role ? (
           <Redirect to="/athlete/home" />
         ) : (

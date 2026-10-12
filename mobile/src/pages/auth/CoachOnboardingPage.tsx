@@ -88,6 +88,7 @@ const CoachOnboardingPage: React.FC = () => {
       setPrice(d.price);
       setOpenDays(d.openDays);
       setLoaded(true);
+      useAuthStore.getState().setCoachDraftPending(true);
       if (!draft) void coachesService.saveDraft(EMPTY_DRAFT).catch(() => undefined);
     })();
     return () => { cancelled = true; };
@@ -159,6 +160,7 @@ const CoachOnboardingPage: React.FC = () => {
       // Creating a profile promotes the account to COACH server-side.
       // The server deletes the draft in the same write.
       updateUser({ role: 'COACH' });
+      useAuthStore.getState().setCoachDraftPending(false);
       showToast('Submitted — an admin will review your profile.', 'success');
       history.replace('/coach/dashboard');
     } catch (err) {
