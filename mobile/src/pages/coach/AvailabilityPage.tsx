@@ -6,7 +6,7 @@ import {
 } from '@/components/ui';
 import { useMyCoachProfile, useUpdateCoachProfile } from '@/hooks';
 import { getErrorMessage } from '@/lib/apiError';
-import { DAY_LABELS, SLOTS, describeDay, slotLabel } from '@/lib/slots';
+import { DAY_LABELS, SLOTS, describeDay, slotLabel, withinHours } from '@/lib/slots';
 import type { Availability } from '@/types';
 import { useUiStore } from '@/store/ui.store';
 
@@ -33,7 +33,13 @@ const AvailabilityPage: React.FC = () => {
   // Seeded once the profile arrives; edits after that are the user's.
   useEffect(() => {
     if (!coach) return;
-    setWeek({ ...emptyWeek(), ...coach.profile.availability });
+    // Out-of-hours times from before the 9am to 7pm change are dropped here,
+    // or saving would send them back and the server would refuse the lot.
+    const saved = coach.profile.availability ?? {};
+    setWeek({
+      ...emptyWeek(),
+      ...Object.fromEntries(Object.entries(saved).map(([day, times]) => [day, withinHours(times)])),
+    });
   }, [coach]);
 
   const timesFor = (day: number) => week[String(day)] ?? [];

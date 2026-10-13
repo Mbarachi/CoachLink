@@ -290,7 +290,7 @@ const CoachOnboardingPage: React.FC = () => {
               ))}
             </AppCard>
             <p style={{ fontSize: 11.5, lineHeight: 1.45, color: 'var(--cl-muted-2)', margin: '11px 2px 0' }}>
-              Every hour from 5am to 9pm is offered on the days you pick. Narrow them
+              Every hour from 9am to 7pm is offered on the days you pick. Narrow them
               down any time from Availability on your dashboard.
             </p>
           </>
