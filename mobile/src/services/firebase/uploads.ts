@@ -1,5 +1,6 @@
 import { getDownloadURL, ref, uploadBytesResumable, type StorageReference } from 'firebase/storage';
 
+import { UserFacingError } from '@/lib/apiError';
 import { firebaseAuth, firebaseStorage } from '@/lib/firebase';
 import { downscaleImage } from '@/lib/image';
 
@@ -13,7 +14,7 @@ const ID_MAX_EDGE = 2000;
 
 function requireUid(): string {
   const uid = firebaseAuth().currentUser?.uid;
-  if (!uid) throw new Error('You must be signed in to upload.');
+  if (!uid) throw new UserFacingError('You must be signed in to upload.');
   return uid;
 }
 
@@ -42,8 +43,11 @@ export interface CoachUploads {
 async function intoMemory(file: File, what: string): Promise<Uint8Array> {
   try {
     return new Uint8Array(await file.arrayBuffer());
-  } catch {
-    throw new Error(`We couldn't read your ${what} from the phone. Please choose it again.`);
+  } catch (err) {
+    // The error's name says why the phone refused, which is the one detail
+    // worth having when someone reports this.
+    const why = err instanceof Error ? ` (${err.name})` : '';
+    throw new UserFacingError(`We couldn't read your ${what} from the phone${why}. Please choose it again.`);
   }
 }
 
@@ -80,16 +84,16 @@ export async function uploadCoachFiles(
   const uid = requireUid();
 
   if (photo.size > MAX_PROFILE_BYTES) {
-    throw new Error('That photo is over 5MB. Please choose a smaller one.');
+    throw new UserFacingError('That photo is over 5MB. Please choose a smaller one.');
   }
   if (idDocument.size > MAX_ID_BYTES) {
-    throw new Error('That document is over 5MB. Please choose a smaller one.');
+    throw new UserFacingError('That document is over 5MB. Please choose a smaller one.');
   }
   if (!photo.type.startsWith('image/')) {
-    throw new Error('Your profile photo must be an image.');
+    throw new UserFacingError('Your profile photo must be an image.');
   }
   if (!idDocument.type.startsWith('image/') && idDocument.type !== 'application/pdf') {
-    throw new Error('Your ID must be an image or a PDF.');
+    throw new UserFacingError('Your ID must be an image or a PDF.');
   }
 
   // Checked at the size they chose, stored at the size we need. A phone

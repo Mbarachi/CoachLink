@@ -44,8 +44,23 @@ export function isSignedOut(error: unknown): boolean {
     || code === 'auth/user-disabled';
 }
 
+/**
+ * An error whose message was written for the person using the app, such as
+ * "That photo is over 5MB". getErrorMessage shows these as they are; any other
+ * error without a Firebase code gets the screen's fallback, so a stray
+ * "Failed to fetch" never reaches anyone.
+ */
+export class UserFacingError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'UserFacingError';
+  }
+}
+
 /** Extracts a user-facing message from a Firebase error. */
 export function getErrorMessage(error: unknown, fallback = 'Something went wrong. Please try again.'): string {
+  if (error instanceof UserFacingError) return error.message;
+
   const code = firebaseCode(error);
   if (code) {
     // Firebase's raw strings leak internals ("Firebase: Error (auth/...)"),

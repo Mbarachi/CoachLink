@@ -73,10 +73,27 @@ const FilePicker: React.FC<FilePickerProps> = ({
     return true;
   };
 
-  const take = (file: File | null) => {
+  /**
+   * Keeps a copy of the bytes, not a handle to the file. On Android a file
+   * from the picker is a link into the phone's storage that the app may only
+   * read for a while after it is chosen; reading it minutes later, at submit,
+   * could fail, and the upload stalled and then gave up. Copying now, while
+   * the phone has just granted access, means the upload never depends on it.
+   */
+  const take = async (file: File | null) => {
     if (!file) return;
-    if (accepts(file)) onChange(file);
-    else onChange(null);
+    if (!accepts(file)) {
+      onChange(null);
+      return;
+    }
+    try {
+      const bytes = await file.arrayBuffer();
+      onChange(new File([bytes], file.name, { type: file.type, lastModified: file.lastModified }));
+    } catch (err) {
+      const why = err instanceof Error ? ` (${err.name})` : '';
+      setError(`Couldn't read that file${why}. Try another, or take a photo instead.`);
+      onChange(null);
+    }
   };
 
   const shoot = async () => {
@@ -94,7 +111,7 @@ const FilePicker: React.FC<FilePickerProps> = ({
       });
       if (!photo.webPath) return;
       const blob = await (await fetch(photo.webPath)).blob();
-      take(new File([blob], `photo.${photo.format || 'jpeg'}`, { type: blob.type || 'image/jpeg' }));
+      await take(new File([blob], `photo.${photo.format || 'jpeg'}`, { type: blob.type || 'image/jpeg' }));
     } catch {
       // Cancelling the camera throws; that is not an error worth showing.
     }
@@ -165,7 +182,7 @@ const FilePicker: React.FC<FilePickerProps> = ({
         // formats that cannot be previewed or uploaded.
         accept={accept.join(',')}
         style={{ display: 'none' }}
-        onChange={(e) => take(e.target.files?.[0] ?? null)}
+        onChange={(e) => void take(e.target.files?.[0] ?? null)}
       />
     </>
   );
