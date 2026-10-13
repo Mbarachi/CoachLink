@@ -30,28 +30,47 @@ export interface CoachUploads {
 }
 
 /**
- * The profile photo is world-readable, so a download URL is fine and lets
- * every listing render it directly. The ID document is not: only its storage
- * path is kept, and reading it goes through rules that admit an admin alone.
- * Minting a download URL for the ID would create a shareable link to a
- * government document that outlives any permission check.
+ * Copies a picked file into memory before it is uploaded.
+ *
+ * On Android a file from the gallery or camera is a handle onto the phone's
+ * storage, not the bytes themselves, and Firebase uploads in slices. Reading
+ * slices of such a handle can fail inside the app's WebView, and each failure
+ * looks like a network error, so Firebase retried until "max retry time
+ * exceeded" while the bar sat still. Desktop browsers never show this. Reading
+ * the whole file once, up front, either works or fails at once with a reason.
  */
-/** Uploads one file, reporting bytes sent so far. */
+async function intoMemory(file: File, what: string): Promise<Uint8Array> {
+  try {
+    return new Uint8Array(await file.arrayBuffer());
+  } catch {
+    throw new Error(`We couldn't read your ${what} from the phone. Please choose it again.`);
+  }
+}
+
+/** Uploads one file's bytes, reporting how many have been sent. */
 function upload(
   target: StorageReference,
-  file: File,
+  bytes: Uint8Array,
+  contentType: string,
   onBytes: (sent: number) => void,
 ): Promise<void> {
   return new Promise((resolve, reject) => {
-    const task = uploadBytesResumable(target, file, { contentType: file.type });
+    const task = uploadBytesResumable(target, bytes, { contentType });
     task.on('state_changed', (snap) => onBytes(snap.bytesTransferred), reject, () => resolve());
   });
 }
 
 /**
- * Both files go up together, and onProgress hears the combined percentage,
- * so a slow connection shows as a number creeping up rather than a spinner
- * that could equally be stuck.
+ * The profile photo is world-readable, so a download URL is fine and lets
+ * every listing render it directly. The ID document is not: only its storage
+ * path is kept, and reading it goes through rules that admit an admin alone.
+ * Minting a download URL for the ID would create a shareable link to a
+ * government document that outlives any permission check.
+ *
+ * onProgress hears one percentage across both files, so a slow connection
+ * shows as a number creeping up rather than a spinner that could be stuck.
+ * One file at a time: on a weak mobile signal two uploads only slow each
+ * other down.
  */
 export async function uploadCoachFiles(
   photo: File,
@@ -83,15 +102,16 @@ export async function uploadCoachFiles(
   const photoRef = ref(firebaseStorage(), `coaches/${uid}/profile/photo.${extensionOf(smallPhoto)}`);
   const idRef = ref(firebaseStorage(), `coaches/${uid}/id/document.${extensionOf(smallId)}`);
 
-  const total = smallPhoto.size + smallId.size;
+  const photoBytes = await intoMemory(smallPhoto, 'profile photo');
+  const idBytes = await intoMemory(smallId, 'ID document');
+
+  const total = photoBytes.byteLength + idBytes.byteLength;
   const sent = { photo: 0, id: 0 };
   const report = () => onProgress?.(Math.min(100, Math.round(((sent.photo + sent.id) / total) * 100)));
   report();
 
-  await Promise.all([
-    upload(photoRef, smallPhoto, (n) => { sent.photo = n; report(); }),
-    upload(idRef, smallId, (n) => { sent.id = n; report(); }),
-  ]);
+  await upload(photoRef, photoBytes, smallPhoto.type, (n) => { sent.photo = n; report(); });
+  await upload(idRef, idBytes, smallId.type || 'application/octet-stream', (n) => { sent.id = n; report(); });
 
   return {
     profileImage: await getDownloadURL(photoRef),

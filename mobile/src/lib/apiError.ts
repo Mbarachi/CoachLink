@@ -59,6 +59,9 @@ export function getErrorMessage(error: unknown, fallback = 'Something went wrong
       'auth/too-many-requests': 'Too many attempts. Try again shortly.',
       'permission-denied': 'You do not have access to this.',
       'unauthenticated': 'Please sign in again.',
+      'storage/retry-limit-exceeded': 'The upload kept failing. Check your connection and try again.',
+      'storage/unauthorized': 'That file was refused. Use a photo or PDF under 5MB.',
+      'storage/canceled': 'The upload was cancelled.',
     };
     if (friendly[code]) return friendly[code];
     const message = (error as FirebaseLikeError).message;
