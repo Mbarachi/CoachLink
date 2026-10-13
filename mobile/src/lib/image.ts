@@ -16,12 +16,12 @@ const QUALITY = 0.85;
  * Returns the original if anything fails: a photo that uploads large beats a
  * signup that dies on a canvas quirk.
  */
-export async function downscaleImage(file: File): Promise<File> {
+export async function downscaleImage(file: File, maxEdge = MAX_EDGE): Promise<File> {
   if (!file.type.startsWith('image/')) return file;
 
   try {
     const bitmap = await createImageBitmap(file);
-    const scale = Math.min(1, MAX_EDGE / Math.max(bitmap.width, bitmap.height));
+    const scale = Math.min(1, maxEdge / Math.max(bitmap.width, bitmap.height));
     if (scale === 1 && file.size < 400_000) {
       bitmap.close();
       return file;

@@ -81,6 +81,10 @@ export const firebaseStorage = (): FirebaseStorage => {
   if (!storage) {
     storage = getStorage(ensureApp());
     if (USE_EMULATORS) connectStorageEmulator(storage, HOST, 9199);
+    // Firebase keeps retrying a failing upload for ten minutes by default,
+    // behind a spinner that looks identical to a slow one. Two is enough to
+    // ride out a dropped signal and still tell someone it did not work.
+    storage.maxUploadRetryTime = 2 * 60 * 1000;
   }
   return storage;
 };

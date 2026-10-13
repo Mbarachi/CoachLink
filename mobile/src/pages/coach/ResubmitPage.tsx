@@ -33,14 +33,16 @@ const ResubmitPage: React.FC = () => {
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [idFile, setIdFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [uploadPercent, setUploadPercent] = useState(0);
 
   const busy = uploading || resubmit.isPending;
 
   const submit = async () => {
     if (!photoFile || !idFile) return;
+    setUploadPercent(0);
     setUploading(true);
     try {
-      const uploads = await uploadCoachFiles(photoFile, idFile);
+      const uploads = await uploadCoachFiles(photoFile, idFile, setUploadPercent);
       setUploading(false);
       await resubmit.mutateAsync(uploads);
       showToast('Sent back for review. We will let you know the outcome.', 'success');
@@ -55,7 +57,7 @@ const ResubmitPage: React.FC = () => {
     <AppPage padding="screen">
       <LoadingOverlay
         show={busy}
-        label={uploading ? 'Uploading your documents…' : 'Sending for review…'}
+        label={uploading ? `Uploading your documents… ${uploadPercent}%` : 'Sending for review…'}
         hint={uploading ? 'Keep the app open — this can take a moment on a slow connection.' : undefined}
       />
 

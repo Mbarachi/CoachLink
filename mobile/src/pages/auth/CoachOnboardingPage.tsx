@@ -67,6 +67,7 @@ const CoachOnboardingPage: React.FC = () => {
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [idFile, setIdFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [uploadPercent, setUploadPercent] = useState(0);
 
   // Picks up where they left off — on this phone or any other, since the
   // draft lives on the server. With no draft yet, saving the empty one is what
@@ -163,8 +164,9 @@ const CoachOnboardingPage: React.FC = () => {
     }
 
     try {
+      setUploadPercent(0);
       setUploading(true);
-      const uploads = await uploadCoachFiles(photoFile, idFile);
+      const uploads = await uploadCoachFiles(photoFile, idFile, setUploadPercent);
 
       await createProfile.mutateAsync({
         ...uploads,
@@ -202,7 +204,7 @@ const CoachOnboardingPage: React.FC = () => {
     <AppPage scrollable padding="auth">
       <LoadingOverlay
         show={uploading || createProfile.isPending}
-        label={uploading ? 'Uploading your documents…' : 'Submitting for review…'}
+        label={uploading ? `Uploading your documents… ${uploadPercent}%` : 'Submitting for review…'}
         hint={uploading ? 'Keep the app open — this can take a moment on a slow connection.' : undefined}
       />
       <div style={{ display: 'flex', alignItems: 'center', gap: 13, padding: '6px 0 4px' }}>
