@@ -46,13 +46,15 @@ export interface ForgotPasswordDto {
 
 /**
  * The user document is written by the onUserCreate trigger, which runs a beat
- * after the account exists. Poll briefly rather than failing the sign-up.
+ * after the account exists. Poll rather than failing the sign-up. Up to 15s:
+ * a trigger that has been idle starts cold, and the old 4.8s window ran out
+ * first, so sign-up failed and rolled the new account back.
  */
-async function awaitProfile(uid: string, attempts = 12): Promise<User> {
+async function awaitProfile(uid: string, attempts = 30): Promise<User> {
   for (let i = 0; i < attempts; i++) {
     const snap = await getDoc(doc(firebaseDb(), 'users', uid));
     if (snap.exists()) return toUser(uid, snap.data());
-    await new Promise((r) => setTimeout(r, 400));
+    await new Promise((r) => setTimeout(r, 500));
   }
   throw new Error('Your profile is still being set up. Try signing in again in a moment.');
 }

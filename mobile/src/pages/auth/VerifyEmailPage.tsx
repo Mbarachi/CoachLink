@@ -1,3 +1,4 @@
+import { App } from '@capacitor/app';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 
@@ -79,11 +80,15 @@ const VerifyEmailPage: React.FC = () => {
     else history.replace(state.next ?? '/auth/role');
   }, [history, state.back, state.next]);
 
-  // The phone's back button matches Skip: it should never strand them here.
+  // From a banner, back returns there. Straight after sign-up there is no
+  // "back": the form behind this screen made an account that now exists, and
+  // reaching role selection by pressing back skipped a step silently. So the
+  // phone's back button closes the app, as on any first screen, and the ways
+  // on are named on screen: Skip for now, or Wrong email? Change it.
   useEffect(() => {
-    setBackOverride('/auth/otp', leave);
+    setBackOverride('/auth/otp', state.back ? leave : () => { void App.exitApp(); });
     return () => setBackOverride('/auth/otp', null);
-  }, [leave]);
+  }, [leave, state.back]);
 
   useEffect(() => {
     if (cooldown <= 0) return;
@@ -164,7 +169,9 @@ const VerifyEmailPage: React.FC = () => {
 
   return (
     <AppPage scrollable padding="auth">
-      <BackButton size={40} onClick={leave} style={{ marginTop: 6 }} />
+      {state.back
+        ? <BackButton size={40} onClick={leave} style={{ marginTop: 6 }} />
+        : <div style={{ height: 46 }} />}
 
       <h1 style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 800, fontSize: 32, letterSpacing: '-0.03em', color: 'var(--cl-ink)', margin: '26px 0 6px' }}>
         Check your email
