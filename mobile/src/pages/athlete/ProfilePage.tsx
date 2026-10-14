@@ -1,3 +1,7 @@
+import { IonIcon } from '@ionic/react';
+import {
+  calendarOutline, createOutline, helpCircleOutline, notificationsOutline, settingsOutline,
+} from 'ionicons/icons';
 import React, { useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
 
@@ -23,11 +27,12 @@ const ProfilePage: React.FC = () => {
   ], [requests, reviewed]);
 
   const menuItems = [
-    { label: 'Edit profile',    action: () => history.push('/athlete/profile/edit') },
-    { label: 'My bookings',     action: () => history.push('/athlete/bookings') },
-    { label: 'Notifications',   action: () => history.push('/athlete/notifications') },
-    { label: 'Help & FAQ',      action: () => history.push('/help') },
-    { label: 'Settings',        action: () => history.push('/athlete/settings') },
+    // Ionicons outline, the set the tab bar uses; bookings shares its calendar.
+    { label: 'Edit profile',  icon: createOutline,        action: () => history.push('/athlete/profile/edit') },
+    { label: 'My bookings',   icon: calendarOutline,      action: () => history.push('/athlete/bookings') },
+    { label: 'Notifications', icon: notificationsOutline, action: () => history.push('/athlete/notifications') },
+    { label: 'Help & FAQ',    icon: helpCircleOutline,    action: () => history.push('/help') },
+    { label: 'Settings',      icon: settingsOutline,      action: () => history.push('/athlete/settings') },
   ];
 
   return (
@@ -35,7 +40,9 @@ const ProfilePage: React.FC = () => {
       <PageBody refreshable pb={96}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '8px 0 18px' }}>
           <PageTitle style={{ margin: 0 }}>Profile</PageTitle>
-          <button onClick={() => history.push('/athlete/settings')} style={{ width: 38, height: 38, borderRadius: '50%', border: '1px solid var(--cl-border)', background: 'var(--cl-surface)', fontSize: 16, cursor: 'pointer' }}>⚙</button>
+          <button onClick={() => history.push('/athlete/settings')} aria-label="Settings" style={{ width: 38, height: 38, borderRadius: '50%', border: '1px solid var(--cl-border)', background: 'var(--cl-surface)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}>
+            <IonIcon icon={settingsOutline} aria-hidden="true" style={{ fontSize: 18, color: 'var(--cl-ink)' }} />
+          </button>
         </div>
 
         {/* avatar + info */}
@@ -62,7 +69,9 @@ const ProfilePage: React.FC = () => {
         <AppCard padding={0} style={{ marginTop: 20, overflow: 'hidden' }}>
           {menuItems.map((item, i) => (
             <div key={item.label} onClick={item.action} style={{ display: 'flex', alignItems: 'center', gap: 13, padding: 15, borderBottom: i < menuItems.length - 1 ? '1px solid var(--cl-subtle)' : 'none', cursor: 'pointer' }}>
-              <div style={{ width: 20, height: 20, borderRadius: 6, background: 'var(--cl-subtle)', flexShrink: 0 }} />
+              <div style={{ width: 32, height: 32, borderRadius: 10, background: 'var(--cl-subtle)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <IonIcon icon={item.icon} aria-hidden="true" style={{ fontSize: 17, color: 'var(--cl-ink)' }} />
+              </div>
               <span style={{ flex: 1, fontSize: 14, fontWeight: 600, color: 'var(--cl-ink)' }}>{item.label}</span>
               <span style={{ color: 'var(--cl-muted-line)' }}>›</span>
             </div>
