@@ -80,7 +80,13 @@ export function getErrorMessage(error: unknown, fallback = 'Something went wrong
     };
     if (friendly[code]) return friendly[code];
     const message = (error as FirebaseLikeError).message;
-    if (message) return message.replace(/^Firebase:\s*/, '').replace(/\s*\(auth\/[^)]+\)\.?$/, '');
+    // The Functions SDK appends the HTTP status, as in "... [400]".
+    if (message) {
+      return message
+        .replace(/^Firebase:\s*/, '')
+        .replace(/\s*\(auth\/[^)]+\)\.?$/, '')
+        .replace(/\s*\[\d{3}\]$/, '');
+    }
   }
 
   return fallback;

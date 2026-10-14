@@ -11,20 +11,22 @@ import { useAuthStore } from '@/store/auth.store';
  * so this session never hears about it. Re-checking when the app returns to
  * the foreground is what makes the banner disappear on its own.
  */
-export function useEmailVerified(): { verified: boolean; recheck: () => Promise<void> } {
+export function useEmailVerified(): { verified: boolean; recheck: () => Promise<boolean> } {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const updateUser = useAuthStore((s) => s.updateUser);
   const [verified, setVerified] = useState(true); // assume fine until told otherwise, so nothing flashes
 
   const recheck = useCallback(async () => {
     const current = firebaseAuth().currentUser;
-    if (!current) return;
+    if (!current) return false;
     try {
       await current.reload();
       setVerified(current.emailVerified);
       updateUser({ isVerified: current.emailVerified });
+      return current.emailVerified;
     } catch {
       // Offline — leave the last known answer rather than nagging wrongly.
+      return false;
     }
   }, [updateUser]);
 

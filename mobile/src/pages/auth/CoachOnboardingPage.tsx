@@ -1,14 +1,17 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { AppButton, AppCard, AppInput, AppPage, BackButton, FilePicker, FormLabel, LoadingOverlay, LoadingState } from '@/components/ui';
+import {
+  AppButton, AppCard, AppInput, AppPage, BackButton, FilePicker, FormLabel, LoadingOverlay, LoadingState,
+  VerifyEmailBanner,
+} from '@/components/ui';
 import { useCreateCoachProfile, useSports } from '@/hooks';
 import { uploadCoachFiles } from '@/services/firebase/uploads';
 import { getErrorMessage } from '@/lib/apiError';
 import { setBackOverride } from '@/lib/backNavigation';
 import { DAY_LABELS, SLOTS } from '@/lib/slots';
 import { EMPTY_DRAFT, type CoachDraft } from '@/lib/coachDraft';
-import { coachesService } from '@/services';
+import { authService, coachesService } from '@/services';
 import { useAuthStore } from '@/store/auth.store';
 import { useUiStore } from '@/store/ui.store';
 
@@ -163,6 +166,13 @@ const CoachOnboardingPage: React.FC = () => {
       return;
     }
 
+    // The server refuses an unconfirmed email, but only after both files have
+    // gone up. Asking first saves the upload and says what to do instead.
+    if (!(await authService.refreshVerification().catch(() => true))) {
+      showToast('Confirm your email first. Use "Resend link" above if you can\'t find it.', 'warning');
+      return;
+    }
+
     try {
       setUploadPercent(0);
       setUploading(true);
@@ -299,6 +309,7 @@ const CoachOnboardingPage: React.FC = () => {
         {/* Step 3: Verification & review */}
         {step === 3 && (
           <>
+            <VerifyEmailBanner required />
             <FormLabel>Profile photo <span style={{ color: 'var(--cl-accent)' }}>*</span></FormLabel>
             <FilePicker
               value={photoFile}
