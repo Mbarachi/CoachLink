@@ -1,6 +1,8 @@
 import {
   createUserWithEmailAndPassword,
   deleteUser,
+  EmailAuthProvider,
+  reauthenticateWithCredential,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signOut,
@@ -10,6 +12,7 @@ import type { User as FirebaseUser } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
 
+import { UserFacingError } from '@/lib/apiError';
 import { firebaseAuth, firebaseDb, firebaseFunctions } from '@/lib/firebase';
 import type { User } from '@/types';
 
@@ -86,6 +89,16 @@ async function completeSignUp(account: FirebaseUser, dto: SignUpDto): Promise<Au
 
 export const authService = {
   async signUp(dto: SignUpDto): Promise<AuthResponse> {
+    // "ada@gmail.comm" is well formed and goes nowhere. Asked before the
+    // account exists, so the typo is fixed in the form rather than living on
+    // as an address no code can reach. Tagged so the form can put the message
+    // under the email field.
+    try {
+      await httpsCallable(firebaseFunctions(), 'checkEmail')({ email: dto.email });
+    } catch (err) {
+      throw Object.assign(err as object, { field: 'email' });
+    }
+
     // Asked first, so a taken number stops here rather than after an account
     // exists. The backend enforces it again when the number is saved below.
     const check = await httpsCallable(firebaseFunctions(), 'phoneAvailable')({ phoneNumber: dto.phoneNumber });
@@ -126,6 +139,32 @@ export const authService = {
   async sendEmailCode(): Promise<{ alreadyVerified?: boolean; debugCode?: string }> {
     const res = await httpsCallable(firebaseFunctions(), 'sendEmailCode')({});
     return res.data as { alreadyVerified?: boolean; debugCode?: string };
+  },
+
+  /**
+   * Replaces a mistyped address on an account that has not confirmed one,
+   * and sends a code to the new one. Refused once the email is confirmed.
+   *
+   * Takes the password because Firebase ends a session when its sign-in
+   * email changes, which signed people out mid-flow. So: prove the password
+   * first, while nothing has changed yet, then change the email, then sign
+   * straight back in with the new email and the same password.
+   */
+  async changeUnconfirmedEmail(email: string, password: string): Promise<{ debugCode?: string }> {
+    const current = firebaseAuth().currentUser;
+    if (!current?.email) throw new UserFacingError('Please sign in again, then change your email.');
+    try {
+      await reauthenticateWithCredential(current, EmailAuthProvider.credential(current.email, password));
+    } catch (err) {
+      const code = (err as { code?: string })?.code;
+      if (code === 'auth/invalid-credential' || code === 'auth/wrong-password') {
+        throw new UserFacingError("That password isn't right.");
+      }
+      throw err;
+    }
+    const res = await httpsCallable(firebaseFunctions(), 'changeUnconfirmedEmail')({ email });
+    await signInWithEmailAndPassword(firebaseAuth(), email.trim().toLowerCase(), password);
+    return res.data as { debugCode?: string };
   },
 
   /** Checks a code; on success the account is confirmed in Firebase Auth. */

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { AppButton, AppPage, BackButton } from '@/components/ui';
+import { AppButton, AppInput, AppPage, BackButton, PasswordInput } from '@/components/ui';
 import { EMAIL_VERIFIED_EVENT } from '@/hooks/useEmailVerified';
 import { getErrorMessage } from '@/lib/apiError';
 import { setBackOverride } from '@/lib/backNavigation';
@@ -32,6 +32,7 @@ const VerifyEmailPage: React.FC = () => {
   const history = useHistory();
   const state = useLocation<VerifyEmailState | undefined>().state ?? {};
   const email = useAuthStore((s) => s.user?.email) ?? 'your email';
+  const updateUser = useAuthStore((s) => s.updateUser);
   const showToast = useUiStore((s) => s.showToast);
 
   const [digits, setDigits] = useState<string[]>(Array(DIGITS).fill(''));
@@ -39,6 +40,33 @@ const VerifyEmailPage: React.FC = () => {
   const [checking, setChecking] = useState(false);
   const [cooldown, setCooldown] = useState(RESEND_SECONDS);
   const [sending, setSending] = useState(false);
+
+  // "Wrong email? Change it": a typo at sign-up otherwise means a code that
+  // can never arrive, on an account that can never be confirmed.
+  const [editing, setEditing] = useState(false);
+  const [newEmail, setNewEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [changing, setChanging] = useState(false);
+
+  const changeEmail = async () => {
+    const next = newEmail.trim();
+    if (!next || !password) return;
+    setChanging(true);
+    try {
+      await authService.changeUnconfirmedEmail(next, password);
+      setPassword('');
+      updateUser({ email: next.toLowerCase() });
+      setEditing(false);
+      setDigits(Array(DIGITS).fill(''));
+      setCooldown(RESEND_SECONDS);
+      showToast(`Code sent to ${next.toLowerCase()}.`, 'success');
+      refs.current[0]?.focus();
+    } catch (err) {
+      showToast(getErrorMessage(err, 'Could not change your email. Please try again.'), 'danger');
+    } finally {
+      setChanging(false);
+    }
+  };
 
   // Once only. A code request made on arrival can answer "already confirmed"
   // after the person has typed the code and left, and a second goBack() would
@@ -145,6 +173,33 @@ const VerifyEmailPage: React.FC = () => {
         We sent a 6-digit code to <span style={{ color: 'var(--cl-ink)', fontWeight: 600 }}>{email}</span>.
         Enter it below. It can take a minute to arrive, so check spam too.
       </p>
+
+      {editing ? (
+        <div style={{ margin: '-12px 0 24px' }}>
+          <AppInput label="Correct email" type="email" value={newEmail} onChange={setNewEmail} placeholder="you@example.com" style={{ marginBottom: 12 }} />
+          {/* Changing the sign-in email ends the session, so the password
+              both proves it is them and signs them straight back in. */}
+          <PasswordInput label="Your password" value={password} onChange={setPassword} placeholder="Your CoachLink password" />
+          <div style={{ display: 'flex', gap: 10, marginTop: 10 }}>
+            <AppButton size="md" onClick={() => void changeEmail()} loading={changing} loadingLabel="Sending…" disabled={!newEmail.trim() || !password}>
+              Send code there
+            </AppButton>
+            <AppButton size="md" variant="text" fullWidth={false} onClick={() => setEditing(false)}>
+              Cancel
+            </AppButton>
+          </div>
+        </div>
+      ) : (
+        <p style={{ fontSize: 13.5, color: 'var(--cl-muted-1)', margin: '-14px 0 24px' }}>
+          Wrong email?{' '}
+          <span
+            onClick={() => { setNewEmail(email === 'your email' ? '' : email); setEditing(true); }}
+            style={{ color: 'var(--cl-ink)', fontWeight: 700, cursor: 'pointer' }}
+          >
+            Change it
+          </span>
+        </p>
+      )}
 
       {/* Grid, because Ionic's input { width: 100% } reset breaks a flex row. */}
       <div style={{ display: 'grid', gridTemplateColumns: `repeat(${DIGITS}, 1fr)`, gap: 10 }}>

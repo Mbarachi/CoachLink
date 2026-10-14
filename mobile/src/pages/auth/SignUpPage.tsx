@@ -28,7 +28,7 @@ const SignUpPage: React.FC = () => {
   const showToast = useUiStore(s => s.showToast);
   const [loading, setLoading] = useState(false);
 
-  const { control, handleSubmit, reset, watch } = useForm<SignUpValues>({
+  const { control, handleSubmit, reset, watch, setError } = useForm<SignUpValues>({
     resolver: zodResolver(signUpSchema),
     defaultValues: DEFAULTS,
     mode: 'onTouched',
@@ -64,6 +64,11 @@ const SignUpPage: React.FC = () => {
       // matters (coach approval, payment), not as a wall on the way in.
       history.replace('/auth/otp', { next: '/auth/role' });
     } catch (err) {
+      // A domain that cannot take mail belongs under the email field, where
+      // the fix is typed, as well as in the toast.
+      if ((err as { field?: string })?.field === 'email') {
+        setError('email', { type: 'server', message: getErrorMessage(err, 'Check your email address.') });
+      }
       showToast(
         isBackendUnreachable(err)
           ? "Can't reach the server. Check that the backend is running."
