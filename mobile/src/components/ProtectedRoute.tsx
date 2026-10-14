@@ -37,12 +37,20 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const role = useAuthStore((s) => s.user?.role);
   const coachDraftPending = useAuthStore((s) => s.coachDraftPending);
+  const emailVerified = useAuthStore((s) => s.emailVerified);
 
   return (
     <Route
       {...rest}
       render={() => {
         if (!isAuthenticated) return <Redirect to="/welcome" />;
+        // Every account confirms its email before using the app. Checked
+        // against where the app actually is, for the same reason as below.
+        if (emailVerified === false && history.location.pathname.startsWith(rest.path)) {
+          return (
+            <Redirect to={{ pathname: '/auth/otp', state: { send: true, next: history.location.pathname } }} />
+          );
+        }
         // No role yet means onboarding never finished; the role screen is
         // where that is picked up, not a dashboard they have no data for.
         if (!role) return <Redirect to="/auth/role" />;

@@ -30,6 +30,7 @@ export function useEmailVerified(): { verified: boolean; recheck: () => Promise<
       await current.reload();
       setVerified(current.emailVerified);
       updateUser({ isVerified: current.emailVerified });
+      useAuthStore.getState().setEmailVerified(current.emailVerified);
       return current.emailVerified;
     } catch {
       // Offline — leave the last known answer rather than nagging wrongly.
@@ -48,7 +49,10 @@ export function useEmailVerified(): { verified: boolean; recheck: () => Promise<
       if (document.visibilityState === 'visible') void recheck();
     };
     document.addEventListener('visibilitychange', onVisible);
-    const onConfirmed = () => setVerified(true);
+    const onConfirmed = () => {
+      setVerified(true);
+      useAuthStore.getState().setEmailVerified(true);
+    };
     window.addEventListener(EMAIL_VERIFIED_EVENT, onConfirmed);
 
     return () => {

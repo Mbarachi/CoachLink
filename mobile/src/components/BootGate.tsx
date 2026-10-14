@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 
 import { Spinner } from '@/components/ui';
+import { firebaseAuth } from '@/lib/firebase';
 import { coachesService } from '@/services';
 import { useAuthStore } from '@/store/auth.store';
 
@@ -22,7 +23,33 @@ const BootGate: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const role = useAuthStore((s) => s.user?.role);
   const pending = useAuthStore((s) => s.coachDraftPending);
+  const emailVerified = useAuthStore((s) => s.emailVerified);
   const mustAsk = isAuthenticated && role !== 'COACH' && pending === null;
+  // Same idea for the email: a phone updated from a build that never stored
+  // it asks Firebase once, so the code-screen gate starts from the truth.
+  const mustAskEmail = isAuthenticated && emailVerified === null;
+
+  useEffect(() => {
+    if (!mustAskEmail) return;
+    let settled = false;
+    const settle = (value: boolean) => {
+      if (settled) return;
+      settled = true;
+      useAuthStore.getState().setEmailVerified(value);
+    };
+    // Offline: let them in rather than strand them. The server still refuses
+    // an unconfirmed account at every point that matters.
+    const timer = setTimeout(() => settle(true), GIVE_UP_MS);
+    void firebaseAuth().authStateReady()
+      .then(async () => {
+        const current = firebaseAuth().currentUser;
+        if (!current) return settle(true);   // signed out; useSessionWatch handles that
+        await current.reload().catch(() => undefined);
+        settle(current.emailVerified);
+      })
+      .catch(() => settle(true));
+    return () => clearTimeout(timer);
+  }, [mustAskEmail]);
 
   useEffect(() => {
     if (!mustAsk) return;
@@ -40,7 +67,7 @@ const BootGate: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     return () => clearTimeout(timer);
   }, [mustAsk]);
 
-  if (mustAsk) {
+  if (mustAsk || mustAskEmail) {
     return (
       <div style={{
         position: 'fixed', inset: 0, display: 'flex', alignItems: 'center',

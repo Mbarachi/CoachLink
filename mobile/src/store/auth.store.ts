@@ -16,9 +16,18 @@ interface AuthState {
    * is when BootGate holds the app until the server answers.
    */
   coachDraftPending: boolean | null;
+  /**
+   * Whether the account's email is confirmed, as last known on this phone.
+   * Every account must confirm before using the app, and the routes read this
+   * to hold an unconfirmed one at the code screen. Null means not known yet,
+   * which BootGate settles by asking Firebase.
+   */
+  emailVerified: boolean | null;
+
+  setEmailVerified: (verified: boolean) => void;
 
   setCoachDraftPending: (pending: boolean) => void;
-  setAuth: (user: User, token: string) => void;
+  setAuth: (user: User, token: string, emailVerified: boolean) => void;
   updateUser: (partial: Partial<User>) => void;
   clearAuth: () => void;
 }
@@ -30,17 +39,20 @@ export const useAuthStore = create<AuthState>()(
       accessToken: null,
       isAuthenticated: false,
       coachDraftPending: null,
+      emailVerified: null,
+
+      setEmailVerified: (emailVerified) => set({ emailVerified }),
 
       setCoachDraftPending: (coachDraftPending) => set({ coachDraftPending }),
 
-      setAuth: (user, accessToken) => {
+      setAuth: (user, accessToken, emailVerified) => {
         // Drop anything cached for whoever was signed in before, so a new
         // account never renders the previous one's bookings or profile.
         queryClient.clear();
         // A fresh session starts from "not mid coach sign-up": true for a new
         // account, and sign-in asks the server before it navigates anywhere.
         // Null here would hold the whole app behind BootGate mid sign-up.
-        set({ user, accessToken, isAuthenticated: true, coachDraftPending: false });
+        set({ user, accessToken, isAuthenticated: true, coachDraftPending: false, emailVerified });
       },
 
       updateUser: (partial) =>
@@ -50,7 +62,7 @@ export const useAuthStore = create<AuthState>()(
 
       clearAuth: () => {
         queryClient.clear();
-        set({ user: null, accessToken: null, isAuthenticated: false, coachDraftPending: null });
+        set({ user: null, accessToken: null, isAuthenticated: false, coachDraftPending: null, emailVerified: null });
       },
     }),
     {
@@ -62,6 +74,7 @@ export const useAuthStore = create<AuthState>()(
         accessToken: state.accessToken,
         isAuthenticated: state.isAuthenticated,
         coachDraftPending: state.coachDraftPending,
+        emailVerified: state.emailVerified,
       }),
       // No expiry check here: Firebase mints one-hour ID tokens and refreshes
       // them silently, so the persisted copy is stale by design. onAuthStateChanged

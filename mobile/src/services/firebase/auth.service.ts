@@ -38,6 +38,7 @@ export interface AuthResponse {
   user: User;
   /** Firebase refreshes this itself; kept so the store shape is unchanged. */
   accessToken: string;
+  emailVerified: boolean;
 }
 
 export interface ForgotPasswordDto {
@@ -86,7 +87,7 @@ async function completeSignUp(account: FirebaseUser, dto: SignUpDto): Promise<Au
   // Last, so an account rolled back above is never sent a code. A failed send
   // does not fail the sign-up: the code screen that follows has Resend.
   await authService.sendEmailCode().catch(() => undefined);
-  return { user, accessToken: await account.getIdToken() };
+  return { user, accessToken: await account.getIdToken(), emailVerified: false };
 }
 
 export const authService = {
@@ -124,7 +125,11 @@ export const authService = {
   async signIn(dto: SignInDto): Promise<AuthResponse> {
     const credential = await signInWithEmailAndPassword(firebaseAuth(), dto.email, dto.password);
     const user = await awaitProfile(credential.user.uid);
-    return { user, accessToken: await credential.user.getIdToken() };
+    return {
+      user,
+      accessToken: await credential.user.getIdToken(),
+      emailVerified: credential.user.emailVerified,
+    };
   },
 
   async forgotPassword(dto: ForgotPasswordDto) {

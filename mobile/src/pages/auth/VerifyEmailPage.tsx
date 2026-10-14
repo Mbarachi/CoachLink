@@ -25,9 +25,10 @@ interface VerifyEmailState {
 
 /**
  * Confirms an email address with the 6-digit code the backend emails through
- * Resend. Reached straight after sign-up, and from the "Confirm your email"
- * banners. Skippable, as the link flow was: confirmation is enforced where it
- * costs something (submitting a coach profile, paying), not as a wall here.
+ * Resend. Not skippable: every account, athlete, parent or coach, confirms
+ * before using the app. Reached straight after sign-up, after signing in
+ * unconfirmed, and wherever the routes find an unconfirmed account. The ways
+ * out are fixing the address or signing out to use another account.
  */
 const VerifyEmailPage: React.FC = () => {
   const history = useHistory();
@@ -102,6 +103,7 @@ const VerifyEmailPage: React.FC = () => {
       const res = await authService.sendEmailCode();
       if (left.current) return;
       if (res.alreadyVerified) {
+        useAuthStore.getState().setEmailVerified(true);
         window.dispatchEvent(new Event(EMAIL_VERIFIED_EVENT));
         showToast('Your email is already confirmed.', 'success');
         leave();
@@ -128,10 +130,19 @@ const VerifyEmailPage: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const signOutHere = async () => {
+    left.current = true;
+    await authService.signOut().catch(() => undefined);
+    useAuthStore.getState().clearAuth();
+    history.replace('/welcome');
+  };
+
   const verify = async (code: string) => {
     setChecking(true);
     try {
       await authService.verifyEmailCode(code);
+      // Before leaving: the routes read this, and would send them straight back.
+      useAuthStore.getState().setEmailVerified(true);
       window.dispatchEvent(new Event(EMAIL_VERIFIED_EVENT));
       showToast('Email confirmed.', 'success');
       leave();
@@ -261,9 +272,17 @@ const VerifyEmailPage: React.FC = () => {
 
       <div style={{ flex: 1, minHeight: 24 }} />
       <p style={{ textAlign: 'center', fontSize: 13.5, marginBottom: 24 }}>
-        <span onClick={leave} style={{ color: 'var(--cl-muted-1)', fontWeight: 600, cursor: 'pointer' }}>
-          {state.back ? 'Not now' : 'Skip for now'}
-        </span>
+        {state.back ? (
+          <span onClick={leave} style={{ color: 'var(--cl-muted-1)', fontWeight: 600, cursor: 'pointer' }}>
+            Not now
+          </span>
+        ) : (
+          // The way out for someone who cannot get the code, or signed up
+          // with the wrong account: not into the app, but back to the start.
+          <span onClick={() => void signOutHere()} style={{ color: 'var(--cl-muted-1)', fontWeight: 600, cursor: 'pointer' }}>
+            Sign out
+          </span>
+        )}
       </p>
     </AppPage>
   );

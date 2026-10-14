@@ -31,6 +31,7 @@ import CoachRoutes from './CoachRoutes';
 const AppRoutes: React.FC = () => {
   const role = useAuthStore((s) => s.user?.role);
   const coachDraftPending = useAuthStore((s) => s.coachDraftPending);
+  const emailVerified = useAuthStore((s) => s.emailVerified);
 
   // A session Firebase has ended must not leave the app pretending otherwise.
   useSessionWatch();
@@ -87,7 +88,10 @@ const AppRoutes: React.FC = () => {
 
       {/* ── Default redirect ───────────────────────────────── */}
       <Route exact path="/">
-        {role === 'COACH' ? (
+        {role && emailVerified === false ? (
+          // Not confirmed yet: the code screen, then back here to be routed.
+          <Redirect to={{ pathname: '/auth/otp', state: { send: true, next: '/' } }} />
+        ) : role === 'COACH' ? (
           <Redirect to="/coach/dashboard" />
         ) : role && coachDraftPending === true ? (
           // Partway through coach sign-up: straight back to it, no detour home.

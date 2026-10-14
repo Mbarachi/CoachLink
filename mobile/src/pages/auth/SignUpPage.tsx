@@ -48,7 +48,7 @@ const SignUpPage: React.FC = () => {
     const lastName = rest.join(' ');
 
     try {
-      const { user, accessToken } = await authService.signUp({
+      const { user, accessToken, emailVerified } = await authService.signUp({
         firstName,
         lastName,
         email: values.email.trim(),
@@ -58,7 +58,7 @@ const SignUpPage: React.FC = () => {
         state: values.state,
         lga: values.lga,
       });
-      setAuth(user, accessToken);
+      setAuth(user, accessToken, emailVerified);
       showToast('Account created. We emailed you a 6-digit code.', 'success');
       // Straight into the app: verification is enforced server-side where it
       // matters (coach approval, payment), not as a wall on the way in.

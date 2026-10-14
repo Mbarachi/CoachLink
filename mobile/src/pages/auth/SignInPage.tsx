@@ -19,8 +19,8 @@ const SignInPage: React.FC = () => {
     if (!email || !password) { showToast('Please enter your email and password.', 'warning'); return; }
     setLoading(true);
     try {
-      const { user, accessToken } = await authService.signIn({ email, password });
-      setAuth(user, accessToken);
+      const { user, accessToken, emailVerified } = await authService.signIn({ email, password });
+      setAuth(user, accessToken, emailVerified);
       // The server only makes someone a coach once the profile is submitted, so
       // a coach who quit the wizard signs in as an athlete. Their saved draft is
       // the record that they were halfway through. A failed check just means
@@ -28,8 +28,13 @@ const SignInPage: React.FC = () => {
       const resuming = user.role !== 'COACH'
         && Boolean(await coachesService.getMyDraft().catch(() => null));
       useAuthStore.getState().setCoachDraftPending(resuming);
+      const destination = resuming
+        ? '/auth/coach-onboarding'
+        : user.role === 'COACH' ? '/coach/dashboard' : '/athlete/home';
+      // Confirming the email comes first for everyone, then on to where they
+      // were going. A fresh code goes out, since any earlier one may be stale.
       history.replace(
-        resuming ? '/auth/coach-onboarding' : user.role === 'COACH' ? '/coach/dashboard' : '/athlete/home',
+        emailVerified ? destination : { pathname: '/auth/otp', state: { send: true, next: destination } },
       );
     } catch (err) {
       if (isBackendUnreachable(err)) {
