@@ -169,7 +169,7 @@ const CoachOnboardingPage: React.FC = () => {
     // The server refuses an unconfirmed email, but only after both files have
     // gone up. Asking first saves the upload and says what to do instead.
     if (!(await authService.refreshVerification().catch(() => true))) {
-      showToast('Confirm your email first. Use "Resend link" above if you can\'t find it.', 'warning');
+      showToast('Confirm your email first: tap "Enter code" above.', 'warning');
       return;
     }
 
@@ -232,6 +232,9 @@ const CoachOnboardingPage: React.FC = () => {
       </div>
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '18px 0 12px' }}>
+        {/* On every step, so a coach who skipped the code at sign-up can
+            confirm while filling in the rest; only Submit insists on it. */}
+        <VerifyEmailBanner required />
 
         {/* Step 0: Sport & experience */}
         {step === 0 && (
@@ -309,7 +312,6 @@ const CoachOnboardingPage: React.FC = () => {
         {/* Step 3: Verification & review */}
         {step === 3 && (
           <>
-            <VerifyEmailBanner required />
             <FormLabel>Profile photo <span style={{ color: 'var(--cl-accent)' }}>*</span></FormLabel>
             <FilePicker
               value={photoFile}

@@ -1,7 +1,6 @@
 import {
   createUserWithEmailAndPassword,
   deleteUser,
-  sendEmailVerification,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signOut,
@@ -79,9 +78,9 @@ async function completeSignUp(account: FirebaseUser, dto: SignUpDto): Promise<Au
   const data = updated.data as Record<string, unknown> & { id?: string };
   const user = toUser(data.id ?? account.uid, data);
 
-  // Last, so an account rolled back above never sends a link to confirm it.
-  // Firebase verifies by link; there is no 6-digit code to enter.
-  await sendEmailVerification(account);
+  // Last, so an account rolled back above is never sent a code. A failed send
+  // does not fail the sign-up: the code screen that follows has Resend.
+  await authService.sendEmailCode().catch(() => undefined);
   return { user, accessToken: await account.getIdToken() };
 }
 
@@ -119,10 +118,21 @@ export const authService = {
   },
 
   /** Re-sends the verification link Firebase mailed at sign-up. */
-  async sendVerificationEmail(): Promise<void> {
-    const current = firebaseAuth().currentUser;
-    if (!current) throw new Error('Sign in again to resend the verification email.');
-    await sendEmailVerification(current);
+  /**
+   * Emails a fresh 6-digit code through the backend (Resend). Says so instead
+   * of sending when the address is already confirmed. debugCode only ever
+   * comes back from the emulator, for tests.
+   */
+  async sendEmailCode(): Promise<{ alreadyVerified?: boolean; debugCode?: string }> {
+    const res = await httpsCallable(firebaseFunctions(), 'sendEmailCode')({});
+    return res.data as { alreadyVerified?: boolean; debugCode?: string };
+  },
+
+  /** Checks a code; on success the account is confirmed in Firebase Auth. */
+  async verifyEmailCode(code: string): Promise<void> {
+    await httpsCallable(firebaseFunctions(), 'verifyEmailCode')({ code });
+    // The server changed the account; this session only sees it after a reload.
+    await firebaseAuth().currentUser?.reload();
   },
 
   /**

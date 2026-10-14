@@ -1,57 +1,33 @@
 import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import { useEmailVerified } from '@/hooks/useEmailVerified';
-import { getErrorMessage } from '@/lib/apiError';
-import { authService } from '@/services';
 import { useAuthStore } from '@/store/auth.store';
-import { useUiStore } from '@/store/ui.store';
+
+interface VerifyEmailBannerProps {
+  /**
+   * Where confirming is the next thing they must do, like the last step of
+   * coach sign-up: no "Not now", since there is nothing to put off.
+   */
+  required?: boolean;
+}
 
 /**
  * A prompt, not a gate. Nothing here blocks the app — verification is enforced
  * server-side at the two points it costs something: a coach being approved,
  * and an athlete paying. This just makes it easy to get it out of the way
- * first, and disappears on its own once the link is opened.
+ * first, and disappears on its own once the code is accepted.
  */
-interface VerifyEmailBannerProps {
-  /**
-   * Where confirming is the next thing they must do, like the last step of
-   * coach sign-up: no "Not now", and an "I've confirmed it" that checks again
-   * instead of waiting for them to leave the app and come back.
-   */
-  required?: boolean;
-}
-
 const VerifyEmailBanner: React.FC<VerifyEmailBannerProps> = ({ required = false }) => {
-  const { verified, recheck } = useEmailVerified();
-  const [checking, setChecking] = useState(false);
+  const history = useHistory();
+  const { verified } = useEmailVerified();
   const email = useAuthStore((s) => s.user?.email);
-  const showToast = useUiStore((s) => s.showToast);
-  const [sending, setSending] = useState(false);
   const [dismissed, setDismissed] = useState(false);
 
   if (verified || dismissed) return null;
 
-  const confirmCheck = async () => {
-    setChecking(true);
-    const nowVerified = await recheck();
-    setChecking(false);
-    showToast(
-      nowVerified ? 'Email confirmed.' : "Not confirmed yet. Open the link in the email, then try again.",
-      nowVerified ? 'success' : 'warning',
-    );
-  };
-
-  const resend = async () => {
-    setSending(true);
-    try {
-      await authService.sendVerificationEmail();
-      showToast(`Verification link sent to ${email ?? 'your email'}.`, 'success');
-    } catch (err) {
-      showToast(getErrorMessage(err, 'Could not send that email.'), 'danger');
-    } finally {
-      setSending(false);
-    }
-  };
+  // A fresh code is sent on arrival, and confirming brings them back here.
+  const enterCode = () => history.push('/auth/otp', { send: true, back: true });
 
   return (
     <div style={{
@@ -68,24 +44,17 @@ const VerifyEmailBanner: React.FC<VerifyEmailBannerProps> = ({ required = false 
         <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--cl-ink)' }}>Confirm your email</div>
         <div style={{ fontSize: 12.5, lineHeight: 1.45, color: 'var(--cl-muted-3)', marginTop: 2 }}>
           {required
-            ? `Confirm your email to submit your profile. We sent a link to ${email ?? 'your email'}; check spam if it isn't there.`
+            ? `Confirm ${email ?? 'your email'} to submit your profile. We'll email you a 6-digit code.`
             : 'You\u2019ll need it before you can pay for a session or be listed as a coach.'}
         </div>
         <div style={{ display: 'flex', gap: 14, marginTop: 8 }}>
           <span
-            onClick={() => void resend()}
+            onClick={enterCode}
             style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--cl-ink)', cursor: 'pointer' }}
           >
-            {sending ? 'Sending…' : 'Resend link'}
+            Enter code
           </span>
-          {required ? (
-            <span
-              onClick={() => void confirmCheck()}
-              style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--cl-ink)', cursor: 'pointer' }}
-            >
-              {checking ? 'Checking…' : "I've confirmed it"}
-            </span>
-          ) : (
+          {required ? null : (
             <span
               onClick={() => setDismissed(true)}
               style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--cl-muted-1)', cursor: 'pointer' }}

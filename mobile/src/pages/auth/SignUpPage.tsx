@@ -59,10 +59,10 @@ const SignUpPage: React.FC = () => {
         lga: values.lga,
       });
       setAuth(user, accessToken);
-      showToast('Account created — we sent a link to confirm your email.', 'success');
+      showToast('Account created. We emailed you a 6-digit code.', 'success');
       // Straight into the app: verification is enforced server-side where it
       // matters (coach approval, payment), not as a wall on the way in.
-      history.replace('/auth/role');
+      history.replace('/auth/otp', { next: '/auth/role' });
     } catch (err) {
       showToast(
         isBackendUnreachable(err)

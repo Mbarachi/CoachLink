@@ -17,6 +17,7 @@ import RoleSelectionPage from '@/pages/auth/RoleSelectionPage';
 import SignInPage from '@/pages/auth/SignInPage';
 import SignUpPage from '@/pages/auth/SignUpPage';
 import SplashPage from '@/pages/auth/SplashPage';
+import VerifyEmailPage from '@/pages/auth/VerifyEmailPage';
 import WelcomePage from '@/pages/auth/WelcomePage';
 import {
   useAndroidBackButton, useNotificationsLive, usePushNavigator, useRefetchOnResume,
@@ -64,9 +65,9 @@ const AppRoutes: React.FC = () => {
       <Route path="/auth/signin" component={SignInPage} exact />
       <Route path="/auth/signup" component={SignUpPage} exact />
       <Route path="/auth/forgot-password" component={ForgotPasswordPage} exact />
-      {/* Firebase verifies by emailed link, so these are inbox screens rather
-          than code entry. The paths are unchanged so existing links still work. */}
-      <Route path="/auth/otp" render={() => <CheckInboxPage mode="verify" />} exact />
+      {/* Email is confirmed by a 6-digit code sent through Resend. Password
+          reset still goes by Firebase's emailed link, hence the inbox screen. */}
+      <Route path="/auth/otp" component={VerifyEmailPage} exact />
       <Route path="/auth/forgot-password/otp" render={() => <CheckInboxPage mode="reset" />} exact />
       <Route path="/auth/reset-success" component={ResetPasswordSuccessPage} exact />
       <Route path="/auth/role" component={RoleSelectionPage} exact />

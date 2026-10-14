@@ -96,7 +96,7 @@ const CheckInboxPage: React.FC<CheckInboxPageProps> = ({ mode }) => {
   const resend = async () => {
     try {
       if (mode === 'verify') {
-        await firebaseAuth.sendVerificationEmail();
+        await firebaseAuth.sendEmailCode();
       } else {
         await firebaseAuth.forgotPassword({ email });
       }

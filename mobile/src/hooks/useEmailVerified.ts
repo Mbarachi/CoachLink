@@ -11,6 +11,9 @@ import { useAuthStore } from '@/store/auth.store';
  * so this session never hears about it. Re-checking when the app returns to
  * the foreground is what makes the banner disappear on its own.
  */
+/** Fired by the code screen once a code is accepted, so every banner hides at once. */
+export const EMAIL_VERIFIED_EVENT = 'coachlink:email-verified';
+
 export function useEmailVerified(): { verified: boolean; recheck: () => Promise<boolean> } {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const updateUser = useAuthStore((s) => s.updateUser);
@@ -41,9 +44,12 @@ export function useEmailVerified(): { verified: boolean; recheck: () => Promise<
       if (document.visibilityState === 'visible') void recheck();
     };
     document.addEventListener('visibilitychange', onVisible);
+    const onConfirmed = () => setVerified(true);
+    window.addEventListener(EMAIL_VERIFIED_EVENT, onConfirmed);
 
     return () => {
       document.removeEventListener('visibilitychange', onVisible);
+      window.removeEventListener(EMAIL_VERIFIED_EVENT, onConfirmed);
       void resume.then((l) => l.remove());
     };
   }, [isAuthenticated, recheck]);
