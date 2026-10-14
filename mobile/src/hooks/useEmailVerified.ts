@@ -20,6 +20,10 @@ export function useEmailVerified(): { verified: boolean; recheck: () => Promise<
   const [verified, setVerified] = useState(true); // assume fine until told otherwise, so nothing flashes
 
   const recheck = useCallback(async () => {
+    // On a cold start the session is still being restored, and asking before
+    // it is would find nobody signed in and skip the check, leaving the banner
+    // hidden on whatever screen the app reopened to.
+    await firebaseAuth().authStateReady();
     const current = firebaseAuth().currentUser;
     if (!current) return false;
     try {

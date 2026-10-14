@@ -234,7 +234,7 @@ const CoachOnboardingPage: React.FC = () => {
       <div style={{ flex: 1, overflowY: 'auto', padding: '18px 0 12px' }}>
         {/* On every step, so a coach who skipped the code at sign-up can
             confirm while filling in the rest; only Submit insists on it. */}
-        <VerifyEmailBanner required />
+        <VerifyEmailBanner required reason="to submit your profile" />
 
         {/* Step 0: Sport & experience */}
         {step === 0 && (

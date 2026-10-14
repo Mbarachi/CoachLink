@@ -40,7 +40,13 @@ const VerifyEmailPage: React.FC = () => {
   const [cooldown, setCooldown] = useState(RESEND_SECONDS);
   const [sending, setSending] = useState(false);
 
+  // Once only. A code request made on arrival can answer "already confirmed"
+  // after the person has typed the code and left, and a second goBack() would
+  // then walk them out of the screen they came from, or out of the app.
+  const left = useRef(false);
   const leave = useCallback(() => {
+    if (left.current) return;
+    left.current = true;
     if (state.back) history.goBack();
     else history.replace(state.next ?? '/auth/role');
   }, [history, state.back, state.next]);
@@ -61,6 +67,7 @@ const VerifyEmailPage: React.FC = () => {
     setSending(true);
     try {
       const res = await authService.sendEmailCode();
+      if (left.current) return;
       if (res.alreadyVerified) {
         window.dispatchEvent(new Event(EMAIL_VERIFIED_EVENT));
         showToast('Your email is already confirmed.', 'success');

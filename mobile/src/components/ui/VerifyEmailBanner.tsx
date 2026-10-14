@@ -10,6 +10,8 @@ interface VerifyEmailBannerProps {
    * coach sign-up: no "Not now", since there is nothing to put off.
    */
   required?: boolean;
+  /** What confirming unlocks here, finishing "Confirm you@x.com …". */
+  reason?: string;
 }
 
 /**
@@ -18,7 +20,7 @@ interface VerifyEmailBannerProps {
  * and an athlete paying. This just makes it easy to get it out of the way
  * first, and disappears on its own once the code is accepted.
  */
-const VerifyEmailBanner: React.FC<VerifyEmailBannerProps> = ({ required = false }) => {
+const VerifyEmailBanner: React.FC<VerifyEmailBannerProps> = ({ required = false, reason = 'to continue' }) => {
   const history = useHistory();
   const { verified } = useEmailVerified();
   const email = useAuthStore((s) => s.user?.email);
@@ -44,7 +46,7 @@ const VerifyEmailBanner: React.FC<VerifyEmailBannerProps> = ({ required = false 
         <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--cl-ink)' }}>Confirm your email</div>
         <div style={{ fontSize: 12.5, lineHeight: 1.45, color: 'var(--cl-muted-3)', marginTop: 2 }}>
           {required
-            ? `Confirm ${email ?? 'your email'} to submit your profile. We'll email you a 6-digit code.`
+            ? `Confirm ${email ?? 'your email'} ${reason}. We'll email you a 6-digit code.`
             : 'You\u2019ll need it before you can pay for a session or be listed as a coach.'}
         </div>
         <div style={{ display: 'flex', gap: 14, marginTop: 8 }}>

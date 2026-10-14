@@ -6,11 +6,12 @@ import { useHistory, useParams } from 'react-router-dom';
 import {
   AppButton, AppCard, AppPage, DetailRow, EmptyIllustration,
   LoadingOverlay, PageBody, PageHeader, QueryState,
+  VerifyEmailBanner,
 } from '@/components/ui';
 import { useBooking } from '@/hooks';
 import { getErrorMessage } from '@/lib/apiError';
 import { formatNaira, formatSessionDate } from '@/lib/format';
-import { paymentsService } from '@/services';
+import { authService, paymentsService } from '@/services';
 import { useUiStore } from '@/store/ui.store';
 import { queryClient } from '@/lib/queryClient';
 
@@ -66,6 +67,12 @@ const PaymentPage: React.FC = () => {
 
   const pay = async () => {
     if (!booking) return;
+    // The server refuses an unconfirmed email, but only after Paystack would
+    // have been opened. Asking first says what to do instead.
+    if (!(await authService.refreshVerification().catch(() => true))) {
+      showToast('Confirm your email first: tap "Enter code" above.', 'warning');
+      return;
+    }
     setWorking(true);
     try {
       const init = await paymentsService.initialize({ bookingRequestId: booking.bookingRequestId });
@@ -90,6 +97,7 @@ const PaymentPage: React.FC = () => {
       </div>
 
       <PageBody>
+        <VerifyEmailBanner required reason="to pay for this session" />
         <QueryState isLoading={bookingQuery.isPending} error={bookingQuery.error} onRetry={() => void bookingQuery.refetch()}>
           {!booking ? null : (
             <>
