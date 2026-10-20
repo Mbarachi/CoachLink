@@ -14,11 +14,13 @@ import {
   StatusPill,
   StickyFooter,
 } from '@/components/ui';
+import LearnerQuestions, { learnersAnswered } from '@/components/coach/LearnerQuestions';
 import { useMyCoachProfile, useSports, useUpdateCoachProfile } from '@/hooks';
 import { getErrorMessage } from '@/lib/apiError';
 import { initialsOf } from '@/lib/format';
 import { useAuthStore } from '@/store/auth.store';
 import { useUiStore } from '@/store/ui.store';
+import type { AgeGroup, Level } from '@/types';
 
 const labelStyle: React.CSSProperties = { margin: '15px 0 7px' };
 
@@ -34,6 +36,8 @@ const ProfileManagementPage: React.FC = () => {
   const update = useUpdateCoachProfile(coach?.profile.id);
 
   const [sportIds, setSportIds] = useState<string[]>([]);
+  const [ageGroups, setAgeGroups] = useState<AgeGroup[]>([]);
+  const [levels, setLevels] = useState<Level[]>([]);
   const [venue, setVenue] = useState('');
   const [rate, setRate] = useState('');
   const [about, setAbout] = useState('');
@@ -43,6 +47,8 @@ const ProfileManagementPage: React.FC = () => {
   useEffect(() => {
     if (!coach) return;
     setSportIds(coach.sports.map((s) => s.id));
+    setAgeGroups(coach.profile.ageGroups);
+    setLevels(coach.profile.levels);
     setVenue(coach.profile.venue);
     setRate(String(coach.profile.sessionRate));
     setAbout(coach.profile.bio);
@@ -57,6 +63,10 @@ const ProfileManagementPage: React.FC = () => {
       showToast('Pick at least one sport.', 'warning');
       return;
     }
+    if (!learnersAnswered(ageGroups, levels)) {
+      showToast('Say who you teach and at what level.', 'warning');
+      return;
+    }
     try {
       await update.mutateAsync({
         bio: about.trim(),
@@ -64,6 +74,8 @@ const ProfileManagementPage: React.FC = () => {
         sessionRate: Number(rate.replace(/[^\d]/g, '')),
         yearsOfExperience: Number(experience) || 0,
         sportIds,
+        ageGroups,
+        levels,
       });
       showToast('Profile saved.', 'success');
       history.push('/coach/settings');
@@ -130,6 +142,14 @@ const ProfileManagementPage: React.FC = () => {
                     >{s.icon} {s.name}</ChoiceChip>
                   ))}
                 </div>
+
+                <LearnerQuestions
+                  ageGroups={ageGroups}
+                  levels={levels}
+                  onAgeGroups={setAgeGroups}
+                  onLevels={setLevels}
+                  labelStyle={labelStyle}
+                />
 
                 <AppInput label="Training venue" value={venue} onChange={setVenue} labelStyle={labelStyle} />
 

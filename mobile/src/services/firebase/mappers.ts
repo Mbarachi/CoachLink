@@ -64,6 +64,8 @@ export function toCoach(id: string, data: DocumentData): Coach {
       sessionRate: data.sessionRate ?? 0,
       venue: data.venue ?? '',
       area: data.area ?? '',
+      ageGroups: data.ageGroups ?? [],
+      levels: data.levels ?? [],
       availability: data.availability ?? {},
       payoutAccount: data.payoutAccount ?? null,
       verificationStatus: data.verificationStatus ?? 'PENDING',

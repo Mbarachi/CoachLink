@@ -34,6 +34,8 @@ Fields:
 * yearsOfExperience
 * sessionRate
 * venue
+* ageGroups — who they teach: CHILD, ADULT, or both
+* levels — where their learners start: BEGINNER, IMPROVING, or both
 * verificationStatus
 * verificationNote — why an admin approved or rejected; shown to the coach
 * previousRejectionNote — what the coach was told on the attempt before this one
@@ -44,6 +46,11 @@ Fields:
 * rating
 * totalReviews
 * isActive
+
+ageGroups and levels are what parents and athletes filter on in Find a coach,
+since they rarely know a coach by name. Profiles made before the questions were
+asked have both empty, which means "not said": those coaches still show under
+every filter, and their dashboard asks them to answer.
 
 Verification Status:
 

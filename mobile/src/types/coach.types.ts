@@ -12,6 +12,11 @@ export type VerificationStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
  */
 export type Availability = Record<string, string[]>;
 
+/** Who a coach takes on. Mirrors AGE_GROUPS in the backend's types.ts. */
+export type AgeGroup = 'CHILD' | 'ADULT';
+/** Where their learners start from. Mirrors LEVELS in the backend's types.ts. */
+export type Level = 'BEGINNER' | 'IMPROVING';
+
 export interface CoachProfile {
   id: string;
   userId: string;
@@ -22,6 +27,10 @@ export interface CoachProfile {
   /** Venue-based discovery per the MVP scope, e.g. "Festival Hotel Pool". */
   venue: string;
   area: string;
+  /** Empty for a profile made before this was asked: not said, not "nobody". */
+  ageGroups: AgeGroup[];
+  /** Empty for a profile made before this was asked. */
+  levels: Level[];
   verificationStatus: VerificationStatus;
   /** Why an admin rejected or approved. Shown to the coach on a rejection. */
   verificationNote: string | null;
@@ -62,6 +71,8 @@ export interface CreateCoachProfileDto {
   sessionRate: number;
   venue: string;
   area?: string;
+  ageGroups: AgeGroup[];
+  levels: Level[];
   sportIds: string[];
   availability?: Availability;
 }

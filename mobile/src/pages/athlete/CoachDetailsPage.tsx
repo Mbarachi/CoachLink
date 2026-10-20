@@ -7,6 +7,7 @@ import {
 } from '@/components/ui';
 import { useCoach, useCoachReviews } from '@/hooks';
 import { coachInitials, coachName, coachSportNames, primarySport } from '@/lib/coach';
+import { ageGroupsTag, levelsTag } from '@/lib/coachSearch';
 import { formatNaira, formatShortDate, initialsOf } from '@/lib/format';
 
 const sectionStyle: React.CSSProperties = { fontSize: 15, margin: '20px 0 7px' };
@@ -51,6 +52,16 @@ const CoachDetailsPage: React.FC = () => {
                     <span style={{ color: 'var(--cl-muted-2)', fontWeight: 400 }}>No reviews yet</span>
                   )}
                 </div>
+
+                {(coach.profile.ageGroups.length > 0 || coach.profile.levels.length > 0) && (
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 11 }}>
+                    {[ageGroupsTag(coach.profile.ageGroups), levelsTag(coach.profile.levels)]
+                      .filter(Boolean)
+                      .map(t => (
+                        <span key={t} style={{ fontSize: 12, fontWeight: 600, color: 'var(--cl-muted-3)', background: 'var(--cl-subtle)', padding: '5px 10px', borderRadius: 8 }}>{t}</span>
+                      ))}
+                  </div>
+                )}
 
                 <div style={{ display: 'flex', gap: 9, marginTop: 18 }}>
                   {[

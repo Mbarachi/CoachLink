@@ -81,6 +81,8 @@ export const coachesService = {
     return {
       step: typeof d.step === 'number' ? d.step : 0,
       sportId: typeof d.sportId === 'string' ? d.sportId : null,
+      ageGroups: Array.isArray(d.ageGroups) ? d.ageGroups : [],
+      levels: Array.isArray(d.levels) ? d.levels : [],
       experience: d.experience ?? '',
       about: d.about ?? '',
       venue: d.venue ?? '',

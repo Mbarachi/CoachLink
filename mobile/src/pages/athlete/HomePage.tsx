@@ -128,7 +128,7 @@ const HomePage: React.FC = () => {
           <div style={{ overflow: 'hidden', borderRadius: 20 }}>
             <div style={{ display: 'flex', gap: HERO_GAP, transition: 'transform .55s cubic-bezier(.4,0,.2,1)', transform: `translateX(calc(${hero} * (-100% - ${HERO_GAP}px)))` }}>
               {/* Slide 1: Swimming */}
-              <div onClick={() => history.push('/athlete/search')} style={{ flexShrink: 0, width: '100%', boxSizing: 'border-box', background: 'var(--cl-ink-fill)', borderRadius: 20, padding: 18, display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', overflow: 'hidden' }}>
+              <div onClick={() => history.push('/athlete/search?sport=Swimming')} style={{ flexShrink: 0, width: '100%', boxSizing: 'border-box', background: 'var(--cl-ink-fill)', borderRadius: 20, padding: 18, display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', overflow: 'hidden' }}>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 800, fontSize: 23, letterSpacing: '-0.02em', color: 'var(--cl-on-ink)', margin: '7px 0 4px', lineHeight: 1.04 }}>Learn to<br />swim</div>
                   <div style={{ fontSize: 12, color: 'var(--cl-bfae97)' }}>Freestyle to open water</div>
@@ -155,7 +155,7 @@ const HomePage: React.FC = () => {
               </div>
 
               {/* Slide 2: Tennis */}
-              <div onClick={() => history.push('/athlete/search')} style={{ flexShrink: 0, width: '100%', boxSizing: 'border-box', background: 'var(--cl-accent)', borderRadius: 20, padding: 18, display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', overflow: 'hidden' }}>
+              <div onClick={() => history.push('/athlete/search?sport=Tennis')} style={{ flexShrink: 0, width: '100%', boxSizing: 'border-box', background: 'var(--cl-accent)', borderRadius: 20, padding: 18, display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', overflow: 'hidden' }}>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 800, fontSize: 23, letterSpacing: '-0.02em', color: 'var(--cl-on-accent)', margin: '7px 0 4px', lineHeight: 1.04 }}>Master<br />your serve</div>
                   <div style={{ fontSize: 12, color: 'var(--cl-on-accent-muted)' }}>Baseline to match play</div>

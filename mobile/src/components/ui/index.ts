@@ -4,6 +4,7 @@ export { default as AppInput } from './AppInput';
 export { default as AppPage } from './AppPage';
 export { default as AppSelect } from './AppSelect';
 export { default as BackButton } from './BackButton';
+export { default as BottomSheet } from './BottomSheet';
 export { default as ChoiceChip } from './ChoiceChip';
 export { default as DetailRow } from './DetailRow';
 export { default as EmptyIllustration } from './EmptyIllustration';

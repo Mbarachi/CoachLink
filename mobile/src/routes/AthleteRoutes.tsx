@@ -19,7 +19,6 @@ import BookingDetailsPage from '@/pages/athlete/BookingDetailsPage';
 import BookingRequestPage from '@/pages/athlete/BookingRequestPage';
 import BookingSuccessPage from '@/pages/athlete/BookingSuccessPage';
 import CoachDetailsPage from '@/pages/athlete/CoachDetailsPage';
-import CoachListingPage from '@/pages/athlete/CoachListingPage';
 import HomePage from '@/pages/athlete/HomePage';
 import LeaveReviewPage from '@/pages/athlete/LeaveReviewPage';
 import MyBookingsPage from '@/pages/athlete/MyBookingsPage';
@@ -46,7 +45,8 @@ const AthleteRoutes: React.FC = () => (
       <Route path="/athlete/profile"       component={ProfilePage}       exact />
       <Route path="/athlete/profile/edit"  component={EditProfilePage}   exact />
 
-      <Route path="/athlete/coaches"                              component={CoachListingPage}   exact />
+      {/* The old "Coaches near you" list, folded into Search. */}
+      <Route exact path="/athlete/coaches"><Redirect to="/athlete/search" /></Route>
       <Route path="/athlete/coaches/:id"                          component={CoachDetailsPage}   exact />
       <Route path="/athlete/booking-request/:coachId"             component={BookingRequestPage} exact />
       <Route path="/athlete/payment/:bookingId"            component={PaymentPage}        exact />

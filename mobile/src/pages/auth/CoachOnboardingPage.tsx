@@ -5,20 +5,23 @@ import {
   AppButton, AppCard, AppInput, AppPage, BackButton, FilePicker, FormLabel, LoadingOverlay, LoadingState,
   VerifyEmailBanner,
 } from '@/components/ui';
+import LearnerQuestions, { learnersAnswered } from '@/components/coach/LearnerQuestions';
 import { useCreateCoachProfile, useSports } from '@/hooks';
 import { uploadCoachFiles } from '@/services/firebase/uploads';
 import { getErrorMessage } from '@/lib/apiError';
 import { setBackOverride } from '@/lib/backNavigation';
 import { DAY_LABELS, SLOTS } from '@/lib/slots';
 import { EMPTY_DRAFT, type CoachDraft } from '@/lib/coachDraft';
+import { ageGroupsTag, levelsTag } from '@/lib/coachSearch';
 import { authService, coachesService } from '@/services';
 import { useAuthStore } from '@/store/auth.store';
 import { useUiStore } from '@/store/ui.store';
+import type { AgeGroup, Level } from '@/types';
 
 /** Monday first, the way a coach thinks about their week. */
 const WEEK = [1, 2, 3, 4, 5, 6, 0] as const;
 
-const STEP_LABELS = ['Sport & experience', 'Venue & pricing', 'Availability', 'Verification & review'];
+const STEP_LABELS = ['Sport & who you teach', 'Venue & pricing', 'Availability', 'Verification & review'];
 const TOTAL_STEPS = STEP_LABELS.length;
 
 const Toggle: React.FC<{ on: boolean; onChange: () => void }> = ({ on, onChange }) => (
@@ -52,6 +55,9 @@ const CoachOnboardingPage: React.FC = () => {
   const [sportId, setSportId] = useState<string | null>(EMPTY_DRAFT.sportId);
   const chosenSport = sportId ?? sports[0]?.id ?? null;
   const sportName = sports.find((s) => s.id === chosenSport)?.name ?? '—';
+
+  const [ageGroups, setAgeGroups] = useState<AgeGroup[]>(EMPTY_DRAFT.ageGroups);
+  const [levels, setLevels] = useState<Level[]>(EMPTY_DRAFT.levels);
 
   const [experience, setExperience] = useState(EMPTY_DRAFT.experience);
   const [about, setAbout] = useState(EMPTY_DRAFT.about);
@@ -88,6 +94,8 @@ const CoachOnboardingPage: React.FC = () => {
       const d = draft ?? EMPTY_DRAFT;
       setStep(d.step);
       setSportId(d.sportId);
+      setAgeGroups(d.ageGroups);
+      setLevels(d.levels);
       setExperience(d.experience);
       setAbout(d.about);
       setVenue(d.venue);
@@ -103,7 +111,7 @@ const CoachOnboardingPage: React.FC = () => {
   /** Saved on every step change, so Continue and Back both keep what was typed. */
   const saveAt = (nextStep: number) => {
     void coachesService.saveDraft({
-      step: nextStep, sportId: chosenSport, experience, about, venue, price, openDays,
+      step: nextStep, sportId: chosenSport, ageGroups, levels, experience, about, venue, price, openDays,
     }).catch(() => {
       showToast("Couldn't save your progress — check your connection.", 'warning');
     });
@@ -135,6 +143,10 @@ const CoachOnboardingPage: React.FC = () => {
   }, []);
 
   const next = () => {
+    if (step === 0 && !learnersAnswered(ageGroups, levels)) {
+      showToast('Say who you teach and at what level.', 'warning');
+      return;
+    }
     if (step === 0 && !experience.replace(/[^\d]/g, '')) {
       showToast('Enter your years of experience.', 'warning');
       return;
@@ -147,6 +159,13 @@ const CoachOnboardingPage: React.FC = () => {
   const finish = async () => {
     if (!chosenSport) {
       showToast('Pick the sport you coach.', 'warning');
+      return;
+    }
+    if (!learnersAnswered(ageGroups, levels)) {
+      // A draft saved before these were asked can arrive here without them.
+      showToast('Say who you teach and at what level.', 'warning');
+      saveAt(0);
+      setStep(0);
       return;
     }
     if (!experience.replace(/[^\d]/g, '')) {
@@ -184,6 +203,8 @@ const CoachOnboardingPage: React.FC = () => {
         yearsOfExperience: Number(experience.replace(/[^\d]/g, '')),
         sessionRate: Number(price.replace(/[^\d]/g, '')),
         venue: venue.trim(),
+        ageGroups,
+        levels,
         sportIds: [chosenSport],
         availability: Object.fromEntries(openDays.map(day => [String(day), SLOTS])),
       });
@@ -255,6 +276,14 @@ const CoachOnboardingPage: React.FC = () => {
                 );
               })}
             </div>
+
+            <LearnerQuestions
+              ageGroups={ageGroups}
+              levels={levels}
+              onAgeGroups={setAgeGroups}
+              onLevels={setLevels}
+              labelStyle={{ margin: '20px 0 8px' }}
+            />
 
             <AppInput label="Years of experience" value={experience} onChange={setExperience} placeholder="e.g. 5" labelStyle={{ margin: '20px 0 7px' }} />
 
@@ -336,6 +365,7 @@ const CoachOnboardingPage: React.FC = () => {
             <FormLabel style={{ margin: '22px 0 9px' }}>Review</FormLabel>
             <AppCard padding="4px 16px" style={{ borderRadius: 16 }}>
               <ReviewRow label="Sport" value={sportName} />
+              <ReviewRow label="Teaches" value={[ageGroupsTag(ageGroups), levelsTag(levels)].filter(Boolean).join(' · ') || '—'} />
               <ReviewRow label="Venue" value={venue || '—'} />
               <ReviewRow label="Price / session" value={price || '—'} bold last />
             </AppCard>

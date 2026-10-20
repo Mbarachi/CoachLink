@@ -91,6 +91,24 @@ const DashboardPage: React.FC = () => {
 
         <VerificationCard coach={mine.data} onFix={() => history.push('/coach/resubmit')} />
 
+        {/* Coaches who signed up before these were asked. Parents filter on
+            them, so an unanswered profile is easy to miss in search. */}
+        {myProfile && (myProfile.ageGroups.length === 0 || myProfile.levels.length === 0) && (
+          <AppCard
+            onClick={() => history.push('/coach/profile')}
+            padding={14}
+            style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 12, marginBottom: 0 }}
+          >
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--cl-ink)' }}>Say who you teach</div>
+              <div style={{ fontSize: 12, lineHeight: 1.4, color: 'var(--cl-muted-1)', marginTop: 2 }}>
+                Parents search for coaches who teach children or adults, and beginners or improvers.
+              </div>
+            </div>
+            <span style={{ fontSize: 18, color: 'var(--cl-muted-line)', flexShrink: 0 }}>&rsaquo;</span>
+          </AppCard>
+        )}
+
         {/* stat cards */}
         <div style={{ display: 'flex', gap: 10, marginTop: 18 }}>
           <StatCard val={String(pending.length)} label="New requests" dark />

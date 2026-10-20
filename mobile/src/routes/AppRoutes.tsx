@@ -1,6 +1,5 @@
 import { IonRouterOutlet } from '@ionic/react';
 import SearchCoachesPage from '@/pages/athlete/SearchCoachesPage';
-import CoachListingPage from '@/pages/athlete/CoachListingPage';
 import CoachDetailsPage from '@/pages/athlete/CoachDetailsPage';
 import React from 'react';
 import { Redirect, Route } from 'react-router-dom';
@@ -56,7 +55,7 @@ const AppRoutes: React.FC = () => {
       {/* ── Public ─────────────────────────────────────────── */}
       <Route path="/splash" component={SplashPage} exact />
       <Route path="/athlete/search" component={SearchCoachesPage} exact />
-      <Route path="/athlete/coaches" component={CoachListingPage} exact />
+      <Route exact path="/athlete/coaches"><Redirect to="/athlete/search" /></Route>
       <Route path="/athlete/coaches/:id" component={CoachDetailsPage} exact />
       <Route path="/welcome" component={WelcomePage} exact />
       {/* Public: the App Store needs a reachable privacy policy, and someone

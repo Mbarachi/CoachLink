@@ -1,3 +1,5 @@
+import type { AgeGroup, Level } from '@/types';
+
 /**
  * A coach's half-finished onboarding, as the wizard holds it and the backend
  * stores it in coachDrafts/{uid}. That document existing is what marks an
@@ -10,6 +12,8 @@
 export interface CoachDraft {
   step: number;
   sportId: string | null;
+  ageGroups: AgeGroup[];
+  levels: Level[];
   experience: string;
   about: string;
   venue: string;
@@ -20,6 +24,9 @@ export interface CoachDraft {
 export const EMPTY_DRAFT: CoachDraft = {
   step: 0,
   sportId: null,
+  // Nothing picked: a coach has to say, not inherit a guess.
+  ageGroups: [],
+  levels: [],
   experience: '',
   about: '',
   venue: '',
