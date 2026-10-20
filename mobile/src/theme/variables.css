@@ -51,6 +51,13 @@
   --cl-danger-on-ink: #e8836a;   /* danger glyph on ink toast  */
   --cl-on-accent-muted:#f7dccf;  /* muted subtext on accent    */
 
+  /* Tab bar. On the cream canvas a canvas-coloured bar with a hairline read
+     as icons pasted onto the page, so in light it is a lighter panel with a
+     firmer line and a soft shadow cast upward. Dark already had the edge. */
+  --cl-tabbar-bg:     var(--cl-surface);
+  --cl-tabbar-line:   #E2D2BD;
+  --cl-tabbar-shadow: 0 -6px 18px rgba(36, 28, 19, 0.07);
+
   /* Sport banner scenes (SportBanner.tsx). A clay court really is terracotta,
      so tennis borrows the accent family; the pool teal is desaturated to sit
      beside it rather than fight it. These are self-contained illustrations —
@@ -129,6 +136,10 @@
   --cl-on-ink:        #F3E9DC;
   --cl-bfae97:        #B5A48C;
 
+  --cl-tabbar-bg:     var(--cl-canvas);
+  --cl-tabbar-line:   var(--cl-border);
+  --cl-tabbar-shadow: none;
+
   --ion-background-color-rgb: 23, 18, 13;
 }
 
@@ -184,8 +195,9 @@
 
 /* ── Tab bar — Clay skin ──────────────────────────────────── */
 ion-tab-bar {
-  --background: var(--cl-canvas);
-  --border:     1px solid var(--cl-border);
+  --background: var(--cl-tabbar-bg);
+  --border:     1px solid var(--cl-tabbar-line);
+  box-shadow:   var(--cl-tabbar-shadow);
   height: 60px;
 }
 
