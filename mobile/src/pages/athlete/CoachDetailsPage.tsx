@@ -1,3 +1,5 @@
+import { IonIcon } from '@ionic/react';
+import { locationOutline } from 'ionicons/icons';
 import React from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 
@@ -81,7 +83,9 @@ const CoachDetailsPage: React.FC = () => {
 
                 <SectionHeading style={sectionStyle}>Training venue</SectionHeading>
                 <AppCard padding="13px 14px" style={{ display: 'flex', alignItems: 'center', gap: 11, borderRadius: 15 }}>
-                  <div style={{ width: 34, height: 34, borderRadius: 10, background: 'var(--cl-subtle)', flexShrink: 0 }} />
+                  <div style={{ width: 34, height: 34, borderRadius: 10, background: 'var(--cl-subtle)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <IonIcon icon={locationOutline} aria-hidden="true" style={{ fontSize: 18, color: 'var(--cl-ink)' }} />
+                  </div>
                   <div>
                     <div style={{ fontWeight: 600, fontSize: 13.5, color: 'var(--cl-ink)' }}>{coach.profile.venue}</div>
                     <div style={{ fontSize: 12, color: 'var(--cl-muted-1)' }}>{coach.profile.area}</div>
