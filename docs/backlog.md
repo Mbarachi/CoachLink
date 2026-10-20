@@ -28,6 +28,71 @@ directory over. The compromises below that name `firestore.indexes.json` and
 
 ---
 
+## Before go-live (30 October 2026)
+
+**Deploy the backend changes from 2026-10-20.** Commit `382b934` in
+`coachlink-firebase` (who a coach teaches, and from what level) is pushed but
+not deployed. Until `npm run deploy` runs, the live functions ignore the two
+new fields without an error: a coach answers both questions in the wizard or
+on their profile, sees "saved", and nothing is stored, so parents' "For" and
+"Level" filters have nothing to work on and the dashboard keeps asking.
+
+**Decide the session-ending rules below**, or at least the refund one. Today a
+cancelled paid session refunds nobody, and that will be the first support
+message after launch.
+
+---
+
+## Session lifecycle: open decisions
+
+Reviewed 2026-10-20. How a session ends is the least-designed part of the
+booking flow, and three decisions are waiting on the owner.
+
+**How it works today.** Only the coach can end a session, by marking it
+complete, and only once its start time has passed (`updateBooking`). That one
+tap pays the coach (`payoutOnCompletion`) and lets the athlete review. Nothing
+ends a session on its own: there is no scheduled function, and the athlete or
+parent has no say at all. What follows from that:
+
+- **A coach who forgets is never paid**, and the athlete is never asked for a
+  review. The session stays "awaiting confirmation" forever.
+- **A no-show cannot be reported.** The athlete has no way to say the coach did
+  not turn up, and a coach can mark complete a session that never happened —
+  see the payout item under Shipped outside PRD scope.
+- **Either side can cancel at any time, even afterwards.** The server puts no
+  time limit on CANCELLED. There is no refund step anywhere (`REFUNDED` exists
+  as a payment status and nothing sets it), so an athlete who cancels a paid
+  session loses the money, the coach is not paid either, and it sits with
+  CoachLink.
+- **A session can be paid for after its date.** `initializePayment` charges
+  every PENDING_PAYMENT booking on the request, past ones included, so a
+  package paid late is billed for sessions that already went by unpaid.
+
+The app now hides Pay and Cancel once a session's hour is over (commit
+`888cb73`), but that is display only; the server still accepts both.
+
+**Proposed rules.**
+- A session ends an hour after it starts; sessions are fixed at an hour.
+- After that, both sides are asked. The coach as now; the athlete or parent
+  gets "Did your session with Tobi happen?" — Yes, or There was a problem.
+  Either Yes completes it. A problem holds the payout and goes to admin.
+- Nobody answers within 48 hours: it completes on its own, so the coach is paid
+  and the athlete asked for a review. Needs the project's first scheduled
+  function.
+- No cancelling after the start time; reporting a problem replaces it.
+- An unpaid session whose time passes becomes "not paid in time" and can no
+  longer be paid (server-side, in `initializePayment`).
+
+**Decisions needed.**
+1. The auto-complete window — 48 hours? — and whether it applies at all.
+2. Refunds on cancelling a paid session. For example: athlete cancels 24 hours
+   or more ahead, full refund; later, none; coach cancels, always full. Needs
+   Paystack's refund API.
+3. Who settles a reported problem, and what they can award: full refund,
+   partial, or pay the coach anyway.
+
+---
+
 ## Not built
 
 **Prepaid packages as a leakage defence** — packages exist as a booking shape,
@@ -87,6 +152,26 @@ chips. Options, increasing effort:
 The fixed list is the likely first step; maps only earn their cost once the
 app spreads past a few neighbourhoods.
 
+**Find a coach: ideas not taken (2026-10-20).** Option 1b shipped. Left over:
+- **Three quick questions on first visit** (design option 1a): sport, who is
+  training, level, then the list. Gentlest for a first-time parent; after the
+  first time the tab opens straight to the list. Suggested alongside 1b, not
+  chosen.
+- **The tab is still labelled "Search"** while the screen says "Find a coach".
+- **Coaches who have not answered the two new questions show under every
+  filter**, so the filters are loose until most have answered. Once they have,
+  sort the unanswered ones last, or hide them under a filter.
+
+**"Next open" is a coach's weekly times, not real free slots.** Bookings are
+readable only by their two parties, so the card cannot know a slot is taken,
+and it says "Next open" rather than "Next free" for that reason. Honest free
+times need a public busy-slots read or a callable returning them.
+
+**Coach dashboard "Upcoming sessions" counts too much.** It counts future
+sessions on accepted requests, which includes ones not yet paid and ones since
+cancelled. Counting future UPCOMING bookings instead would match the athlete's
+number.
+
 ---
 
 **Reviews cannot be tested without a past session.** Completion requires the
@@ -94,11 +179,40 @@ session date to have passed and every seeded booking is dated ahead, so trying
 the review flow means seeding a paid booking in the past or waiting for one to
 age into it. The same gap blocks testing payouts end to end.
 
+**The seed script makes no sample data.** `npm run seed` creates the two sports
+and the admin, nothing else. Checking Find a coach, the review row and the
+booking tabs on 2026-10-20 took throwaway scripts writing coaches, a parent,
+reviews and past and future bookings straight into the emulator. A `seed:demo`
+that does the same would make every screen testable in a minute.
+
+**Local emulator mode does not work in a browser.** Two separate faults:
+- The app connects to the emulators at `127.0.0.1` (`HOST` in
+  `src/lib/firebase.ts`), but the Content-Security-Policy in `index.html`
+  allows only `http://localhost:*`, so every call is blocked. Change `HOST` to
+  `localhost`, or add `http://127.0.0.1:*` to `connect-src`.
+- On Victor's Mac the Datadog agent holds ports 5001 and 5002, and 5001 is the
+  Functions emulator's port, so `./dev.sh --emulate` cannot start functions.
+  Move it in `firebase.json`, the `connectFunctionsEmulator` call and
+  `test/run.mjs` (5011 was free), or stop the agent while developing.
+
+**`npm run lint` cannot run.** ESLint is not installed in `mobile/` and there is
+no `eslint.config.js`, so the script fails before checking anything. Type
+checking (`tsc -b`) is the only automated check on the app today.
+
 ## Known compromises
 
-**Coach search is prefix-only.** Firestore has no case-insensitive contains, so
-`searchTokens` indexes every prefix of every name word. "dinma" will not find
-"Chidinma". Real search needs Algolia or Typesense.
+**Find a coach filters on the phone.** Since 2026-10-20 the app reads every
+approved coach in one query (up to `DISCOVERY_LIMIT`, 300) and filters and
+sorts them itself, because six filters in Firestore would need a composite index
+per combination. Fine for one neighbourhood; revisit once listings run into the
+hundreds, when that read gets slow and a search service (Algolia, Typesense)
+starts to pay for itself. A side effect: name search is now a plain "contains"
+on the phone, so "dinma" finds "Chidinma", and the backend's `searchTokens`
+prefix field is no longer read by the app. It can go, with its index.
+
+**"See all" reviews stops at 50.** `listForCoach` returns a coach's 50 newest.
+The count shown is the coach's real total, so it stays right, but reviews past
+50 cannot be read. Add paging before any coach gets near it.
 
 **Firestore indexes must mirror every query shape.** A missing composite index
 is a runtime failure, not a slow query, and the emulator does not catch it
