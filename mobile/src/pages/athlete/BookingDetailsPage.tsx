@@ -10,6 +10,7 @@ import { getErrorMessage } from '@/lib/apiError';
 import {
   formatNaira, formatSessionDate, formatSessionTime, fullName, initialsOf,
 } from '@/lib/format';
+import { shownStatus } from '@/lib/sessions';
 import { useUiStore } from '@/store/ui.store';
 
 const BANNERS: Partial<Record<string, string>> = {
@@ -17,6 +18,8 @@ const BANNERS: Partial<Record<string, string>> = {
   UPCOMING: 'Confirmed. Your coach is expecting you.',
   COMPLETED: 'This session is done.',
   CANCELLED: 'This session was cancelled.',
+  AWAITING_CONFIRMATION: 'This session’s time has passed. Your coach will confirm it took place, and then you can leave a review.',
+  NOT_PAID: 'This session’s time passed before it was paid for, so it did not go ahead.',
 };
 
 const BookingDetailsPage: React.FC = () => {
@@ -41,7 +44,9 @@ const BookingDetailsPage: React.FC = () => {
     }
   };
 
-  const canCancel = booking?.status === 'PENDING_PAYMENT' || booking?.status === 'UPCOMING';
+  const shown = booking ? shownStatus(booking) : undefined;
+  // Once its hour is over there is nothing left to pay for or call off.
+  const canCancel = shown === 'PENDING_PAYMENT' || shown === 'UPCOMING';
 
   return (
     <AppPage padding="screen">
@@ -69,13 +74,13 @@ const BookingDetailsPage: React.FC = () => {
               </div>
 
               <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
-                <StatusPill status={booking.status} />
+                <StatusPill status={shown} />
               </div>
 
-              {BANNERS[booking.status] && (
+              {shown && BANNERS[shown] && (
                 <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start', background: 'var(--cl-subtle)', borderRadius: 14, padding: 14, marginTop: 16 }}>
                   <div style={{ width: 18, height: 18, borderRadius: '50%', background: 'var(--cl-ink-fill)', color: 'var(--cl-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, flexShrink: 0 }}>i</div>
-                  <span style={{ fontSize: 12.5, lineHeight: 1.5, color: 'var(--cl-muted-3)' }}>{BANNERS[booking.status]}</span>
+                  <span style={{ fontSize: 12.5, lineHeight: 1.5, color: 'var(--cl-muted-3)' }}>{BANNERS[shown!]}</span>
                 </div>
               )}
 
@@ -86,7 +91,7 @@ const BookingDetailsPage: React.FC = () => {
                 <DetailRow label="Session fee" value={formatNaira(booking.sessionRate)} bold last />
               </AppCard>
 
-              {booking.status === 'PENDING_PAYMENT' && (
+              {shown === 'PENDING_PAYMENT' && (
                 <AppButton
                   size="md"
                   onClick={() => history.push(`/athlete/payment/${booking.id}`)}

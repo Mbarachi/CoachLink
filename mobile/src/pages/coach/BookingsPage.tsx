@@ -7,6 +7,7 @@ import {
 import { useBookings, useUpdateBooking } from '@/hooks';
 import { getErrorMessage } from '@/lib/apiError';
 import { formatNaira, formatSessionDate, formatSessionTime, fullName, initialsOf } from '@/lib/format';
+import { hasEnded, isAhead, newestFirst, shownStatus } from '@/lib/sessions';
 import { useUiStore } from '@/store/ui.store';
 import type { Booking } from '@/types';
 
@@ -28,7 +29,7 @@ const EMPTY: Record<Tab, { title: string; message: string }> = {
   },
   Past: {
     title: 'Nothing past yet',
-    message: 'Completed and cancelled sessions are kept here.',
+    message: 'Completed, cancelled and unpaid sessions are kept here.',
   },
 };
 
@@ -53,13 +54,18 @@ const CoachBookingsPage: React.FC = () => {
     const from = startOfToday();
     const to = endOfToday();
     const at = (b: Booking) => new Date(b.scheduledAt).getTime();
-    const live = (b: Booking) => b.status === 'UPCOMING' || b.status === 'PENDING_PAYMENT';
 
     return {
-      Today: all.filter((b) => live(b) && at(b) >= from && at(b) < to),
-      Upcoming: all.filter((b) => live(b) && at(b) >= to),
-      'To confirm': all.filter((b) => b.status === 'UPCOMING' && at(b) < from),
-      Past: all.filter((b) => b.status === 'COMPLETED' || b.status === 'CANCELLED'),
+      Today: all.filter((b) => isAhead(b) && at(b) >= from && at(b) < to),
+      Upcoming: all.filter((b) => isAhead(b) && at(b) >= to),
+      // As soon as the hour is over, not from tomorrow: a coach finishing at
+      // 10am can mark it done straight away.
+      'To confirm': all.filter((b) => b.status === 'UPCOMING' && hasEnded(b.scheduledAt)),
+      // Unpaid sessions whose time passed land here rather than nowhere.
+      Past: all
+        .filter((b) => b.status === 'COMPLETED' || b.status === 'CANCELLED'
+          || (b.status === 'PENDING_PAYMENT' && hasEnded(b.scheduledAt)))
+        .sort(newestFirst),
     };
   }, [query.data]);
 
@@ -130,7 +136,7 @@ const SessionCard: React.FC<SessionCardProps> = ({ booking, confirmable, onDone 
             {athlete.bookedForChild && ' · for their child'}
           </div>
         </div>
-        <StatusPill status={booking.status} />
+        <StatusPill status={shownStatus(booking)} />
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: 13, fontSize: 12.5, color: 'var(--cl-muted-3)' }}>
@@ -143,9 +149,14 @@ const SessionCard: React.FC<SessionCardProps> = ({ booking, confirmable, onDone 
 
       {/* Unpaid means accepted but not yet confirmed — worth saying plainly, so
           nobody travels to a session the athlete has not paid for. */}
-      {booking.status === 'PENDING_PAYMENT' && (
+      {shownStatus(booking) === 'PENDING_PAYMENT' && (
         <div style={{ fontSize: 12, color: 'var(--cl-pending-text)', marginTop: 8 }}>
           Not confirmed until the athlete pays.
+        </div>
+      )}
+      {shownStatus(booking) === 'NOT_PAID' && (
+        <div style={{ fontSize: 12, color: 'var(--cl-muted-2)', marginTop: 8 }}>
+          The athlete did not pay before the session, so it did not go ahead.
         </div>
       )}
 

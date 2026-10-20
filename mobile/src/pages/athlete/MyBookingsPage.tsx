@@ -7,6 +7,7 @@ import {
 } from '@/components/ui';
 import { useBookingRequests, useBookings, useMyReviewedBookings } from '@/hooks';
 import { formatNaira, formatSessionDate, formatSessionTime, fullName, initialsOf } from '@/lib/format';
+import { isAhead, newestFirst, shownStatus } from '@/lib/sessions';
 
 const TABS = ['Pending', 'To pay', 'Upcoming', 'Past'] as const;
 type Tab = (typeof TABS)[number];
@@ -44,7 +45,7 @@ const EMPTY: Record<Tab, { title: string; message: string }> = {
   },
   Past: {
     title: 'Nothing past yet',
-    message: 'Completed and cancelled sessions are kept here.',
+    message: 'Sessions whose time has passed are kept here.',
   },
 };
 
@@ -60,21 +61,28 @@ const MyBookingsPage: React.FC = () => {
   const reviewedIds = useMemo(() => reviewed.data ?? [], [reviewed.data]);
 
   const rows = useMemo<Record<Tab, Row[]>>(() => {
-    const fromBooking = (b: (typeof bookings)[number]): Row => ({
-      id: b.id,
-      href: `/athlete/bookings/${b.id}`,
-      coach: b.coach,
-      sportName: b.sport.name,
-      scheduledAt: b.scheduledAt,
-      amount: b.sessionRate,
-      status: b.status,
-      sessions: 1,
-      // A review nobody is asked for is a review nobody writes, and Past is
-      // the only screen an athlete revisits after a session.
-      note: b.status === 'COMPLETED' && !reviewedIds.includes(b.id)
-        ? `Tap to review ${b.coach.firstName}`
-        : undefined,
-    });
+    const fromBooking = (b: (typeof bookings)[number]): Row => {
+      const shown = shownStatus(b);
+      return {
+        id: b.id,
+        href: `/athlete/bookings/${b.id}`,
+        coach: b.coach,
+        sportName: b.sport.name,
+        scheduledAt: b.scheduledAt,
+        amount: b.sessionRate,
+        status: shown,
+        sessions: 1,
+        // A review nobody is asked for is a review nobody writes, and Past is
+        // the only screen an athlete revisits after a session.
+        note: shown === 'COMPLETED' && !reviewedIds.includes(b.id)
+          ? `Tap to review ${b.coach.firstName}`
+          : shown === 'AWAITING_CONFIRMATION'
+            ? `Waiting for ${b.coach.firstName} to confirm it took place`
+            : shown === 'NOT_PAID'
+              ? 'Not paid for before the session, so it did not go ahead'
+              : undefined,
+      };
+    };
 
     const fromRequest = (r: (typeof requests)[number]): Row => ({
       id: r.id,
@@ -93,14 +101,16 @@ const MyBookingsPage: React.FC = () => {
 
     return {
       Pending: requests.filter((r) => r.status === 'PENDING').map(fromRequest),
-      'To pay': bookings.filter((b) => b.status === 'PENDING_PAYMENT').map(fromBooking),
-      Upcoming: bookings.filter((b) => b.status === 'UPCOMING').map(fromBooking),
+      // Only sessions still ahead: once one's hour is over it is no longer
+      // "upcoming" or payable, whatever the stored status says.
+      'To pay': bookings.filter((b) => b.status === 'PENDING_PAYMENT' && isAhead(b)).map(fromBooking),
+      Upcoming: bookings.filter((b) => b.status === 'UPCOMING' && isAhead(b)).map(fromBooking),
       // Requests a coach turned down, or that lapsed, belong here too —
       // otherwise they vanish with no explanation.
       Past: [
-        ...bookings.filter((b) => b.status === 'COMPLETED' || b.status === 'CANCELLED').map(fromBooking),
+        ...bookings.filter((b) => !isAhead(b)).map(fromBooking),
         ...requests.filter((r) => ['DECLINED', 'EXPIRED', 'CANCELLED'].includes(r.status)).map(fromRequest),
-      ],
+      ].sort(newestFirst),
     };
   }, [bookings, requests, reviewedIds]);
 

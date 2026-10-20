@@ -27,11 +27,16 @@ export const STATUS_TONES: Record<string, PillTone> = {
   DECLINED: 'neutral',
   EXPIRED: 'neutral',
   UPCOMING: 'accent',
+  // Applied for display by lib/sessions.ts, never stored.
+  AWAITING_CONFIRMATION: 'pending',
+  NOT_PAID: 'neutral',
 };
 
 /** "PENDING" -> "Pending"; anything already prettified is left alone. */
 const LABELS: Record<string, string> = {
   PENDING_PAYMENT: 'Awaiting payment',
+  AWAITING_CONFIRMATION: 'Awaiting confirmation',
+  NOT_PAID: 'Not paid',
 };
 
 export const statusLabel = (status: string) =>

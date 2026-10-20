@@ -4,6 +4,7 @@ import { useHistory } from 'react-router-dom';
 import { AppCard, AppPage, EmptyState, InitialsAvatar, NotificationBell, PageBody, StatusPill, VerifyEmailBanner } from '@/components/ui';
 import { useBookingRequests, useBookings } from '@/hooks';
 import { formatSessionDate, formatSessionTime, fullName, initialsOf, timeOfDayGreeting } from '@/lib/format';
+import { isAhead } from '@/lib/sessions';
 import { useAuthStore } from '@/store/auth.store';
 
 /** Gutter between hero slides. The track advances by a slide *plus* this,
@@ -47,7 +48,7 @@ const HomePage: React.FC = () => {
   const bookings = useMemo(() => bookingsQuery.data ?? [], [bookingsQuery.data]);
   const requests = useBookingRequests().data ?? [];
 
-  const confirmed = bookings.filter(b => b.status === 'UPCOMING').length;
+  const confirmed = bookings.filter(b => b.status === 'UPCOMING' && isAhead(b)).length;
   const completed = bookings.filter(b => b.status === 'COMPLETED').length;
   const awaitingResponse = requests.filter(r => r.status === 'PENDING').length;
   const coachCount = new Set(bookings.map(b => b.coachId)).size;
@@ -60,7 +61,9 @@ const HomePage: React.FC = () => {
    */
   const upcoming = useMemo(
     () => bookings
-      .filter(b => b.status === 'UPCOMING' || b.status === 'PENDING_PAYMENT')
+      // Still ahead only. Sorted soonest first, a session whose hour passed
+      // without the coach marking it done would otherwise sit at the top.
+      .filter(b => isAhead(b))
       .sort((a, b) => a.scheduledAt.localeCompare(b.scheduledAt))
       .slice(0, 2),
     [bookings],
