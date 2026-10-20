@@ -3,16 +3,20 @@ import { locationOutline } from 'ionicons/icons';
 import React from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 
+import ReviewCard from '@/components/reviews/ReviewCard';
 import {
   AppButton, AppCard, AppPage, BackButton, EmptyState, InitialsAvatar, PageBody,
-  QueryState, RatingStar, SectionHeading, SportBanner, StarRating, StatusPill, StickyFooter,
+  QueryState, RatingStar, SectionHeading, SportBanner, StatusPill, StickyFooter,
 } from '@/components/ui';
 import { useCoach, useCoachReviews } from '@/hooks';
 import { coachInitials, coachName, coachSportNames, primarySport } from '@/lib/coach';
 import { ageGroupsTag, levelsTag } from '@/lib/coachSearch';
-import { formatNaira, formatShortDate, initialsOf } from '@/lib/format';
+import { formatNaira } from '@/lib/format';
 
 const sectionStyle: React.CSSProperties = { fontSize: 15, margin: '20px 0 7px' };
+
+/** Reviews shown on the page itself before "See all". */
+const REVIEW_PREVIEW = 5;
 
 const CoachDetailsPage: React.FC = () => {
   const history = useHistory();
@@ -20,6 +24,12 @@ const CoachDetailsPage: React.FC = () => {
   const query = useCoach(id);
   const coach = query.data;
   const reviews = useCoachReviews(id);
+  const allReviews = reviews.data ?? [];
+  const previewReviews = allReviews.slice(0, REVIEW_PREVIEW);
+  // The coach's own count, since the review list itself is capped.
+  const reviewCount = Math.max(coach?.profile.totalReviews ?? 0, allReviews.length);
+  const moreReviews = reviewCount > REVIEW_PREVIEW;
+  const openReviews = () => history.push(`/athlete/coaches/${id}/reviews`);
 
   return (
     <AppPage>
@@ -103,36 +113,39 @@ const CoachDetailsPage: React.FC = () => {
                   <StatusPill tone="accent" style={{ fontWeight: 600, padding: '6px 11px', color: 'var(--cl-on-accent)' }}>Within range</StatusPill>
                 </div>
 
-                <SectionHeading style={sectionStyle}>
-                  Reviews{reviews.data?.length ? ` (${reviews.data.length})` : ''}
-                </SectionHeading>
+                <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12 }}>
+                  <SectionHeading style={sectionStyle}>
+                    Reviews{reviewCount ? ` (${reviewCount})` : ''}
+                  </SectionHeading>
+                  {moreReviews && (
+                    <span onClick={openReviews} style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--cl-accent)', cursor: 'pointer' }}>See all</span>
+                  )}
+                </div>
                 {/* A failed review fetch is not worth an error screen over the
                     whole profile: the rest of the page is still useful. */}
-                {reviews.data && reviews.data.length > 0 ? (
-                  reviews.data.map((r) => (
-                    <AppCard key={r.id} style={{ borderRadius: 15 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 11 }}>
-                        <InitialsAvatar
-                          initials={initialsOf(r.athleteName.split(' ')[0], r.athleteName.split(' ')[1])}
-                          size={36} radius={11} fontSize={13}
-                        />
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ fontWeight: 700, fontSize: 13.5, color: 'var(--cl-ink)' }}>
-                            {r.athleteName}
-                          </div>
-                          <div style={{ fontSize: 11.5, color: 'var(--cl-muted-2)', marginTop: 1 }}>
-                            {formatShortDate(r.createdAt)}
-                          </div>
-                        </div>
-                        <StarRating value={r.rating} size={14} />
-                      </div>
-                      {r.comment && (
-                        <p style={{ fontSize: 13.5, lineHeight: 1.55, color: 'var(--cl-muted-3)', margin: '11px 0 0' }}>
-                          {r.comment}
-                        </p>
-                      )}
-                    </AppCard>
-                  ))
+                {previewReviews.length > 0 ? (
+                  // Newest few in a row that slides sideways, each a peek
+                  // wider than the screen allows, so it is clear there are more.
+                  <div style={{ display: 'flex', gap: 10, overflowX: 'auto', scrollSnapType: 'x mandatory', scrollPaddingLeft: 'var(--cl-px)', margin: '0 calc(-1 * var(--cl-px))', padding: '0 var(--cl-px) 4px', scrollbarWidth: 'none' }}>
+                    {previewReviews.map((r) => (
+                      <ReviewCard
+                        key={r.id}
+                        review={r}
+                        clampLines={4}
+                        onClick={openReviews}
+                        style={{ flex: '0 0 82%', boxSizing: 'border-box', borderRadius: 15, scrollSnapAlign: 'start' }}
+                      />
+                    ))}
+                    {moreReviews && (
+                      <AppCard
+                        onClick={openReviews}
+                        style={{ flex: '0 0 40%', boxSizing: 'border-box', borderRadius: 15, scrollSnapAlign: 'start', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, textAlign: 'center' }}
+                      >
+                        <span style={{ fontWeight: 700, fontSize: 14, color: 'var(--cl-accent)' }}>See all</span>
+                        <span style={{ fontSize: 12, color: 'var(--cl-muted-1)' }}>{reviewCount} reviews →</span>
+                      </AppCard>
+                    )}
+                  </div>
                 ) : (
                   <AppCard padding={4} style={{ borderRadius: 15 }}>
                     <EmptyState

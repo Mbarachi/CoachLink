@@ -1,33 +1,10 @@
 import React, { useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import {
-  AppCard, AppPage, EmptyState, InitialsAvatar, PageBody, PageHeader,
-  QueryState, RatingStar, StarRating,
-} from '@/components/ui';
+import ReviewCard from '@/components/reviews/ReviewCard';
+import ReviewSummary from '@/components/reviews/ReviewSummary';
+import { AppPage, EmptyState, PageBody, PageHeader, QueryState } from '@/components/ui';
 import { useCoachReviews, useMyCoachProfile } from '@/hooks';
-import { formatShortDate, initialsOf } from '@/lib/format';
-
-/** How many of each score, so a 4.6 says what it is made of. */
-const Distribution: React.FC<{ counts: number[]; total: number }> = ({ counts, total }) => (
-  <div style={{ flex: 1, minWidth: 0 }}>
-    {[5, 4, 3, 2, 1].map((score) => {
-      const n = counts[score - 1] ?? 0;
-      return (
-        <div key={score} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-          <span style={{ fontSize: 11, color: 'var(--cl-muted-2)', width: 8 }}>{score}</span>
-          <div style={{ flex: 1, height: 5, borderRadius: 3, background: 'var(--cl-subtle)', overflow: 'hidden' }}>
-            <div style={{
-              width: total ? `${(n / total) * 100}%` : 0,
-              height: '100%', background: 'var(--cl-star)',
-            }} />
-          </div>
-          <span style={{ fontSize: 11, color: 'var(--cl-muted-2)', width: 14, textAlign: 'right' }}>{n}</span>
-        </div>
-      );
-    })}
-  </div>
-);
 
 /**
  * What athletes said, for the coach who was reviewed.
@@ -43,14 +20,6 @@ const ReviewsPage: React.FC = () => {
   const profile = profileQuery.data?.profile;
   const reviewsQuery = useCoachReviews(profile?.id);
   const reviews = useMemo(() => reviewsQuery.data ?? [], [reviewsQuery.data]);
-
-  const counts = useMemo(() => {
-    const buckets = [0, 0, 0, 0, 0];
-    for (const r of reviews) {
-      if (r.rating >= 1 && r.rating <= 5) buckets[r.rating - 1] += 1;
-    }
-    return buckets;
-  }, [reviews]);
 
   return (
     <AppPage padding="screen">
@@ -72,44 +41,8 @@ const ReviewsPage: React.FC = () => {
             />
           ) : (
             <>
-              <AppCard style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
-                <div style={{ textAlign: 'center', flexShrink: 0 }}>
-                  <div style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 800, fontSize: 34, color: 'var(--cl-ink)', lineHeight: 1.1 }}>
-                    {(profile?.rating ?? 0).toFixed(1)}
-                  </div>
-                  <div style={{ fontSize: 13 }}><RatingStar /></div>
-                  <div style={{ fontSize: 11.5, color: 'var(--cl-muted-2)', marginTop: 2 }}>
-                    {reviews.length} {reviews.length === 1 ? 'review' : 'reviews'}
-                  </div>
-                </div>
-                <Distribution counts={counts} total={reviews.length} />
-              </AppCard>
-
-              {reviews.map((r) => (
-                <AppCard key={r.id}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 11 }}>
-                    <InitialsAvatar
-                      initials={initialsOf(r.athleteName.split(' ')[0], r.athleteName.split(' ')[1])}
-                      src={r.athleteImage}
-                      size={36} radius={11} fontSize={13}
-                    />
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontWeight: 700, fontSize: 13.5, color: 'var(--cl-ink)' }}>
-                        {r.athleteName}
-                      </div>
-                      <div style={{ fontSize: 11.5, color: 'var(--cl-muted-2)', marginTop: 1 }}>
-                        {formatShortDate(r.createdAt)}
-                      </div>
-                    </div>
-                    <StarRating value={r.rating} size={14} />
-                  </div>
-                  {r.comment && (
-                    <p style={{ fontSize: 13.5, lineHeight: 1.55, color: 'var(--cl-muted-3)', margin: '11px 0 0' }}>
-                      {r.comment}
-                    </p>
-                  )}
-                </AppCard>
-              ))}
+              <ReviewSummary rating={profile?.rating ?? 0} reviews={reviews} />
+              {reviews.map((r) => <ReviewCard key={r.id} review={r} style={{ marginBottom: 10 }} />)}
             </>
           )}
 
