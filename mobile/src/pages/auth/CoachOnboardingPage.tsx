@@ -271,7 +271,7 @@ const CoachOnboardingPage: React.FC = () => {
                     style={{ flex: 1, background: active ? 'var(--cl-ink-fill)' : 'var(--cl-surface)', border: active ? 'none' : '1px solid var(--cl-border)', borderRadius: 15, padding: 14, textAlign: 'center', cursor: 'pointer' }}
                   >
                     <div style={{ fontSize: 22 }}>{s.icon}</div>
-                    <div style={{ fontWeight: 700, fontSize: 13.5, color: active ? 'var(--cl-surface)' : 'var(--cl-ink)', marginTop: 6 }}>{s.name}</div>
+                    <div style={{ fontWeight: 700, fontSize: 13.5, color: active ? 'var(--cl-on-ink)' : 'var(--cl-ink)', marginTop: 6 }}>{s.name}</div>
                   </div>
                 );
               })}
