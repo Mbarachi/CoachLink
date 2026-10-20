@@ -29,6 +29,9 @@ const CoachDetailsPage: React.FC = () => {
   // The coach's own count, since the review list itself is capped.
   const reviewCount = Math.max(coach?.profile.totalReviews ?? 0, allReviews.length);
   const moreReviews = reviewCount > REVIEW_PREVIEW;
+  // A lone review takes the full width; with company, each is a little
+  // narrower than the screen so the next one peeks in.
+  const reviewWidth = previewReviews.length > 1 || moreReviews ? '82%' : '100%';
   const openReviews = () => history.push(`/athlete/coaches/${id}/reviews`);
 
   return (
@@ -124,8 +127,7 @@ const CoachDetailsPage: React.FC = () => {
                 {/* A failed review fetch is not worth an error screen over the
                     whole profile: the rest of the page is still useful. */}
                 {previewReviews.length > 0 ? (
-                  // Newest few in a row that slides sideways, each a peek
-                  // wider than the screen allows, so it is clear there are more.
+                  // Newest few in a row that slides sideways.
                   <div style={{ display: 'flex', gap: 10, overflowX: 'auto', scrollSnapType: 'x mandatory', scrollPaddingLeft: 'var(--cl-px)', margin: '0 calc(-1 * var(--cl-px))', padding: '0 var(--cl-px) 4px', scrollbarWidth: 'none' }}>
                     {previewReviews.map((r) => (
                       <ReviewCard
@@ -133,7 +135,7 @@ const CoachDetailsPage: React.FC = () => {
                         review={r}
                         clampLines={4}
                         onClick={openReviews}
-                        style={{ flex: '0 0 82%', boxSizing: 'border-box', borderRadius: 15, scrollSnapAlign: 'start' }}
+                        style={{ flex: `0 0 ${reviewWidth}`, boxSizing: 'border-box', borderRadius: 15, scrollSnapAlign: 'start' }}
                       />
                     ))}
                     {moreReviews && (
