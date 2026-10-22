@@ -33,9 +33,10 @@ const QA: { q: string; a: string }[] = [
   {
     q: 'When do coaches get paid?',
     a: 'Automatically, once a session is marked complete — there is nothing to '
-      + 'withdraw. CoachLink keeps 8% of the session fee; the rest goes to the bank '
-      + 'account on the coach’s Earnings screen, usually within a working day of '
-      + 'the athlete’s payment clearing.',
+      + 'withdraw. The coach marks it done after the session; if they forget, it is '
+      + 'marked done for them a day after it ended. CoachLink keeps 8% of the '
+      + 'session fee; the rest goes to the bank account on the coach’s Earnings '
+      + 'screen, usually within a working day of the athlete’s payment clearing.',
   },
   {
     q: 'I paid but my session is not confirmed',

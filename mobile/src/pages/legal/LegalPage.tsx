@@ -83,8 +83,9 @@ const LegalPage: React.FC = () => {
           You may cancel a session in the app until it is paid for. A paid session
           cannot be cancelled in the app; if something prevents it going ahead,
           email <strong>{SUPPORT_EMAIL}</strong> and we will look at it case by
-          case. Only the coach can mark a session complete, and only after its
-          start time has passed. Coaching happens between you and the coach in person;
+          case. The coach marks a session complete once its start time has
+          passed; if they have not within a day of it ending, it is marked
+          complete automatically, and the coach is paid. Coaching happens between you and the coach in person;
           CoachLink is not a party to it and does not supervise sessions.
         </P>
 

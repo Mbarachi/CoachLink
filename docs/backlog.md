@@ -87,6 +87,16 @@ notifications; the web version gets the in-app list only.
 
 ## Session lifecycle: open decisions
 
+**Knowing a session has started (idea, 2026-10-22).** Like a ride app's "trip
+started": today the app only knows a session by its booked time, never that
+both people turned up. Options, increasing strength:
+- **Coach taps "Start session"** when the athlete arrives. The athlete or
+  parent is told ("Ada's session has started"), and a started session is good
+  evidence it happened, which makes auto-completion and any dispute easier.
+- **A four-digit code** on the athlete's booking that the coach types in to
+  start it, as ride apps do. Proves both were there, not just the coach.
+Either adds a button and a status (IN_PROGRESS) between UPCOMING and COMPLETED.
+
 Reviewed 2026-10-20. How a session ends is the least-designed part of the
 booking flow, and three decisions are waiting on the owner.
 
@@ -127,7 +137,9 @@ The app now hides Pay and Cancel once a session's hour is over (commit
   2026-10-22, from its start time.
 
 **Decisions needed.**
-1. The auto-complete window — 48 hours? — and whether it applies at all.
+1. ~~The auto-complete window.~~ Decided and built 2026-10-22: 24 hours after a
+   session ends, `sendReminders` marks it COMPLETED (`completedBy: 'AUTO'`), which
+   pays the coach and asks the athlete for a review, as a tap would.
 2. ~~Refunds on cancelling a paid session.~~ Decided: paid sessions cannot be
    cancelled (above). Revisit only if support starts handling many by hand.
 3. Who settles a reported problem, and what they can award: full refund,
