@@ -1,13 +1,13 @@
 import React, { useMemo, useState } from 'react';
 
 import {
-  AppButton, AppCard, AppPage, EmptyState, InitialsAvatar,
+  AppButton, AppCard, AppPage, BottomSheet, EmptyState, InitialsAvatar,
   PageBody, PageTitle, QueryState, StatusPill, TabChips,
 } from '@/components/ui';
-import { useBookings, useUpdateBooking } from '@/hooks';
+import { useBookings, useStartSession, useUpdateBooking } from '@/hooks';
 import { getErrorMessage } from '@/lib/apiError';
 import { formatNaira, formatSessionDate, formatSessionTime, fullName, initialsOf } from '@/lib/format';
-import { hasEnded, isAhead, newestFirst, shownStatus } from '@/lib/sessions';
+import { canStart, hasEnded, isAhead, newestFirst, shownStatus } from '@/lib/sessions';
 import { useUiStore } from '@/store/ui.store';
 import type { Booking } from '@/types';
 
@@ -107,7 +107,25 @@ interface SessionCardProps {
 
 const SessionCard: React.FC<SessionCardProps> = ({ booking, confirmable, onDone }) => {
   const complete = useUpdateBooking(booking.id);
+  const start = useStartSession(booking.id);
   const { athlete } = booking;
+  const [starting, setStarting] = useState(false);
+  const [code, setCode] = useState('');
+  const [codeError, setCodeError] = useState<string | null>(null);
+
+  const closeStart = () => { setStarting(false); setCode(''); setCodeError(null); };
+  const submitCode = async () => {
+    setCodeError(null);
+    try {
+      await start.mutateAsync(code);
+      closeStart();
+      onDone('Session started.');
+    } catch (err) {
+      // Shown in the sheet, beside the code they typed, not as a toast that
+      // vanishes while they are still looking at the athlete's phone.
+      setCodeError(getErrorMessage(err, 'Could not start the session.'));
+    }
+  };
 
   const markComplete = async () => {
     try {
@@ -159,6 +177,57 @@ const SessionCard: React.FC<SessionCardProps> = ({ booking, confirmable, onDone 
           The athlete did not pay before the session, so it did not go ahead.
         </div>
       )}
+
+      {booking.startedAt && (
+        <div style={{ fontSize: 12, color: 'var(--cl-success-text)', marginTop: 8 }}>
+          Started at {formatSessionTime(booking.startedAt)}.
+        </div>
+      )}
+
+      {canStart(booking) && (
+        <AppButton
+          variant="ink"
+          onClick={() => setStarting(true)}
+          style={{ marginTop: 13, width: '100%' }}
+        >
+          Start session
+        </AppButton>
+      )}
+
+      <BottomSheet
+        open={starting}
+        title="Start session"
+        onClose={closeStart}
+        footer={
+          <AppButton
+            onClick={() => void submitCode()}
+            disabled={code.length !== 4}
+            loading={start.isPending}
+            loadingLabel="Starting…"
+          >
+            Start
+          </AppButton>
+        }
+      >
+        <p style={{ fontSize: 13.5, lineHeight: 1.5, color: 'var(--cl-muted-3)', margin: '0 0 14px' }}>
+          Ask {athlete.firstName || 'the athlete'} for the four-digit start code on their booking,
+          and type it in.
+        </p>
+        <input
+          autoFocus
+          inputMode="numeric"
+          autoComplete="one-time-code"
+          maxLength={4}
+          value={code}
+          onChange={e => { setCode(e.target.value.replace(/\D/g, '').slice(0, 4)); setCodeError(null); }}
+          placeholder="0000"
+          aria-label="Start code"
+          style={{ width: '100%', boxSizing: 'border-box', height: 64, borderRadius: 'var(--cl-radius-input)', border: `1.6px solid ${codeError ? 'var(--cl-destructive)' : 'var(--cl-border)'}`, background: 'var(--cl-surface)', textAlign: 'center', fontFamily: 'var(--cl-font-display)', fontWeight: 800, fontSize: 30, letterSpacing: '.4em', color: 'var(--cl-ink)', outline: 'none' }}
+        />
+        {codeError && (
+          <div style={{ fontSize: 12.5, color: 'var(--cl-destructive)', marginTop: 8 }}>{codeError}</div>
+        )}
+      </BottomSheet>
 
       {confirmable && (
         <AppButton

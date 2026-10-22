@@ -5,7 +5,7 @@ import {
   AppButton, AppCard, AppPage, DetailRow, InitialsAvatar,
   PageBody, PageHeader, QueryState, StarRating, StatusPill,
 } from '@/components/ui';
-import { useBooking, useBookingReview, useUpdateBooking } from '@/hooks';
+import { useBooking, useBookingReview, useStartCode, useUpdateBooking } from '@/hooks';
 import { getErrorMessage } from '@/lib/apiError';
 import {
   formatNaira, formatSessionDate, formatSessionTime, fullName, initialsOf,
@@ -21,6 +21,7 @@ const BANNERS: Partial<Record<string, string>> = {
   CANCELLED: 'This session was cancelled.',
   AWAITING_CONFIRMATION: 'This session’s time has passed. Your coach will confirm it took place, and then you can leave a review.',
   NOT_PAID: 'This session started before it was paid for, so it did not go ahead.',
+  IN_PROGRESS: 'In progress. Your coach started the session with your code.',
 };
 
 const BookingDetailsPage: React.FC = () => {
@@ -46,6 +47,8 @@ const BookingDetailsPage: React.FC = () => {
   };
 
   const shown = booking ? shownStatus(booking) : undefined;
+  // Paid, not started, not over: the window in which the code is any use.
+  const startCode = useStartCode(bookingId, shown === 'UPCOMING');
   // Only before payment. A paid session stands (the server refuses it too),
   // and once its hour is over there is nothing left to call off.
   const canCancel = shown === 'PENDING_PAYMENT';
@@ -84,6 +87,22 @@ const BookingDetailsPage: React.FC = () => {
                   <div style={{ width: 18, height: 18, borderRadius: '50%', background: 'var(--cl-ink-fill)', color: 'var(--cl-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, flexShrink: 0 }}>i</div>
                   <span style={{ fontSize: 12.5, lineHeight: 1.5, color: 'var(--cl-muted-3)' }}>{BANNERS[shown!]}</span>
                 </div>
+              )}
+
+              {/* Like a ride's PIN: the coach types it in when they meet, which
+                  starts the session and shows both of them were there. */}
+              {shown === 'UPCOMING' && (
+                <AppCard style={{ borderRadius: 16, marginTop: 16, textAlign: 'center' }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: '.08em', color: 'var(--cl-muted-2)' }}>START CODE</div>
+                  <div style={{ fontFamily: 'var(--cl-font-display)', fontWeight: 800, fontSize: 38, letterSpacing: '.3em', color: 'var(--cl-ink)', margin: '6px 0 4px', paddingLeft: '.3em' }}>
+                    {startCode.data ?? (startCode.isError ? '— — — —' : '· · · ·')}
+                  </div>
+                  <div style={{ fontSize: 12.5, lineHeight: 1.45, color: 'var(--cl-muted-1)' }}>
+                    {startCode.isError
+                      ? 'Could not load your code. Pull down to try again.'
+                      : `Show this to ${booking.coach.firstName || 'your coach'} when you arrive. They type it in to start your session.`}
+                  </div>
+                </AppCard>
               )}
 
               <AppCard padding="4px 16px" style={{ borderRadius: 16, marginTop: 16 }}>

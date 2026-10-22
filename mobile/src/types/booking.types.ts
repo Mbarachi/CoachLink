@@ -113,6 +113,8 @@ export interface Booking {
   cancelledAt: string | null;
   cancelledBy: 'ATHLETE' | 'COACH' | null;
   completedAt: string | null;
+  /** When the coach started it with the athlete's code; null if never started. */
+  startedAt: string | null;
   createdAt: string;
   updatedAt: string;
 

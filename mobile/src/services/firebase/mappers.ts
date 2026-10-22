@@ -146,6 +146,7 @@ export function toBooking(id: string, data: DocumentData): Booking {
     cancelledAt: data.cancelledAt ? toIso(data.cancelledAt) : null,
     cancelledBy: data.cancelledBy ?? null,
     completedAt: data.completedAt ? toIso(data.completedAt) : null,
+    startedAt: data.startedAt ? toIso(data.startedAt) : null,
     createdAt: toIso(data.createdAt),
     updatedAt: toIso(data.updatedAt),
     sport: data.sport,

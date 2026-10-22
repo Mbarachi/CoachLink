@@ -11,6 +11,7 @@ export type NotificationType =
   | 'REQUEST_EXPIRED'
   | 'SESSION_COMPLETED'
   | 'SESSION_REMINDER'
+  | 'SESSION_STARTED'
   | 'REVIEW_RECEIVED'
   | 'GENERAL';
 

@@ -49,6 +49,17 @@ export const bookingsService = {
     return toBooking(snap.id, snap.data());
   },
 
+  /** The athlete's four-digit code for a paid session, shown to the coach on arrival. */
+  async getStartCode(id: string): Promise<string> {
+    const res = await httpsCallable(firebaseFunctions(), 'getStartCode')({ bookingId: id });
+    return (res.data as { code: string }).code;
+  },
+
+  /** The coach starting a session with the code the athlete shows them. */
+  async startSession(id: string, code: string): Promise<void> {
+    await httpsCallable(firebaseFunctions(), 'startSession')({ bookingId: id, code });
+  },
+
   async update(id: string, dto: UpdateBookingDto): Promise<Booking> {
     const res = await httpsCallable(firebaseFunctions(), 'updateBooking')({
       bookingId: id, status: dto.status,

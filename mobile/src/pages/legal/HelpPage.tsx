@@ -25,6 +25,13 @@ const QA: { q: string; a: string }[] = [
       + 'dates first. If something unexpected comes up, email us and we’ll help.',
   },
   {
+    q: 'What is the start code?',
+    a: 'Every paid session has a four-digit code, on its page under My bookings. '
+      + 'Show it to your coach when you arrive; they type it in to start the '
+      + 'session, and you are told it has begun. It shows you both turned up. '
+      + 'Booking for your child? Send them the code, or read it to the coach.',
+  },
+  {
     q: 'How do coaches get verified?',
     a: 'Every coach submits a photo and a government-issued ID, and an admin '
       + 'reviews both before the profile appears in search. A coach who has not '

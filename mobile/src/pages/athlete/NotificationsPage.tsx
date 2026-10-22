@@ -20,6 +20,7 @@ const GLYPHS: Record<NotificationType, string> = {
   REQUEST_EXPIRED: '–',
   SESSION_COMPLETED: '★',
   SESSION_REMINDER: '!',
+  SESSION_STARTED: '✓',
   REVIEW_RECEIVED: '★',
   GENERAL: '!',
 };
