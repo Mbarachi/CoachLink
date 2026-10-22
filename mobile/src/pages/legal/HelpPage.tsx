@@ -2,7 +2,7 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { AppCard, AppPage, PageBody, PageHeader } from '@/components/ui';
-import { SUPPORT_EMAIL } from '@/lib/support';
+import { OPERATOR, SUPPORT_EMAIL } from '@/lib/support';
 
 const QA: { q: string; a: string }[] = [
   {
@@ -66,6 +66,7 @@ const HelpPage: React.FC = () => {
           <p style={{ fontSize: 13.5, lineHeight: 1.6, color: 'var(--cl-muted-3)', margin: '8px 0 0' }}>
             Email <strong>{SUPPORT_EMAIL}</strong> with what happened and
             roughly when. Include the coach&rsquo;s name if it is about a session.
+            It is a webhammer.com.ng address because CoachLink is run by {OPERATOR}.
           </p>
         </AppCard>
       </PageBody>

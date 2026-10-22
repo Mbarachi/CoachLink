@@ -2,7 +2,7 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { AppPage, PageBody, PageHeader, SectionHeading } from '@/components/ui';
-import { SUPPORT_EMAIL } from '@/lib/support';
+import { OPERATOR, OPERATOR_RC, SUPPORT_EMAIL } from '@/lib/support';
 
 const P: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <p style={{ fontSize: 13.5, lineHeight: 1.65, color: 'var(--cl-muted-3)', margin: '0 0 12px' }}>
@@ -29,7 +29,9 @@ const LegalPage: React.FC = () => {
       <PageBody pb={28}>
         <P>
           CoachLink connects athletes and parents in Amuwo Odofin, Lagos with
-          verified swimming and tennis coaches. Last updated September 2026.
+          verified swimming and tennis coaches.
+          {` It is a service of ${OPERATOR} (RC ${OPERATOR_RC}), a company registered in Nigeria; `}
+          &ldquo;we&rdquo; on this page means them. Last updated October 2026.
         </P>
 
         <SectionHeading>What we collect</SectionHeading>
@@ -103,7 +105,8 @@ const LegalPage: React.FC = () => {
 
         <SectionHeading>Contact</SectionHeading>
         <P>
-          <strong>{SUPPORT_EMAIL}</strong> for anything on this page.
+          <strong>{SUPPORT_EMAIL}</strong> for anything on this page. The
+          address is on {OPERATOR}&rsquo;s domain because they run CoachLink.
         </P>
       </PageBody>
     </AppPage>
