@@ -36,11 +36,10 @@ the balance and are retried every three hours; Paystack's transfer results) need
 `npm run deploy` too. The retry job is the project's first scheduled function, so
 the first deploy may ask to turn on Cloud Scheduler for the project; say yes.
 
-**A mailbox for the support address.** The app and the server tell people to
-write to `SUPPORT_EMAIL` — `support@coachie.com.ng`, set in the app's
-`lib/support.ts` and the backend's `types.ts`. Resend only sends, so that address
-receives nothing until a mailbox or forwarding exists on the domain (Zoho Mail's
-free plan, or a free forwarder such as ImprovMX pointing at an inbox you read).
+**The support address receives mail.** The app and the server tell people to
+write to `SUPPORT_EMAIL`, `support@webhammer.com.ng` since 2026-10-22, set in the
+app's `lib/support.ts` and the backend's `types.ts`. Worth sending it a test
+message before launch to be sure someone reads it.
 
 **Paystack set-up for paying coaches.** Business verified (done, 2026-10-22).
 Still to do in the Paystack dashboard:
