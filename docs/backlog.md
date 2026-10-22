@@ -87,15 +87,17 @@ notifications; the web version gets the in-app list only.
 
 ## Session lifecycle: open decisions
 
-**Knowing a session has started (idea, 2026-10-22).** Like a ride app's "trip
-started": today the app only knows a session by its booked time, never that
-both people turned up. Options, increasing strength:
-- **Coach taps "Start session"** when the athlete arrives. The athlete or
-  parent is told ("Ada's session has started"), and a started session is good
-  evidence it happened, which makes auto-completion and any dispute easier.
-- **A four-digit code** on the athlete's booking that the coach types in to
-  start it, as ride apps do. Proves both were there, not just the coach.
-Either adds a button and a status (IN_PROGRESS) between UPCOMING and COMPLETED.
+**Starting a session with the athlete's code: built 2026-10-22.** Every paid
+session gets a four-digit code (`sessionCodes`, readable by no client; the
+athlete fetches theirs with `getStartCode`). The coach types it in to start the
+session (`startSession`), from 30 minutes before to 90 minutes after its start,
+with five tries before a 10-minute lock. The booking gets `startedAt`, both
+sides show "In progress", and the athlete or parent is told it has begun.
+
+Still optional: a session can be marked done, or complete on its own, without
+being started. Once coaches are used to it, consider requiring a start before
+a coach can mark a session done, or before auto-completion pays out; that is
+what turns the code into real evidence in a dispute.
 
 Reviewed 2026-10-20. How a session ends is the least-designed part of the
 booking flow, and three decisions are waiting on the owner.
