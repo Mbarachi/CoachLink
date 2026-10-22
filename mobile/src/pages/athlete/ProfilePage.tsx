@@ -1,7 +1,5 @@
 import { IonIcon } from '@ionic/react';
-import {
-  calendarOutline, createOutline, helpCircleOutline, notificationsOutline, settingsOutline,
-} from 'ionicons/icons';
+import { createOutline, settingsOutline } from 'ionicons/icons';
 import React, { useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
 
@@ -26,24 +24,20 @@ const ProfilePage: React.FC = () => {
     { val: String(reviewed.length), label: 'Reviews' },
   ], [requests, reviewed]);
 
+  // About you, and the way to Settings. Bookings has its own tab, the bell on
+  // Home opens notifications, and Help & FAQ sits under Settings, so listing
+  // them here as well only made the page longer.
   const menuItems = [
-    // Ionicons outline, the set the tab bar uses; bookings shares its calendar.
-    { label: 'Edit profile',  icon: createOutline,        action: () => history.push('/athlete/profile/edit') },
-    { label: 'My bookings',   icon: calendarOutline,      action: () => history.push('/athlete/bookings') },
-    { label: 'Notifications', icon: notificationsOutline, action: () => history.push('/athlete/notifications') },
-    { label: 'Help & FAQ',    icon: helpCircleOutline,    action: () => history.push('/help') },
-    { label: 'Settings',      icon: settingsOutline,      action: () => history.push('/athlete/settings') },
+    // Ionicons outline, the set the tab bar uses.
+    { label: 'Edit profile', icon: createOutline,   action: () => history.push('/athlete/profile/edit') },
+    { label: 'Settings',     icon: settingsOutline, action: () => history.push('/athlete/settings') },
   ];
 
   return (
     <AppPage padding="screen">
       <PageBody refreshable pb={96}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '8px 0 18px' }}>
-          <PageTitle style={{ margin: 0 }}>Profile</PageTitle>
-          <button onClick={() => history.push('/athlete/settings')} aria-label="Settings" style={{ width: 38, height: 38, borderRadius: '50%', border: '1px solid var(--cl-border)', background: 'var(--cl-surface)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}>
-            <IonIcon icon={settingsOutline} aria-hidden="true" style={{ fontSize: 18, color: 'var(--cl-ink)' }} />
-          </button>
-        </div>
+        {/* No gear here: the Settings row below says the same, with a label. */}
+        <PageTitle style={{ margin: '8px 0 18px' }}>Profile</PageTitle>
 
         {/* avatar + info */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 15 }}>

@@ -36,8 +36,8 @@ const SettingsPage: React.FC = () => {
       <PageBody pb={22}>
         <SectionLabel>ACCOUNT</SectionLabel>
         <AppCard padding={0} style={groupStyle}>
-          <ListRow label="My bookings" onClick={() => history.push('/athlete/bookings')} />
-          <ListRow label="Notifications" onClick={() => history.push('/athlete/notifications')} />
+          {/* Not My bookings or Notifications: the Bookings tab and the bell on
+              Home already open them. */}
           {/* The role screen promises this can be changed later, and an
               athlete has no other way to start coaching. Becoming one is a
               one-way step done by submitting a profile, so this is the only
