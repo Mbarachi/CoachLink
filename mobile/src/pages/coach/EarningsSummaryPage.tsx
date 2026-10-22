@@ -219,6 +219,13 @@ const EarningsSummaryPage: React.FC = () => {
                   <div style={{ fontSize: 11.5, color: 'var(--cl-muted-1)', marginTop: 2 }}>
                     {formatShortDate(p.createdAt)} · {formatNaira(p.sessionRate)} session
                   </div>
+                  {/* "Sending" can last a while: payouts go out of money that
+                      reaches CoachLink the working day after the athlete pays. */}
+                  {p.status === 'PENDING' && (
+                    <div style={{ fontSize: 11.5, lineHeight: 1.4, color: 'var(--cl-muted-2)', marginTop: 3 }}>
+                      On its way. It goes out once the athlete&apos;s payment has cleared, usually within a working day.
+                    </div>
+                  )}
                   {p.status === 'FAILED' && p.failureReason && (
                     <div style={{ fontSize: 11.5, lineHeight: 1.4, color: 'var(--cl-destructive)', marginTop: 3 }}>
                       {p.failureReason}
