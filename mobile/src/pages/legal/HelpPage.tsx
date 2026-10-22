@@ -1,4 +1,6 @@
-import React from 'react';
+import { IonIcon } from '@ionic/react';
+import { chevronDownOutline } from 'ionicons/icons';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { AppCard, AppPage, PageBody, PageHeader } from '@/components/ui';
@@ -46,6 +48,10 @@ const QA: { q: string; a: string }[] = [
 /** Plain answers to what people get stuck on, not a support portal. */
 const HelpPage: React.FC = () => {
   const history = useHistory();
+  // Several can be open at once, so comparing two answers needs no back and forth.
+  const [open, setOpen] = useState<string[]>([]);
+  const toggle = (q: string) =>
+    setOpen((prev) => (prev.includes(q) ? prev.filter((x) => x !== q) : [...prev, q]));
 
   return (
     <AppPage padding="screen">
@@ -54,12 +60,30 @@ const HelpPage: React.FC = () => {
       </div>
 
       <PageBody pb={28}>
-        {QA.map(({ q, a }) => (
-          <AppCard key={q}>
-            <div style={{ fontWeight: 700, fontSize: 14.5, color: 'var(--cl-ink)' }}>{q}</div>
-            <p style={{ fontSize: 13.5, lineHeight: 1.6, color: 'var(--cl-muted-3)', margin: '8px 0 0' }}>{a}</p>
-          </AppCard>
-        ))}
+        {/* Questions only, until one is tapped: the list reads at a glance and
+            the answer someone came for is one tap away. */}
+        {QA.map(({ q, a }) => {
+          const isOpen = open.includes(q);
+          return (
+            <AppCard key={q} padding={0} style={{ marginBottom: 10, overflow: 'hidden' }}>
+              <button
+                onClick={() => toggle(q)}
+                aria-expanded={isOpen}
+                style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 12, padding: 16, border: 'none', background: 'none', textAlign: 'left', cursor: 'pointer', fontFamily: 'var(--cl-font-body)' }}
+              >
+                <span style={{ flex: 1, fontWeight: 700, fontSize: 14.5, color: 'var(--cl-ink)' }}>{q}</span>
+                <IonIcon
+                  icon={chevronDownOutline}
+                  aria-hidden="true"
+                  style={{ fontSize: 17, color: 'var(--cl-muted-2)', flexShrink: 0, transition: 'transform .2s', transform: isOpen ? 'rotate(180deg)' : 'none' }}
+                />
+              </button>
+              {isOpen && (
+                <p style={{ fontSize: 13.5, lineHeight: 1.6, color: 'var(--cl-muted-3)', margin: 0, padding: '0 16px 16px' }}>{a}</p>
+              )}
+            </AppCard>
+          );
+        })}
 
         <AppCard style={{ background: 'var(--cl-subtle)', border: 'none' }}>
           <div style={{ fontWeight: 700, fontSize: 14.5, color: 'var(--cl-ink)' }}>Still stuck?</div>
