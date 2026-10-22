@@ -58,6 +58,34 @@ Still to do in the Paystack dashboard:
 
 ---
 
+## Notifications: reminders and email still to build
+
+Every event now notifies the right side, in the app and as a phone push
+through OneSignal (the push is sent from the same record, by `pushNotification`).
+Added 2026-10-22: request withdrawn, unpaid session cancelled, payment failed,
+request expired (a half-hourly job, `notifyExpiredRequests`), and the review
+prompt when a session is marked done. The coach no longer hears "You have been
+paid" when the athlete pays; that is "Sessions paid for".
+
+Reminders, built 2026-10-22 (`sendReminders`, every 15 minutes; the timing
+rules are `planReminders` in `reminders.ts`, tested by `npm run test:reminders`):
+- **Coach, request still unanswered** an hour after it arrived.
+- **Athlete or parent, accepted but unpaid**, from 24 hours before the first
+  session (not within an hour of acceptance), once per request.
+- **Both, session coming up**: the evening before, 7pm to 10pm Lagos time (one
+  message per coach for the whole day), and 2 hours before.
+- **Coach, session over but not marked done**, 3 hours after it ends. Pairs with
+  the auto-complete decision below.
+
+Not built: **email** for the two moments a missed push costs most, a new
+request to a coach and "accepted, please pay" to an athlete. Resend is already
+set up for the confirmation codes; Paystack already emails athletes a receipt.
+
+Push only reaches someone with the installed app, signed in, who allowed
+notifications; the web version gets the in-app list only.
+
+---
+
 ## Session lifecycle: open decisions
 
 Reviewed 2026-10-20. How a session ends is the least-designed part of the
