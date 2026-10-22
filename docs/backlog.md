@@ -30,16 +30,31 @@ directory over. The compromises below that name `firestore.indexes.json` and
 
 ## Before go-live (30 October 2026)
 
-**Deploy the backend changes from 2026-10-20.** Commit `382b934` in
-`coachlink-firebase` (who a coach teaches, and from what level) is pushed but
-not deployed. Until `npm run deploy` runs, the live functions ignore the two
-new fields without an error: a coach answers both questions in the wizard or
-on their profile, sees "saved", and nothing is stored, so parents' "For" and
-"Level" filters have nothing to work on and the dashboard keeps asking.
+**Deploy the backend again after 2026-10-22.** The 2026-10-20 deploy is done.
+The 2026-10-22 changes (paid sessions cannot be cancelled; payouts that wait for
+the balance and are retried every three hours; Paystack's transfer results) need
+`npm run deploy` too. The retry job is the project's first scheduled function, so
+the first deploy may ask to turn on Cloud Scheduler for the project; say yes.
 
-**Decide the session-ending rules below**, or at least the refund one. Today a
-cancelled paid session refunds nobody, and that will be the first support
-message after launch.
+**A mailbox for the support address.** The app and the server tell people to
+write to `SUPPORT_EMAIL` — `support@coachie.com.ng`, set in the app's
+`lib/support.ts` and the backend's `types.ts`. Resend only sends, so that address
+receives nothing until a mailbox or forwarding exists on the domain (Zoho Mail's
+free plan, or a free forwarder such as ImprovMX pointing at an inbox you read).
+
+**Paystack set-up for paying coaches.** Business verified (done, 2026-10-22).
+Still to do in the Paystack dashboard:
+- Switch the payout schedule to Manual, so athletes' payments stay in the
+  Paystack balance that coach payouts are sent from: Settings, Accounts, sign
+  the consent form, "Request Single Payout Account", then ask Paystack support
+  to switch the schedule. Preferences then shows Payout Schedule as "Settled to
+  Balance". CoachLink's 8% stays in the balance and is withdrawn by hand.
+- Untick "Confirm transfers before sending" under Preferences. Otherwise every
+  transfer waits for a code nobody types; the server now records those as
+  waiting rather than sent, but they still do not move.
+- Make sure the webhook URL under Settings, API Keys & Webhooks points at the
+  live `paystackWebhook` function. Transfer results arrive on the same URL as
+  payments.
 
 ---
 
@@ -59,11 +74,11 @@ parent has no say at all. What follows from that:
 - **A no-show cannot be reported.** The athlete has no way to say the coach did
   not turn up, and a coach can mark complete a session that never happened —
   see the payout item under Shipped outside PRD scope.
-- **Either side can cancel at any time, even afterwards.** The server puts no
-  time limit on CANCELLED. There is no refund step anywhere (`REFUNDED` exists
-  as a payment status and nothing sets it), so an athlete who cancels a paid
-  session loses the money, the coach is not paid either, and it sits with
-  CoachLink.
+- **Cancelling a paid session: decided 2026-10-22.** A paid session cannot be
+  cancelled, by either side; the server refuses it, and the payment screen
+  says so kindly before anyone pays. Anything that truly cannot go ahead is
+  handled by hand through support. There is still no refund step anywhere
+  (`REFUNDED` exists as a payment status and nothing sets it).
 - **A session can be paid for after its date.** `initializePayment` charges
   every PENDING_PAYMENT booking on the request, past ones included, so a
   package paid late is billed for sessions that already went by unpaid.
@@ -85,9 +100,8 @@ The app now hides Pay and Cancel once a session's hour is over (commit
 
 **Decisions needed.**
 1. The auto-complete window — 48 hours? — and whether it applies at all.
-2. Refunds on cancelling a paid session. For example: athlete cancels 24 hours
-   or more ahead, full refund; later, none; coach cancels, always full. Needs
-   Paystack's refund API.
+2. ~~Refunds on cancelling a paid session.~~ Decided: paid sessions cannot be
+   cancelled (above). Revisit only if support starts handling many by hand.
 3. Who settles a reported problem, and what they can award: full refund,
    partial, or pay the coach anyway.
 
@@ -286,11 +300,14 @@ Recorded so the PRD screen inventory is not mistaken for the whole build.
 
 ---
 
-**Paystack has to approve the business for transfers.** Payments in work on a
-plain live account; paying money *out* does not. Until transfers are enabled
-every payout will fail and sit at FAILED with Paystack's reason attached — the
-earnings are still recorded correctly, they simply do not move. Worth confirming
-before the first real coach completes a session, not after.
+**How a payout moves (since 2026-10-22).** Marking a session complete starts a
+transfer from the Paystack balance. If the balance is short — normal with
+"Settled to Balance", since an athlete's payment arrives the next working day —
+the payout stays "Sending" and `retryPayouts` tries again every three hours.
+Paystack's `transfer.success`, `transfer.failed` and `transfer.reversed` webhooks
+then mark it sent or failed. Coaches only ever see plain wording; Paystack's own
+message is kept in the payout's `lastError` for us. See Before go-live for the
+dashboard settings this depends on.
 
 **A payout is sent as soon as a session is marked complete**, and the coach is
 the one who marks it. There is no hold period and no dispute window, so a
