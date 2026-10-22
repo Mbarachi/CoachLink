@@ -14,12 +14,22 @@ const GLYPHS: Record<NotificationType, string> = {
   BOOKING_CONFIRMED: '✓',
   PAYMENT_RECEIVED: '₦',
   PAYMENT_REQUIRED: '₦',
+  PAYMENT_FAILED: '₦',
+  BOOKING_CANCELLED: '×',
+  REQUEST_WITHDRAWN: '×',
+  REQUEST_EXPIRED: '–',
+  SESSION_COMPLETED: '★',
+  SESSION_REMINDER: '!',
   REVIEW_RECEIVED: '★',
   GENERAL: '!',
 };
 
-/** Only the row that wants money spent earns the accent tile. */
-const isActionable = (n: Notification) => n.type === 'BOOKING_ACCEPTED';
+/**
+ * Only rows that want something done earn the accent tile: pay, pay again,
+ * or write the review.
+ */
+const ACTIONABLE: NotificationType[] = ['BOOKING_ACCEPTED', 'PAYMENT_REQUIRED', 'PAYMENT_FAILED', 'SESSION_COMPLETED'];
+const isActionable = (n: Notification) => ACTIONABLE.includes(n.type);
 
 const NotificationsPage: React.FC = () => {
   const history = useHistory();
