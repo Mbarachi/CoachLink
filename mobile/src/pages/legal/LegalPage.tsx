@@ -2,6 +2,7 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { AppPage, PageBody, PageHeader, SectionHeading } from '@/components/ui';
+import { SUPPORT_EMAIL } from '@/lib/support';
 
 const P: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <p style={{ fontSize: 13.5, lineHeight: 1.65, color: 'var(--cl-muted-3)', margin: '0 0 12px' }}>
@@ -77,9 +78,11 @@ const LegalPage: React.FC = () => {
 
         <SectionHeading>Sessions and cancellations</SectionHeading>
         <P>
-          Either side may cancel a session before it is marked complete. Only the
-          coach can mark a session complete, and only after its start time has
-          passed. Coaching happens between you and the coach in person;
+          You may cancel a session in the app until it is paid for. A paid session
+          cannot be cancelled in the app; if something prevents it going ahead,
+          email <strong>{SUPPORT_EMAIL}</strong> and we will look at it case by
+          case. Only the coach can mark a session complete, and only after its
+          start time has passed. Coaching happens between you and the coach in person;
           CoachLink is not a party to it and does not supervise sessions.
         </P>
 
@@ -92,7 +95,7 @@ const LegalPage: React.FC = () => {
 
         <SectionHeading>Deleting your account</SectionHeading>
         <P>
-          Email <strong>support@coachlink.ng</strong> and we will delete your
+          Email <strong>{SUPPORT_EMAIL}</strong> and we will delete your
           account and personal data, including a coach&rsquo;s ID document.
           Records we are required to keep for tax or payment purposes are the
           exception.
@@ -100,7 +103,7 @@ const LegalPage: React.FC = () => {
 
         <SectionHeading>Contact</SectionHeading>
         <P>
-          <strong>support@coachlink.ng</strong> for anything on this page.
+          <strong>{SUPPORT_EMAIL}</strong> for anything on this page.
         </P>
       </PageBody>
     </AppPage>

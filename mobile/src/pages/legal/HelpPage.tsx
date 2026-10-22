@@ -2,6 +2,7 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { AppCard, AppPage, PageBody, PageHeader } from '@/components/ui';
+import { SUPPORT_EMAIL } from '@/lib/support';
 
 const QA: { q: string; a: string }[] = [
   {
@@ -17,8 +18,9 @@ const QA: { q: string; a: string }[] = [
   },
   {
     q: 'Can I cancel?',
-    a: 'Yes, from the session details screen, up until the session is marked '
-      + 'complete. Refunds are handled case by case for now — email us.',
+    a: 'Before you pay, yes: from the session details screen. Once a session is '
+      + 'paid for it is locked in and can’t be cancelled in the app, so check the '
+      + 'dates first. If something unexpected comes up, email us and we’ll help.',
   },
   {
     q: 'How do coaches get verified?',
@@ -61,7 +63,7 @@ const HelpPage: React.FC = () => {
         <AppCard style={{ background: 'var(--cl-subtle)', border: 'none' }}>
           <div style={{ fontWeight: 700, fontSize: 14.5, color: 'var(--cl-ink)' }}>Still stuck?</div>
           <p style={{ fontSize: 13.5, lineHeight: 1.6, color: 'var(--cl-muted-3)', margin: '8px 0 0' }}>
-            Email <strong>support@coachlink.ng</strong> with what happened and
+            Email <strong>{SUPPORT_EMAIL}</strong> with what happened and
             roughly when. Include the coach&rsquo;s name if it is about a session.
           </p>
         </AppCard>

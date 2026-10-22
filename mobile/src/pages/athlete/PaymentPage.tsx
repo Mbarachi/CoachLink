@@ -14,6 +14,7 @@ import { formatNaira, formatSessionDate } from '@/lib/format';
 import { authService, paymentsService } from '@/services';
 import { useUiStore } from '@/store/ui.store';
 import { queryClient } from '@/lib/queryClient';
+import { SUPPORT_EMAIL } from '@/lib/support';
 
 const PaymentPage: React.FC = () => {
   const history = useHistory();
@@ -119,6 +120,19 @@ const PaymentPage: React.FC = () => {
                   One payment covers every unpaid session on this booking. You&apos;ll pay on
                   Paystack&apos;s secure page — your card details never reach CoachLink.
                 </span>
+              </div>
+
+              {/* Said before money moves, not after: a paid session cannot be
+                  cancelled, and finding that out later would feel like a trap. */}
+              <div style={{ background: 'var(--cl-surface)', border: '1px solid var(--cl-border)', borderRadius: 13, padding: 14, marginTop: 12 }}>
+                <div style={{ fontWeight: 700, fontSize: 13.5, color: 'var(--cl-ink)' }}>Before you pay</div>
+                <p style={{ fontSize: 12.5, lineHeight: 1.5, color: 'var(--cl-muted-3)', margin: '5px 0 0' }}>
+                  Once paid, your sessions are locked in for you and your coach, so they
+                  can&apos;t be cancelled in the app. Please check the dates work for you.
+                  If something unexpected comes up, email{' '}
+                  <strong style={{ color: 'var(--cl-ink)' }}>{SUPPORT_EMAIL}</strong> and
+                  we&apos;ll do our best to help.
+                </p>
               </div>
 
               <AppButton onClick={() => void pay()} loading={working}

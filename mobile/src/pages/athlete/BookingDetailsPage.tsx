@@ -11,11 +11,12 @@ import {
   formatNaira, formatSessionDate, formatSessionTime, fullName, initialsOf,
 } from '@/lib/format';
 import { shownStatus } from '@/lib/sessions';
+import { SUPPORT_EMAIL } from '@/lib/support';
 import { useUiStore } from '@/store/ui.store';
 
 const BANNERS: Partial<Record<string, string>> = {
   PENDING_PAYMENT: 'Your coach accepted. Pay to confirm this session — payments go live shortly.',
-  UPCOMING: 'Confirmed. Your coach is expecting you.',
+  UPCOMING: `Confirmed. Your coach is expecting you. Paid sessions can’t be cancelled in the app, so if something comes up, email ${SUPPORT_EMAIL} and we’ll help.`,
   COMPLETED: 'This session is done.',
   CANCELLED: 'This session was cancelled.',
   AWAITING_CONFIRMATION: 'This session’s time has passed. Your coach will confirm it took place, and then you can leave a review.',
@@ -45,8 +46,9 @@ const BookingDetailsPage: React.FC = () => {
   };
 
   const shown = booking ? shownStatus(booking) : undefined;
-  // Once its hour is over there is nothing left to pay for or call off.
-  const canCancel = shown === 'PENDING_PAYMENT' || shown === 'UPCOMING';
+  // Only before payment. A paid session stands (the server refuses it too),
+  // and once its hour is over there is nothing left to call off.
+  const canCancel = shown === 'PENDING_PAYMENT';
 
   return (
     <AppPage padding="screen">
