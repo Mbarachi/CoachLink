@@ -20,7 +20,7 @@ const BANNERS: Partial<Record<string, string>> = {
   COMPLETED: 'This session is done.',
   CANCELLED: 'This session was cancelled.',
   AWAITING_CONFIRMATION: 'This session’s time has passed. Your coach will confirm it took place, and then you can leave a review.',
-  NOT_PAID: 'This session’s time passed before it was paid for, so it did not go ahead.',
+  NOT_PAID: 'This session started before it was paid for, so it did not go ahead.',
 };
 
 const BookingDetailsPage: React.FC = () => {

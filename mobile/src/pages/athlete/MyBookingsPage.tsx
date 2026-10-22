@@ -79,7 +79,7 @@ const MyBookingsPage: React.FC = () => {
           : shown === 'AWAITING_CONFIRMATION'
             ? `Waiting for ${b.coach.firstName} to confirm it took place`
             : shown === 'NOT_PAID'
-              ? 'Not paid for before the session, so it did not go ahead'
+              ? 'Not paid for before it started, so it did not go ahead'
               : undefined,
       };
     };

@@ -7,6 +7,10 @@ const SESSION_MS = 60 * 60 * 1000;
 export const hasEnded = (scheduledAt: string, now = Date.now()) =>
   new Date(scheduledAt).getTime() + SESSION_MS <= now;
 
+/** True from a session's start time. The server stops taking payment then. */
+const hasStarted = (scheduledAt: string, now = Date.now()) =>
+  new Date(scheduledAt).getTime() <= now;
+
 /**
  * A booking's status as the screens should show it.
  *
@@ -16,20 +20,24 @@ export const hasEnded = (scheduledAt: string, now = Date.now()) =>
  * acts. So time is applied here, for display; nothing is written back.
  *
  * - AWAITING_CONFIRMATION: paid, over, and not yet marked done by the coach.
- * - NOT_PAID: accepted, but its time came and went before anyone paid.
+ * - NOT_PAID: accepted, but its start time came before anyone paid. The
+ *   server no longer takes payment for it from then.
  */
 export type ShownStatus = Booking['status'] | 'AWAITING_CONFIRMATION' | 'NOT_PAID';
 
 export function shownStatus(booking: Pick<Booking, 'status' | 'scheduledAt'>, now = Date.now()): ShownStatus {
-  if (!hasEnded(booking.scheduledAt, now)) return booking.status;
-  if (booking.status === 'UPCOMING') return 'AWAITING_CONFIRMATION';
-  if (booking.status === 'PENDING_PAYMENT') return 'NOT_PAID';
+  if (booking.status === 'PENDING_PAYMENT' && hasStarted(booking.scheduledAt, now)) return 'NOT_PAID';
+  if (booking.status === 'UPCOMING' && hasEnded(booking.scheduledAt, now)) return 'AWAITING_CONFIRMATION';
   return booking.status;
 }
 
-/** Ahead of the athlete still: not over, not cancelled, not done. */
+/**
+ * Ahead of the athlete still: a paid session until its hour is over, an unpaid
+ * one until it starts (after that it can no longer be paid for).
+ */
 export const isAhead = (booking: Pick<Booking, 'status' | 'scheduledAt'>, now = Date.now()) =>
-  (booking.status === 'UPCOMING' || booking.status === 'PENDING_PAYMENT') && !hasEnded(booking.scheduledAt, now);
+  (booking.status === 'UPCOMING' && !hasEnded(booking.scheduledAt, now))
+  || (booking.status === 'PENDING_PAYMENT' && !hasStarted(booking.scheduledAt, now));
 
 /** Newest first, for the Past piles. */
 export const newestFirst = (a: { scheduledAt: string | null }, b: { scheduledAt: string | null }) =>

@@ -64,7 +64,7 @@ const CoachBookingsPage: React.FC = () => {
       // Unpaid sessions whose time passed land here rather than nowhere.
       Past: all
         .filter((b) => b.status === 'COMPLETED' || b.status === 'CANCELLED'
-          || (b.status === 'PENDING_PAYMENT' && hasEnded(b.scheduledAt)))
+          || shownStatus(b) === 'NOT_PAID')
         .sort(newestFirst),
     };
   }, [query.data]);

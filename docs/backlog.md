@@ -79,9 +79,10 @@ parent has no say at all. What follows from that:
   says so kindly before anyone pays. Anything that truly cannot go ahead is
   handled by hand through support. There is still no refund step anywhere
   (`REFUNDED` exists as a payment status and nothing sets it).
-- **A session can be paid for after its date.** `initializePayment` charges
-  every PENDING_PAYMENT booking on the request, past ones included, so a
-  package paid late is billed for sessions that already went by unpaid.
+- **Paying after a session's date: fixed 2026-10-22.** `initializePayment`
+  charges only unpaid sessions that have not started, records which on the
+  payment (`bookingIds`), and settling confirms only those. With nothing ahead
+  it refuses. The app shows an unpaid session as "Not paid" from its start.
 
 The app now hides Pay and Cancel once a session's hour is over (commit
 `888cb73`), but that is display only; the server still accepts both.
@@ -95,8 +96,8 @@ The app now hides Pay and Cancel once a session's hour is over (commit
   and the athlete asked for a review. Needs the project's first scheduled
   function.
 - No cancelling after the start time; reporting a problem replaces it.
-- An unpaid session whose time passes becomes "not paid in time" and can no
-  longer be paid (server-side, in `initializePayment`).
+- ~~An unpaid session whose time passes can no longer be paid.~~ Done
+  2026-10-22, from its start time.
 
 **Decisions needed.**
 1. The auto-complete window — 48 hours? — and whether it applies at all.
