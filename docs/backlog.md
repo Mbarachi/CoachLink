@@ -37,7 +37,7 @@ the balance and are retried every three hours; Paystack's transfer results) need
 the first deploy may ask to turn on Cloud Scheduler for the project; say yes.
 
 **The support address receives mail.** The app and the server tell people to
-write to `SUPPORT_EMAIL`, `support@webhammer.com.ng` since 2026-10-22, set in the
+write to `SUPPORT_EMAIL`, `coachlink@webhammer.com.ng` since 2026-10-22, set in the
 app's `lib/support.ts` and the backend's `types.ts`. Worth sending it a test
 message before launch to be sure someone reads it.
 
